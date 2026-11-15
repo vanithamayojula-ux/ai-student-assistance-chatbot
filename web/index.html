@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Help Desk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B3990'/%3E%3Crect x='7' y='17' width='18' height='7' rx='2' fill='%23FFE45C'/%3E%3Crect x='7' y='9' width='12' height='3' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="app" id="app" data-view="ask">
+  <!-- rail -->
+  <header class="rail">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+      <span class="brand-text">
+        <strong>Student Help Desk</strong>
+        <span id="university">University</span>
+      </span>
+    </div>
+
+    <nav class="nav" aria-label="Sections">
+      <a href="#/ask" data-nav="ask">Ask</a>
+      <a href="#/library" data-nav="library">Library</a>
+      <a href="#/evaluation" data-nav="evaluation">Evaluation</a>
+    </nav>
+
+    <section class="chats" aria-labelledby="chats-title">
+      <div class="chats-head">
+        <h2 id="chats-title">Conversations</h2>
+        <button class="btn-quiet on-dark" id="new-chat" type="button">New</button>
+      </div>
+      <ul id="chat-list" class="chat-list"></ul>
+    </section>
+
+    <p class="rail-foot" id="corpus-stat"></p>
+  </header>
+
+  <!-- ask -->
+  <main class="view view-ask" id="main" data-for="ask" tabindex="-1">
+    <div class="thread" id="thread" aria-live="polite"></div>
+
+    <form class="composer" id="composer" autocomplete="off">
+      <label class="sr-only" for="question">Your question</label>
+      <textarea id="question" rows="1" maxlength="1000" placeholder="Ask about attendance, exams, fees, hostel, syllabus..."></textarea>
+      <div class="composer-row">
+        <label class="pick">
+          <span>Search in</span>
+          <select id="category"><option value="">All documents</option></select>
+        </label>
+        <label class="pick">
+          <span>Answer by</span>
+          <select id="generator"></select>
+        </label>
+        <button class="btn-primary" id="send" type="submit">Ask</button>
+      </div>
+    </form>
+  </main>
+
+  <aside class="evidence" id="evidence" data-for="ask" aria-labelledby="evidence-title">
+    <div class="evidence-head">
+      <h2 id="evidence-title">Where this comes from</h2>
+      <button class="btn-quiet sheet-close" id="evidence-close" type="button">Close</button>
+    </div>
+    <div class="evidence-body" id="evidence-body"></div>
+  </aside>
+
+  <!-- library -->
+  <main class="view view-library" data-for="library" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Library</h1>
+        <p id="library-sub">The documents the assistant answers from.</p>
+      </div>
+      <form class="upload" id="upload-form">
+        <label class="pick">
+          <span>Category</span>
+          <select id="upload-category" required></select>
+        </label>
+        <label class="file">
+          <input type="file" id="upload-file" accept=".pdf,.docx,.md,.txt" required>
+          <span id="upload-name">Choose a PDF, DOCX, MD or TXT file</span>
+        </label>
+        <button class="btn-primary" type="submit" id="upload-btn">Add document</button>
+      </form>
+    </div>
+    <p class="notice" id="library-notice" hidden></p>
+    <div class="library">
+      <div class="doc-list" id="doc-list"></div>
+      <article class="reader" id="reader" aria-live="polite">
+        <p class="empty">Choose a document to read it section by section.</p>
+      </article>
+    </div>
+  </main>
+
+  <!-- evaluation -->
+  <main class="view view-eval" data-for="evaluation" tabindex="-1">
+    <div class="page-head">
+      <div>
+        <h1>Evaluation</h1>
+        <p id="eval-sub">How the assistant scores on the labelled student-question set.</p>
+      </div>
+      <button class="btn-primary" id="eval-run" type="button">Run evaluation</button>
+    </div>
+    <div id="eval-body" class="eval-body"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="/app.js" defer></script>
+</body>
+</html>

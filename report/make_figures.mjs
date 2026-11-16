@@ -160,6 +160,7 @@ const logical = `<div id="logical" style="width:820px;background:#fff;padding:18
 #logical .g{background:#EEF6F1;border-color:#a9cdbb}
 </style>
 <div class="layer"><div class="lt">PRESENTATION &nbsp;·&nbsp; web/ (HTML, CSS, JavaScript in the browser)</div><div class="row">
+<div class="b"><b>Home</b><span>what the assistant does, with a live example answer</span></div>
 <div class="b"><b>Ask</b><span>conversation, streamed answer, evidence panel with highlighted source sentences</span></div>
 <div class="b"><b>Library</b><span>browse and read documents, upload or remove files</span></div>
 <div class="b"><b>Evaluation</b><span>retrieval, abstention and answer scores, per-question table</span></div>

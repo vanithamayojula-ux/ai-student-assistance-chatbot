@@ -4,45 +4,118 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Student Help Desk</title>
+  <meta name="description" content="Ask about attendance, exams, fees, hostel or syllabus. Every answer comes from the university's own documents and shows the passage it was taken from.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Geist:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B3990'/%3E%3Crect x='7' y='17' width='18' height='7' rx='2' fill='%23FFE45C'/%3E%3Crect x='7' y='9' width='12' height='3' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%233752DA'/%3E%3Crect x='7' y='17' width='18' height='7' rx='2' fill='%23FFB84D'/%3E%3Crect x='7' y='9' width='12' height='3' rx='1.5' fill='%23fff'/%3E%3C/svg%3E">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<div class="app" id="app" data-view="ask">
-  <!-- rail -->
-  <header class="rail">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
-      <span class="brand-text">
-        <strong>Student Help Desk</strong>
-        <span id="university">University</span>
-      </span>
-    </div>
+<div class="app" id="app" data-view="home">
+  <div class="site-top">
+    <p class="topbar" id="topbar" hidden>
+      <span>Sample data</span>
+      <em>These documents belong to a fictional university.</em>
+      <a href="#/library">Add your own in the Library</a>
+    </p>
+    <header class="site-head">
+      <a class="brand" href="#/" aria-label="Student Help Desk, home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+        <span class="brand-text">
+          <strong>Student Help Desk</strong>
+          <span id="university">University</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#/" data-nav="home">Home</a>
+        <a href="#/ask" data-nav="ask">Ask</a>
+        <a href="#/library" data-nav="library">Library</a>
+        <a href="#/evaluation" data-nav="evaluation">Evaluation</a>
+      </nav>
+      <a class="btn-cta" href="#/ask" id="head-cta">Ask a question<i aria-hidden="true"></i></a>
+    </header>
+  </div>
 
-    <nav class="nav" aria-label="Sections">
-      <a href="#/ask" data-nav="ask">Ask</a>
-      <a href="#/library" data-nav="library">Library</a>
-      <a href="#/evaluation" data-nav="evaluation">Evaluation</a>
-    </nav>
-
-    <section class="chats" aria-labelledby="chats-title">
-      <div class="chats-head">
-        <h2 id="chats-title">Conversations</h2>
-        <button class="btn-quiet on-dark" id="new-chat" type="button">New</button>
+  <!-- home -->
+  <main class="view view-home" data-for="home" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title">Every answer comes with the page it came from.</h1>
+        <p id="hero-sub">Ask about attendance, exams, fees, hostel or syllabus. The help desk answers only from the university's own documents, shows you the passage, and tells you when the documents don't cover it.</p>
+        <form class="hero-ask" id="hero-form" autocomplete="off">
+          <label class="sr-only" for="hero-q">Your question</label>
+          <input id="hero-q" type="text" maxlength="1000" placeholder="What do you need to know?">
+          <button class="btn-primary" type="submit">Ask</button>
+        </form>
+        <div class="hero-try" id="hero-try" aria-label="Example questions"></div>
       </div>
-      <ul id="chat-list" class="chat-list"></ul>
+      <div class="demo" id="demo" aria-label="An example answer">
+        <div class="demo-q"><span class="who">Student</span><p id="demo-q"></p></div>
+        <div class="demo-a"><span class="who">Help desk</span><p id="demo-a"></p>
+          <button class="demo-src" id="demo-src" type="button" hidden></button>
+        </div>
+      </div>
     </section>
 
-    <p class="rail-foot" id="corpus-stat"></p>
-  </header>
+    <section class="band band-cats" aria-labelledby="cats-title">
+      <div class="wrap">
+        <div class="band-head">
+          <h2 id="cats-title">Five kinds of documents, one place to ask</h2>
+          <p id="cats-sub">Syllabus, regulations, notices, FAQs and academic policies.</p>
+        </div>
+        <div class="cats" id="home-cats"></div>
+      </div>
+    </section>
+
+    <section class="band band-how" aria-labelledby="how-title">
+      <div class="wrap how">
+        <div>
+          <h2 id="how-title">How an answer is made</h2>
+          <ol class="steps">
+            <li><h3>Search the documents</h3><p>Your question is matched against every passage twice: by its words and by its meaning. The two rankings are merged.</p></li>
+            <li><h3>Check the evidence</h3><p>If the best passages don't really cover the question, the help desk stops here and says so.</p></li>
+            <li><h3>Answer from the passages</h3><p>The answer is written only from the four best passages. Nothing comes from guesswork.</p></li>
+            <li><h3>Show the source</h3><p>Each claim carries a number. Select it to read the passage, with the supporting sentence marked.</p></li>
+          </ol>
+        </div>
+        <div class="how-proof" id="home-passage" hidden></div>
+      </div>
+    </section>
+
+    <section class="band band-measured" aria-labelledby="measured-title" id="home-measured" hidden>
+      <div class="wrap measured">
+        <div>
+          <h2 id="measured-title">Tested on student questions, including ones it should refuse</h2>
+          <p id="measured-sub"></p>
+          <a class="btn-outline" href="#/evaluation">See every question</a>
+        </div>
+        <dl class="scores" id="home-scores"></dl>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <h2 id="closing-title">Have a question about the rules?</h2>
+      <p>Ask it the way you would ask a senior.</p>
+      <div class="closing-actions">
+        <a class="btn-cta" href="#/ask">Ask a question<i aria-hidden="true"></i></a>
+        <a class="btn-outline on-blue" href="#/library">Browse the library</a>
+      </div>
+    </section>
+  </main>
 
   <!-- ask -->
-  <main class="view view-ask" id="main" data-for="ask" tabindex="-1">
+  <aside class="chats" data-for="ask" aria-labelledby="chats-title">
+    <div class="chats-head">
+      <h2 id="chats-title">Conversations</h2>
+      <button class="btn-quiet" id="new-chat" type="button">New</button>
+    </div>
+    <ul id="chat-list" class="chat-list"></ul>
+  </aside>
+
+  <main class="view view-ask" data-for="ask" tabindex="-1">
     <div class="thread" id="thread" aria-live="polite"></div>
 
     <form class="composer" id="composer" autocomplete="off">
@@ -109,6 +182,24 @@
     </div>
     <div id="eval-body" class="eval-body"></div>
   </main>
+
+  <footer class="site-foot">
+    <div class="wrap foot">
+      <div class="foot-brand">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i></span>
+        <div>
+          <strong>Student Help Desk</strong>
+          <p>A retrieval-augmented chatbot over a university knowledge corpus. Project P08, after Smart India Hackathon 2024 problem SIH1631.</p>
+        </div>
+      </div>
+      <nav class="foot-nav" aria-label="Footer">
+        <a href="#/ask">Ask</a>
+        <a href="#/library">Library</a>
+        <a href="#/evaluation">Evaluation</a>
+      </nav>
+      <p class="foot-stat" id="corpus-stat"></p>
+    </div>
+  </footer>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>

@@ -1,4 +1,4 @@
-/* Student Help Desk: browser logic. No framework, no build step.
+/* Student Help Desk: the website's logic (home page, Ask, Library, Evaluation). No framework, no build step.
    All text from the server is inserted with textContent, never innerHTML. */
 (() => {
   "use strict";
@@ -261,7 +261,7 @@
     if (!message || !(message.sources || []).length) {
       body.append(el("div", { class: "evidence-empty" },
         el("p", { text: "When you ask a question, the passages the answer was taken from appear here." }),
-        el("div", { class: "source cited sweep demo" },
+        el("div", { class: "source cited sweep demo-card" },
           el("div", { class: "source-body" }, el("div", { class: "doc-text" },
             el("p", {}, "The assistant only answers from the university's documents. ",
               el("mark", { text: "The sentence that supports the answer is marked like this," }),
@@ -389,7 +389,8 @@
   function autosize() {
     const box = $("#question");
     box.style.height = "auto";
-    box.style.height = Math.min(box.scrollHeight, 160) + "px";
+    // while the Ask page is hidden the box has no height to measure: leave it to the stylesheet
+    box.style.height = box.scrollHeight ? Math.min(box.scrollHeight, 160) + "px" : "";
   }
 
   /* ---------- library ---------- */
@@ -583,12 +584,112 @@
     finally { button.disabled = false; button.textContent = "Run evaluation"; }
   }
 
+  /* ---------- home ---------- */
+  // Ask from anywhere on the site: start a fresh conversation on the Ask page.
+  function goAsk(question) {
+    state.currentId = null;
+    if (location.hash !== "#/ask") location.hash = "#/ask";
+    renderChats(); renderThread(); showEvidence(null);
+    ask(question);
+  }
+
+  // One quoted answer, without touching the conversation (used for the home page example).
+  async function quickAnswer(question) {
+    const response = await fetch("/api/chat", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question, history: [], generator: "extractive", category: null }),
+    });
+    if (!response.ok) throw new Error(`The server could not answer (${response.status}).`);
+    const events = (await response.text()).split("\n").filter((line) => line.trim()).map((line) => JSON.parse(line));
+    return events.find((event) => event.type === "done") || null;
+  }
+
+  async function renderHome() {
+    if (state.homeReady) return;
+    state.homeReady = true;
+    const h = state.health;
+
+    $("#hero-sub").textContent = `Ask about attendance, exams, fees, hostel or syllabus. The help desk answers only from ` +
+      `${h.university}'s own documents, shows you the passage, and tells you when the documents don't cover it.`;
+    $("#hero-try").replaceChildren(...STARTERS.slice(2, 5).map((s) =>
+      el("button", { type: "button", text: s.q, onclick: () => goAsk(s.q) })));
+
+    // the example exchange in the hero is a real answer from the running assistant
+    const example = STARTERS[1].q;
+    $("#demo-q").textContent = example;
+    quickAnswer(example).then((result) => {
+      if (!result) return;
+      const firstCite = /\[(\d+)\]/.exec(result.answer);
+      const source = firstCite ? result.sources.find((s) => s.n === Number(firstCite[1])) : null;
+      $("#demo-a").textContent = (firstCite ? result.answer.slice(0, firstCite.index) : result.answer).trim();
+      if (source) {
+        const chip = $("#demo-src");
+        chip.hidden = false;
+        chip.replaceChildren("From ", el("b", { text: source.title }), `, section ${source.section}`);
+        chip.addEventListener("click", () => goAsk(example));
+
+        const proof = $("#home-passage");
+        proof.hidden = false;
+        proof.replaceChildren(
+          el("article", { class: "source cited" },
+            el("div", { class: "source-head" },
+              el("div", { class: "source-top" },
+                el("span", { class: "source-n", text: source.n }),
+                el("span", { class: "tag", "data-cat": source.category, text: categoryLabel(source.category) }),
+                source.updated ? el("span", { class: "when", text: `Updated ${formatDate(source.updated)}` }) : null),
+              el("div", { class: "source-title", text: source.title }),
+              el("div", { class: "source-section", text: source.section })),
+            el("div", { class: "source-body" }, renderBlocks(source.blocks))),
+          el("p", { class: "how-proof-note", text: "The passage behind the example answer at the top of this page. The marked sentences are the ones the help desk found relevant." }));
+      }
+      requestAnimationFrame(() => $("#demo").classList.add("in"));
+    }).catch(() => { $("#demo").hidden = true; });
+
+    // what the corpus holds, by category
+    api("/api/documents").then(({ documents }) => {
+      const passages = documents.reduce((sum, d) => sum + d.passages, 0);
+      $("#cats-sub").textContent = `${documents.length} documents, split into ${passages} searchable passages. ` +
+        "Read any of them in the Library, or add your own.";
+      $("#home-cats").replaceChildren(...h.categories.map((category) => {
+        const docs = documents.filter((d) => d.category === category.id);
+        const starter = STARTERS.find((s) => s.cat === category.id);
+        return el("div", { class: "cat", "data-cat": category.id },
+          el("div", { class: "cat-name" }, category.label,
+            el("small", { text: `${docs.length} ${docs.length === 1 ? "document" : "documents"}` })),
+          el("p", { class: "cat-docs", text: docs.length ? docs.slice(0, 3).map((d) => d.title).join(", ") + (docs.length > 3 ? ` and ${docs.length - 3} more` : "") : "No documents yet." }),
+          starter && docs.length ? el("button", { class: "cat-ask", type: "button", text: starter.q, onclick: () => goAsk(starter.q) }) : null);
+      }));
+    }).catch(() => {});
+
+    // measured results, straight from the last evaluation
+    api("/api/eval/results").then((data) => {
+      if (!data.available) return;
+      const methods = Object.keys(data.retrieval);
+      const best = methods.reduce((a, b) => (data.retrieval[b].passage.mrr > data.retrieval[a].passage.mrr ? b : a));
+      const summary = data.answers[Object.keys(data.answers)[0]].summary;
+      const score = (label, detail, value, text) => el("div", {},
+        el("dt", {}, label, el("small", { text: detail })), el("dd", { text: text || pct(value) }),
+        value == null ? null : el("div", { class: "meter" }, el("i", { style: `--v:${(value * 100).toFixed(1)}%` })));
+      const ms = summary.latency_ms.median;
+      $("#home-scores").replaceChildren(
+        score("Right passage found", `in the top three results, ${data.questions.answerable} answerable questions`, data.retrieval[best].passage["hit@3"]),
+        score("Answers correct", `all ${data.questions.total} questions, every key fact present`, summary.accuracy),
+        score("Out-of-scope questions declined", `${data.questions.unanswerable} questions the documents do not cover`, summary.unanswerable_declined),
+        score("Time to answer", "median, quoting the documents", null, ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${ms} ms`));
+      $("#measured-title").textContent = `Tested on ${data.questions.total} student questions, including ones it should refuse`;
+      $("#measured-sub").textContent = `Informal and Hindi-English questions are the weak spot: ${pct(summary.by_style.colloquial)} of those are answered correctly, ` +
+        `against ${pct(summary.by_style.direct)} for questions that use the documents' own words.`;
+      $("#home-measured").hidden = false;
+    }).catch(() => {});
+  }
+
   /* ---------- shell ---------- */
   async function refreshHealth() {
     state.health = await api("/api/health");
     const h = state.health;
     $("#university").textContent = h.university;
-    $("#corpus-stat").textContent = `${h.documents} documents, ${h.passages} passages. ` +
+    $("#topbar").hidden = !h.sample_corpus;
+    $("#corpus-stat").textContent = `${h.university}. ${h.documents} documents, ${h.passages} passages. ` +
       (h.retrievers.includes("hybrid") ? "Keyword and meaning search." : "Keyword search only.");
     document.title = `Student Help Desk, ${h.university}`;
   }
@@ -608,12 +709,18 @@
   }
 
   function route() {
-    const view = (location.hash.replace(/^#\/?/, "") || "ask").split("/")[0];
-    const name = ["ask", "library", "evaluation"].includes(view) ? view : "ask";
+    const view = (location.hash.replace(/^#\/?/, "") || "home").split("/")[0];
+    const name = ["home", "ask", "library", "evaluation"].includes(view) ? view : "home";
+    const changed = $("#app").dataset.view !== name;
     $("#app").dataset.view = name;
     document.querySelectorAll("[data-nav]").forEach((a) =>
       a.dataset.nav === name ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    document.querySelectorAll("main.view").forEach((main) =>
+      main.dataset.for === name ? main.setAttribute("id", "main") : main.removeAttribute("id"));
     $("#evidence").classList.remove("open");
+    if (changed) window.scrollTo(0, 0);
+    if (name === "home") renderHome();
+    if (name === "ask") autosize();
     if (name === "library") loadLibrary();
     if (name === "evaluation") loadEval();
   }
@@ -621,6 +728,7 @@
   async function start() {
     try { await refreshHealth(); }
     catch (error) {
+      $("#app").dataset.view = "ask";
       $("#thread").append(el("div", { class: "welcome" }, el("h1", { text: "The help desk is not running" }),
         el("p", { text: `Start the server and reload this page. (${error.message})` })));
       return;
@@ -644,16 +752,20 @@
       $("#upload-name").textContent = event.target.files[0]?.name || "Choose a PDF, DOCX, MD or TXT file";
     });
     $("#eval-run").addEventListener("click", runEval);
+    $("#hero-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const question = $("#hero-q").value.trim();
+      if (!question) { $("#hero-q").focus(); return; }
+      $("#hero-q").value = "";
+      goAsk(question);
+    });
     window.addEventListener("hashchange", route);
-    route();
 
     // A link such as /?q=What+is+the+minimum+attendance asks that question on arrival.
     const linked = new URLSearchParams(location.search).get("q");
-    if (linked) {
-      state.currentId = null;
-      history.replaceState(null, "", location.pathname + location.hash);
-      ask(linked.slice(0, 1000));
-    }
+    if (linked) history.replaceState(null, "", location.pathname + "#/ask");
+    route();
+    if (linked) goAsk(linked.slice(0, 1000));
   }
 
   start();

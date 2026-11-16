@@ -437,7 +437,7 @@ c.bullets([
     "performance, but no special processing is done for them.",
     "Answers||: short factual answers with citations. The system does not give advice, opinions or "
     "answers that need information about an individual student.",
-    "Interface||: a web application with a conversation view, a document library and an evaluation "
+    "Interface||: a website with a home page, a conversation view, a document library and an evaluation "
     "page.",
 ])
 c.p("The constraints are these.")
@@ -653,9 +653,11 @@ c.bullets([
     "Server (app/main.py)||. Endpoints for chat, documents, evaluation and feedback. Answers are "
     "streamed to the browser as newline-delimited JSON events so that text appears as it is "
     "written. Uploads are checked for type, size and file name.",
-    "Interface (web/)||. Three views: Ask, Library and Evaluation. The design uses a dark indigo "
-    "navigation rail, a serif typeface for document text and a highlighter-yellow mark for the "
-    "supporting sentence, so that the evidence reads like an annotated handbook.",
+    "Interface (web/)||. A website with four pages: a home page, Ask, Library and Evaluation. The "
+    "home page explains the assistant and shows a live example answer taken from the running "
+    "system. The design uses a cream page with navy text, a royal-blue hero panel, a serif typeface "
+    "for headlines and for document text, and a highlighter-yellow mark for the supporting "
+    "sentence. It adapts to phone-sized screens.",
     "Evaluation (app/evaluate.py)||. Computes all metrics in this report and writes them to "
     "data/eval/results.json, which the Evaluation page displays.",
     "Testing (tests/)||. Eighteen automated tests cover the tokenizer, retrieval, grounded "
@@ -701,7 +703,7 @@ set_text(P[80], (
     "the interface rather than processed images; the \"before\" is the student's question and the "
     "\"after\" is the cited answer."))
 c = Cursor(P[80])
-c.figure("ui-welcome.png", "Figure 8.1: Opening screen with starter questions", 6.0)
+c.figure("ui-home.png", "Figure 8.1: Home page of the website, with an example answer produced live by the assistant", 6.0)
 c.figure("ui-answer.png", "Figure 8.2: A cited answer (centre) and the source passages with the supporting sentence highlighted (right)", 6.0)
 c.figure("ui-declined.png", "Figure 8.3: An out-of-scope question is declined, and the nearest passages are offered", 6.0)
 c.figure("ui-library.png", "Figure 8.4: Library view, where documents are read, uploaded and removed", 6.0)

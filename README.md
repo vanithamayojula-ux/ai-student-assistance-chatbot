@@ -109,7 +109,7 @@ app/
   pipeline.py    the RAG pipeline (retrieve, gate, generate, cite)
   evaluate.py    evaluation on the labelled question set
   main.py        FastAPI server and API
-web/             the interface (plain HTML, CSS, JavaScript)
+web/             the website: home page, Ask, Library, Evaluation (plain HTML, CSS, JavaScript)
 data/corpus/     the knowledge corpus, one folder per category
 data/eval/       questions.jsonl (labels), results.json (last evaluation)
 tests/           automated tests

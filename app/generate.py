@@ -4,7 +4,7 @@ Three generators share one contract (question + passages in, cited answer out):
 
 * extractive - no language model. Picks the sentences that best answer the
                question and quotes them. Cannot hallucinate, works offline.
-* ollama     - a local LLM writes the answer from the passages.
+* gemini     - the Gemini API writes the answer from the passages.
 * claude     - the Claude API writes the answer from the passages.
 
 For the LLM generators the model is told to use only the passages and to reply
@@ -204,30 +204,65 @@ def _system() -> str:
     return SYSTEM_PROMPT.format(university=config.UNIVERSITY_NAME, no_answer=NO_ANSWER)
 
 
-def ollama_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterator[str]:
+def gemini_api_key() -> str:
+    return os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
+
+
+def _http_client():
     import httpx
 
+    return httpx.Client(timeout=httpx.Timeout(90.0, connect=10.0))
+
+
+def gemini_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterator[str]:
+    """Stream an answer from the Gemini API (Interactions API, server-sent events)."""
+    import httpx
+
+    key = gemini_api_key()
+    if not key:
+        raise RuntimeError("Gemini needs an API key. Set GEMINI_API_KEY.")
     payload = {
-        "model": config.OLLAMA_MODEL,
-        "messages": [{"role": "system", "content": _system()}] + build_messages(question, hits, history),
+        "model": config.GEMINI_MODEL,
+        "system_instruction": _system(),
+        "input": build_messages(question, hits, history)[0]["content"],
         "stream": True,
-        "think": False,      # reasoning models: skip the visible thinking, we want the answer
-        "options": {"temperature": 0.1, "num_ctx": 4096, "num_predict": 400},
+        "store": False,                       # nothing is kept on the server after the reply
+        # Short grounded answers need little reasoning. The output cap includes thinking tokens.
+        "generation_config": {"thinking_level": "low", "max_output_tokens": 2000},
     }
-    with httpx.Client(timeout=httpx.Timeout(180.0, connect=5.0)) as client:
-        with client.stream("POST", f"{config.OLLAMA_URL}/api/chat", json=payload) as response:
-            if response.status_code != 200:
-                detail = response.read().decode("utf-8", "replace")[:300]
-                raise RuntimeError(f"Ollama returned {response.status_code}: {detail}")
-            for line in response.iter_lines():
-                if not line:
-                    continue
-                event = json.loads(line)
-                if event.get("error"):
-                    raise RuntimeError(f"Ollama: {event['error']}")
-                piece = (event.get("message") or {}).get("content") or ""
-                if piece:
-                    yield piece
+    headers = {"x-goog-api-key": key, "Api-Revision": config.GEMINI_API_REVISION}
+    try:
+        with _http_client() as client:
+            with client.stream("POST", config.GEMINI_URL, params={"alt": "sse"},
+                               json=payload, headers=headers) as response:
+                if response.status_code != 200:
+                    detail = response.read().decode("utf-8", "replace")
+                    try:
+                        detail = json.loads(detail)["error"]["message"]
+                    except Exception:
+                        detail = detail[:300]
+                    if response.status_code in (401, 403):
+                        raise RuntimeError(f"Gemini API key was rejected. Check GEMINI_API_KEY. ({detail})")
+                    if response.status_code == 429:
+                        raise RuntimeError("Gemini API rate limit reached. Try again in a minute.")
+                    raise RuntimeError(f"Gemini API error {response.status_code}: {detail}")
+                for line in response.iter_lines():
+                    if not line.startswith("data:"):
+                        continue
+                    data = line[5:].strip()
+                    if not data or data == "[DONE]":
+                        continue
+                    event = json.loads(data)
+                    kind = event.get("event_type", "")
+                    if kind == "error" or "error" in event:
+                        message = (event.get("error") or {}).get("message", "unknown error")
+                        raise RuntimeError(f"Gemini: {message}")
+                    if kind == "step.delta":
+                        delta = event.get("delta") or {}
+                        if delta.get("type") == "text" and delta.get("text"):
+                            yield delta["text"]
+    except httpx.HTTPError as exc:
+        raise RuntimeError("Could not reach the Gemini API. Check the internet connection.") from exc
 
 
 def claude_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterator[str]:
@@ -274,20 +309,11 @@ def available_generators(force: bool = False) -> list[dict]:
         "detail": "Answers with the exact sentences from the documents. No language model.",
     }]
 
-    ollama = {"id": "ollama", "label": f"Local model ({config.OLLAMA_MODEL})", "ready": False,
-              "detail": "Ollama is not running on this computer."}
-    try:
-        import httpx
-
-        tags = httpx.get(f"{config.OLLAMA_URL}/api/tags", timeout=1.5).json()
-        names = {m.get("name", "") for m in tags.get("models", [])}
-        if config.OLLAMA_MODEL in names:
-            ollama.update(ready=True, detail="A language model on this computer writes the answer from the documents.")
-        else:
-            ollama["detail"] = f"Ollama is running but the model {config.OLLAMA_MODEL} is not installed."
-    except Exception:
-        pass
-    generators.append(ollama)
+    gemini = {"id": "gemini", "label": f"Gemini ({config.GEMINI_MODEL})", "ready": False,
+              "detail": "Set GEMINI_API_KEY (environment variable or .env file) to turn this on."}
+    if gemini_api_key():
+        gemini.update(ready=True, detail="Gemini writes the answer from the documents.")
+    generators.append(gemini)
 
     claude = {"id": "claude", "label": f"Claude ({config.CLAUDE_MODEL})", "ready": False,
               "detail": "Set the ANTHROPIC_API_KEY environment variable to turn this on."}
@@ -304,4 +330,4 @@ def available_generators(force: bool = False) -> list[dict]:
     return generators
 
 
-STREAMS = {"ollama": ollama_stream, "claude": claude_stream}
+STREAMS = {"gemini": gemini_stream, "claude": claude_stream}

@@ -1,7 +1,7 @@
 """Evaluation against the labelled student-question set.
 
 Run:  python -m app.evaluate                      (retrieval + extractive answers)
-      python -m app.evaluate --generator ollama   (also score LLM-written answers)
+      python -m app.evaluate --generator gemini   (also score LLM-written answers)
 
 What is measured, and why:
 
@@ -252,7 +252,7 @@ def run(generators: list[str], limit: int | None = None, engine: Engine | None =
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate the chatbot on the labelled question set.")
-    parser.add_argument("--generator", action="append", choices=["extractive", "ollama", "claude"],
+    parser.add_argument("--generator", action="append", choices=["extractive", "gemini", "claude"],
                         help="generator(s) to score; default: extractive")
     parser.add_argument("--limit", type=int, default=None, help="score only the first N questions")
     args = parser.parse_args()

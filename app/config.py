@@ -5,6 +5,22 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def _load_dotenv() -> None:
+    """Read KEY=VALUE lines from a .env file in the project folder (real env vars win)."""
+    path = ROOT / ".env"
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        os.environ.setdefault(key.strip(), value.strip().strip("'\""))
+
+
+_load_dotenv()
 DATA_DIR = ROOT / "data"
 CORPUS_DIR = DATA_DIR / "corpus"        # the sample corpus shipped with the project
 UPLOAD_DIR = DATA_DIR / "uploads"       # documents added through the Library page
@@ -44,8 +60,10 @@ ABSTAIN_THRESHOLD = float(os.getenv("ABSTAIN_THRESHOLD", "0.50"))
 LOOSE_THRESHOLD = float(os.getenv("LOOSE_THRESHOLD", "0.35"))
 
 # --- generation -----------------------------------------------------------
-OLLAMA_URL = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen3.5:4b")
+# Gemini is called through the Interactions API; the key comes from GEMINI_API_KEY.
+GEMINI_URL = os.getenv("GEMINI_URL", "https://generativelanguage.googleapis.com/v1beta/interactions")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+GEMINI_API_REVISION = os.getenv("GEMINI_API_REVISION", "2026-05-20")
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-opus-5-5")
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024

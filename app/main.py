@@ -39,7 +39,7 @@ class Turn(BaseModel):
 class ChatRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     history: list[Turn] = Field(default_factory=list, max_length=20)
-    generator: Literal["extractive", "ollama", "claude"] = "extractive"
+    generator: Literal["extractive", "gemini", "claude"] = "extractive"
     category: Literal["syllabus", "regulations", "notices", "faqs", "policies"] | None = None
 
 

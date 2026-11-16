@@ -1,6 +1,7 @@
 """Tests for the RAG pipeline. Run:  python -m pytest -q
 
-They use the quote-only generator, so they need no language model.
+They use the quote-only generator, and a simulated Gemini API, so they need no
+language model, API key or network.
 """
 from __future__ import annotations
 
@@ -128,3 +129,82 @@ def test_upload_then_ask_then_delete(client):
 
 def test_sample_documents_cannot_be_deleted(client):
     assert client.delete("/api/documents/REG-01").status_code == 403
+
+
+# --- Gemini generator, against a simulated API (no key or network needed) -----------------
+def _fake_gemini(monkeypatch, handler):
+    import httpx
+
+    from app import generate
+
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    monkeypatch.setattr(generate, "_http_client",
+                        lambda: httpx.Client(transport=httpx.MockTransport(handler)))
+    generate.available_generators(force=True)      # availability is cached for 30 s
+
+
+def _sse(*events) -> bytes:
+    import json
+
+    lines = []
+    for event in events:
+        lines.append(f"event: {event['event_type']}\ndata: {json.dumps(event)}\n\n")
+    return ("".join(lines) + "event: done\ndata: [DONE]\n\n").encode("utf-8")
+
+
+def test_gemini_answer_is_streamed_and_cited(engine, monkeypatch):
+    import httpx
+    import json
+
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["url"] = str(request.url)
+        seen["key"] = request.headers.get("x-goog-api-key")
+        seen["body"] = json.loads(request.content)
+        return httpx.Response(200, headers={"content-type": "text/event-stream"}, content=_sse(
+            {"event_type": "interaction.created"},
+            {"event_type": "step.delta", "index": 0, "delta": {"type": "thought_summary", "content": {"text": "thinking"}}},
+            {"event_type": "step.delta", "index": 1, "delta": {"type": "text", "text": "You need at least 75% "}},
+            {"event_type": "step.delta", "index": 1, "delta": {"type": "text", "text": "attendance in each course. [1]"}},
+            {"event_type": "interaction.completed", "interaction": {"status": "completed"}},
+        ))
+
+    _fake_gemini(monkeypatch, handler)
+    result = engine.answer("What is the minimum attendance required in each course?", generator="gemini")
+    assert result["generator"] == "gemini" and not result["abstained"]
+    assert result["answer"] == "You need at least 75% attendance in each course. [1]"
+    assert any(source["cited"] for source in result["sources"])
+    assert seen["key"] == "test-key" and "/interactions" in seen["url"]
+    body = seen["body"]
+    assert body["stream"] is True and body["model"] == config.GEMINI_MODEL
+    assert "Passages:" in body["input"] and "NO_ANSWER" in body["system_instruction"]
+
+
+def test_gemini_no_answer_becomes_a_decline(engine, monkeypatch):
+    import httpx
+
+    _fake_gemini(monkeypatch, lambda request: httpx.Response(200, content=_sse(
+        {"event_type": "step.delta", "index": 0, "delta": {"type": "text", "text": "NO_ANSWER"}})))
+    result = engine.answer("What is the minimum attendance required in each course?", generator="gemini")
+    assert result["abstained"]
+
+
+def test_gemini_failure_falls_back_to_quoting(engine, monkeypatch):
+    import httpx
+
+    _fake_gemini(monkeypatch, lambda request: httpx.Response(
+        403, json={"error": {"code": 403, "message": "API key not valid."}}))
+    result = engine.answer("What is the minimum attendance required in each course?", generator="gemini")
+    assert result["generator"] == "extractive" and "75%" in result["answer"]
+
+
+def test_gemini_is_listed_and_needs_a_key(monkeypatch):
+    from app.generate import available_generators
+
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    listed = {g["id"]: g for g in available_generators(force=True)}
+    assert "ollama" not in listed and listed["gemini"]["ready"] is False
+    monkeypatch.setenv("GEMINI_API_KEY", "test-key")
+    assert {g["id"]: g for g in available_generators(force=True)}["gemini"]["ready"] is True

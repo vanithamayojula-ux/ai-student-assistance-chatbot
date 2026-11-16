@@ -14,9 +14,9 @@
     { cat: "faqs", q: "When does the hostel gate close at night?" },
   ];
   const METHOD = { bm25: "BM25 (keywords)", dense: "Dense (embeddings)", hybrid: "Hybrid (BM25 + dense)" };
-  const GENERATOR = { extractive: "Quoted from the documents", ollama: "Written by the local model from the documents",
+  const GENERATOR = { extractive: "Quoted from the documents", gemini: "Written by Gemini from the documents",
                       claude: "Written by Claude from the documents" };
-  const GEN_SHORT = { extractive: "Quote the documents", ollama: "Local model", claude: "Claude" };
+  const GEN_SHORT = { extractive: "Quote the documents", gemini: "Gemini", claude: "Claude" };
 
   const state = {
     health: null,

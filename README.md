@@ -27,15 +27,27 @@ python -m venv .venv
 ```
 
 Then open http://127.0.0.1:8000. The first start downloads a small embedding model
-(about 70 MB) once; after that it works offline.
+(about 70 MB) once; after that the quote-only mode works offline.
 
 Other commands:
 
 ```
 .venv\Scripts\python -m pytest -q                          # tests
 .venv\Scripts\python -m app.evaluate                       # evaluation, quote-only answers
-.venv\Scripts\python -m app.evaluate --generator ollama    # also score local-model answers
+.venv\Scripts\python -m app.evaluate --generator gemini    # also score Gemini answers (needs a key)
 ```
+
+## Turning on Gemini
+
+The assistant works without any language model ("Quote the documents"). To have Gemini
+write the answers instead:
+
+1. Create an API key at https://aistudio.google.com/apikey.
+2. In the project folder, create a file named `.env` containing one line:
+   `GEMINI_API_KEY=your-key-here`
+3. Restart the server and choose **Gemini** under "Answer by".
+
+Questions and the retrieved passages are then sent to Google's API.
 
 ## How it works
 
@@ -76,8 +88,8 @@ Other commands:
 4. **Generate** (`app/generate.py`). Three interchangeable generators:
    - *Quote the documents*: no language model. Picks the sentences that best answer
      the question and quotes them. It cannot invent anything and needs no internet.
-   - *Local model*: an Ollama model on this computer writes the answer from the
-     passages (default `qwen3.5:4b`).
+   - *Gemini*: the Gemini API writes the answer from the passages (needs
+     `GEMINI_API_KEY`, default model `gemini-3.8-flash`).
    - *Claude*: the Claude API writes the answer (needs `ANTHROPIC_API_KEY`).
 
    The language models are instructed to use only the passages, cite them, and reply
@@ -93,7 +105,7 @@ app/
   ingest.py      read .md/.txt/.pdf/.docx, split into passages
   textutil.py    tokenizer, sentence and table-row splitting
   retrieval.py   BM25, dense embeddings, hybrid fusion, confidence
-  generate.py    quote-only, Ollama and Claude answer generators
+  generate.py    quote-only, Gemini and Claude answer generators
   pipeline.py    the RAG pipeline (retrieve, gate, generate, cite)
   evaluate.py    evaluation on the labelled question set
   main.py        FastAPI server and API
@@ -105,12 +117,15 @@ tests/           automated tests
 
 ## Settings
 
-Set these as environment variables before starting the server.
+Set these as environment variables before starting the server, or put them in a file
+named `.env` in the project folder, one `NAME=value` per line (the file is ignored by
+git, so a key in it is not committed).
 
 | Variable | Default | Meaning |
 |---|---|---|
 | `UNIVERSITY_NAME` | Sutlej Valley University | Name shown in the interface and given to the language model |
-| `OLLAMA_MODEL` | qwen3.5:4b | Local model used by "Local model" |
+| `GEMINI_API_KEY` | not set | Turns on the Gemini generator |
+| `GEMINI_MODEL` | gemini-3.8-flash | Gemini model |
 | `ANTHROPIC_API_KEY` | not set | Turns on the Claude generator |
 | `CLAUDE_MODEL` | claude-opus-5-5 | Claude model |
 | `TOP_K` | 4 | Passages given to the generator |
@@ -179,10 +194,11 @@ passages) and the 80 labelled questions. The full numbers are in
   move in steps of 17 points.
 - **Sentence-selection weights were chosen on all answerable questions**, not on the
   dev half only, so the quote-only answer accuracy is slightly optimistic.
-- **Language-model answers are not scored here.** The local model (`qwen3.5:4b`) gave
-  good grounded answers in manual checks but takes about 30 s per answer on a CPU; a
-  full scored run (`--generator ollama`) takes around 40 minutes and was not completed.
-  The Claude generator is implemented but has not been run (no API key was available).
+- **Language-model answers are not scored here.** The Gemini and Claude generators are
+  implemented, and the Gemini request and response handling is covered by an automated
+  test against a simulated stream, but neither has been run against the live service
+  (no API key was available). To score Gemini, set `GEMINI_API_KEY` and run
+  `python -m app.evaluate --generator gemini`.
 - **The corpus is fictional sample data.** Numbers will differ on real documents.
 - Scanned PDFs need OCR before upload; there are no user accounts, and conversations
   are stored only in the browser.
@@ -193,3 +209,17 @@ Use the Library page to upload `.pdf`, `.docx`, `.md` or `.txt` files (up to 10 
 or copy files into `data/corpus/<category>/` and restart. Markdown files may start
 with a front-matter block (`title`, `doc_id`, `updated`). To evaluate on your own
 documents, write questions in the same format as `data/eval/questions.jsonl`.
+
+## Project report
+
+`report/AI_Student_Assistance_Chatbot_Report.docx` (and a PDF copy) is the project
+report in the university's template. It is generated, so the numbers always match the
+last evaluation:
+
+```
+.venv\Scripts\python report\build_report.py                          # writes the .docx
+powershell -ExecutionPolicy Bypass -File report\finalize.ps1         # fills contents lists, saves the PDF
+```
+
+The details only the student knows (registration number, course, faculty name, date)
+are left as `[placeholders]` in the document.

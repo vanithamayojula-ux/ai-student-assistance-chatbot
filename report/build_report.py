@@ -655,9 +655,11 @@ c.bullets([
     "written. Uploads are checked for type, size and file name.",
     "Interface (web/)||. A website with four pages: a home page, Ask, Library and Evaluation. The "
     "home page explains the assistant and shows a live example answer taken from the running "
-    "system. The design uses a cream page with navy text, a royal-blue hero panel, a serif typeface "
-    "for headlines and for document text, and a highlighter-yellow mark for the supporting "
-    "sentence. It adapts to phone-sized screens.",
+    "system. The design is black and white throughout, like a printed rulebook: the five document "
+    "types are told apart by shape instead of colour, and the supporting sentence is shown in "
+    "reverse, white on black. Short animations show what the system is doing, for example the "
+    "example answer is typed out and the scores count up when reached, and they are switched off "
+    "for users who ask their device for reduced motion. The site adapts to phone-sized screens.",
     "Evaluation (app/evaluate.py)||. Computes all metrics in this report and writes them to "
     "data/eval/results.json, which the Evaluation page displays.",
     "Testing (tests/)||. Eighteen automated tests cover the tokenizer, retrieval, grounded "

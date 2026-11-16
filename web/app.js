@@ -13,6 +13,15 @@
     { cat: "policies", q: "How much similarity is allowed in an assignment before it counts as plagiarism?" },
     { cat: "faqs", q: "When does the hostel gate close at night?" },
   ];
+  // Shown in the running strip on the home page. Each is answered by the sample corpus.
+  const TICKER = [
+    { cat: "regulations", q: "What is the minimum attendance required?" },
+    { cat: "notices", q: "How much is the fine for late fee payment?" },
+    { cat: "regulations", q: "What is the passing grade in a course?" },
+    { cat: "syllabus", q: "How many credits is the Data Structures course?" },
+    { cat: "faqs", q: "How do I apply for a duplicate ID card?" },
+    ...STARTERS,
+  ];
   const METHOD = { bm25: "BM25 (keywords)", dense: "Dense (embeddings)", hybrid: "Hybrid (BM25 + dense)" };
   const GENERATOR = { extractive: "Quoted from the documents", gemini: "Written by Gemini from the documents",
                       claude: "Written by Claude from the documents" };
@@ -200,7 +209,7 @@
     return node;
   }
 
-  function renderThread(keepScroll = false) {
+  function renderThread(keepScroll = false, animateLast = false) {
     const thread = $("#thread");
     const conversation = current();
     thread.replaceChildren();
@@ -217,9 +226,13 @@
       return;
     }
     const inner = el("div", { class: "thread-inner" });
-    for (const message of conversation.messages) {
-      inner.append(message.role === "user" ? el("div", { class: "msg-user", text: message.content }) : botNode(message));
-    }
+    const messages = conversation.messages;
+    messages.forEach((message, i) => {
+      const isNew = animateLast && i === messages.length - 2;       // the question just asked
+      inner.append(message.role === "user"
+        ? el("div", { class: "msg-user" + (isNew ? " new" : ""), text: message.content })
+        : botNode(message));
+    });
     thread.append(inner);
     if (!keepScroll) thread.scrollTop = thread.scrollHeight;
   }
@@ -329,7 +342,7 @@
     conversation.messages.push({ role: "user", content: question }, message);
     state.busy = true; $("#send").disabled = true;
     $("#question").value = ""; autosize();
-    renderChats(); renderThread();
+    renderChats(); renderThread(false, true);
 
     try {
       const response = await fetch("/api/chat", {
@@ -484,6 +497,7 @@
   async function loadEval() {
     try { state.evalData = await api("/api/eval/results"); }
     catch (error) { toast(error.message, true); return; }
+    state.evalFresh = true;
     renderEval();
   }
 
@@ -491,6 +505,8 @@
     const data = state.evalData;
     const body = $("#eval-body");
     body.replaceChildren();
+    body.classList.toggle("fresh", Boolean(state.evalFresh));     // bars grow only on arrival, not on every filter click
+    state.evalFresh = false;
     if (!data?.available) {
       body.append(el("p", { class: "empty", text: "No results yet. Run the evaluation to score the assistant on the labelled questions." }));
       return;
@@ -579,9 +595,64 @@
     button.disabled = true; button.textContent = "Running...";
     try {
       state.evalData = await api("/api/eval/run", { method: "POST" });
+      state.evalFresh = true;
       renderEval(); await refreshHealth(); toast("Evaluation finished");
     } catch (error) { toast(error.message, true); }
     finally { button.disabled = false; button.textContent = "Run evaluation"; }
+  }
+
+  /* ---------- motion helpers ---------- */
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Run a callback the first time an element scrolls into view.
+  function whenSeen(node, callback, threshold = 0.25) {
+    if (!node) return;
+    if (reducedMotion || !("IntersectionObserver" in window)) { callback(); return; }
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) { observer.disconnect(); callback(); }
+    }, { threshold });
+    observer.observe(node);
+  }
+
+  // Count a figure such as "94.1%" or "180 ms" up from zero.
+  function countUp(node) {
+    const match = /^([\d.]+)(.*)$/.exec(node.textContent.trim());
+    if (!match || reducedMotion) return;
+    const target = Number(match[1]);
+    const decimals = (match[1].split(".")[1] || "").length;
+    const started = performance.now();
+    const frame = (now) => {
+      const t = Math.min(1, (now - started) / 1100);
+      const eased = 1 - Math.pow(1 - t, 3);
+      node.textContent = (target * eased).toFixed(decimals) + match[2];
+      if (t < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  }
+
+  // Type text into a node at a pace that takes about a second and a half whatever its length.
+  function typeInto(node, text, done) {
+    if (reducedMotion) { node.textContent = text; done(); return; }
+    node.textContent = "";
+    node.classList.add("typing");
+    const step = Math.max(1, Math.ceil(text.length / 75));
+    let shown = 0;
+    const timer = setInterval(() => {
+      shown = Math.min(text.length, shown + step);
+      node.textContent = text.slice(0, shown);
+      if (shown >= text.length) { clearInterval(timer); node.classList.remove("typing"); done(); }
+    }, 20);
+  }
+
+  // Wrap each word of the hero headline so the words can rise in one after another.
+  function splitHeadline() {
+    const title = $("#hero-title");
+    const text = title.textContent.trim();
+    title.setAttribute("aria-label", text);
+    title.replaceChildren();
+    text.split(/\s+/).forEach((word, i) => {
+      title.append(el("span", { class: "w", "aria-hidden": "true" }, el("span", { style: `--i:${i}`, text: word })), " ");
+    });
   }
 
   /* ---------- home ---------- */
@@ -614,6 +685,16 @@
     $("#hero-try").replaceChildren(...STARTERS.slice(2, 5).map((s) =>
       el("button", { type: "button", text: s.q, onclick: () => goAsk(s.q) })));
 
+    // a running strip of questions; each one can be asked with a click
+    const tickerTrack = (copy) => el("div", { class: "ticker-track", "aria-hidden": copy ? "true" : null },
+      TICKER.map((item) => el("button", { type: "button", "data-cat": item.cat, tabindex: copy ? "-1" : null,
+        text: item.q, onclick: () => goAsk(item.q) })));
+    $("#ticker").replaceChildren(tickerTrack(false), tickerTrack(true));
+
+    const steps = [...document.querySelectorAll(".steps li")];
+    steps.forEach((li, i) => li.style.setProperty("--i", i));
+    whenSeen($(".steps"), () => steps.forEach((li) => li.classList.add("on")), 0.35);
+
     // the example exchange in the hero is a real answer from the running assistant
     const example = STARTERS[1].q;
     $("#demo-q").textContent = example;
@@ -621,7 +702,7 @@
       if (!result) return;
       const firstCite = /\[(\d+)\]/.exec(result.answer);
       const source = firstCite ? result.sources.find((s) => s.n === Number(firstCite[1])) : null;
-      $("#demo-a").textContent = (firstCite ? result.answer.slice(0, firstCite.index) : result.answer).trim();
+      const answerText = (firstCite ? result.answer.slice(0, firstCite.index) : result.answer).trim();
       if (source) {
         const chip = $("#demo-src");
         chip.hidden = false;
@@ -642,7 +723,15 @@
             el("div", { class: "source-body" }, renderBlocks(source.blocks))),
           el("p", { class: "how-proof-note", text: "The passage behind the example answer at the top of this page. The marked sentences are the ones the help desk found relevant." }));
       }
-      requestAnimationFrame(() => $("#demo").classList.add("in"));
+      // asked, then answered as if typed, then the source is inked in
+      const demo = $("#demo");
+      setTimeout(() => {
+        demo.classList.add("in");
+        setTimeout(() => {
+          demo.classList.add("answering");
+          typeInto($("#demo-a"), answerText, () => demo.classList.add("sourced"));
+        }, reducedMotion ? 0 : 750);
+      }, reducedMotion ? 0 : 900);
     }).catch(() => { $("#demo").hidden = true; });
 
     // what the corpus holds, by category
@@ -650,15 +739,18 @@
       const passages = documents.reduce((sum, d) => sum + d.passages, 0);
       $("#cats-sub").textContent = `${documents.length} documents, split into ${passages} searchable passages. ` +
         "Read any of them in the Library, or add your own.";
-      $("#home-cats").replaceChildren(...h.categories.map((category) => {
+      $("#home-cats").replaceChildren(...h.categories.map((category, i) => {
         const docs = documents.filter((d) => d.category === category.id);
         const starter = STARTERS.find((s) => s.cat === category.id);
-        return el("div", { class: "cat", "data-cat": category.id },
+        const askable = starter && docs.length;
+        return el("div", { class: "cat", "data-cat": category.id, style: `--i:${i}`,
+          onclick: (event) => { if (askable && !event.target.closest("button")) goAsk(starter.q); } },
           el("div", { class: "cat-name" }, category.label,
             el("small", { text: `${docs.length} ${docs.length === 1 ? "document" : "documents"}` })),
           el("p", { class: "cat-docs", text: docs.length ? docs.slice(0, 3).map((d) => d.title).join(", ") + (docs.length > 3 ? ` and ${docs.length - 3} more` : "") : "No documents yet." }),
-          starter && docs.length ? el("button", { class: "cat-ask", type: "button", text: starter.q, onclick: () => goAsk(starter.q) }) : null);
+          askable ? el("button", { class: "cat-ask", type: "button", text: starter.q, onclick: () => goAsk(starter.q) }) : null);
       }));
+      whenSeen($("#home-cats"), () => $("#home-cats").classList.add("on"), 0.12);
     }).catch(() => {});
 
     // measured results, straight from the last evaluation
@@ -680,6 +772,10 @@
       $("#measured-sub").textContent = `Informal and Hindi-English questions are the weak spot: ${pct(summary.by_style.colloquial)} of those are answered correctly, ` +
         `against ${pct(summary.by_style.direct)} for questions that use the documents' own words.`;
       $("#home-measured").hidden = false;
+      whenSeen($("#home-scores"), () => {
+        $("#home-scores").classList.add("on");
+        document.querySelectorAll("#home-scores dd").forEach(countUp);
+      }, 0.3);
     }).catch(() => {});
   }
 
@@ -726,6 +822,7 @@
   }
 
   async function start() {
+    splitHeadline();
     try { await refreshHealth(); }
     catch (error) {
       $("#app").dataset.view = "ask";

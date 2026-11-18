@@ -5,6 +5,7 @@ Run:  python -m uvicorn app.main:app --port 8000      then open http://127.0.0.1
 from __future__ import annotations
 
 import json
+import logging
 import re
 import time
 from collections import Counter
@@ -12,7 +13,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -20,6 +21,9 @@ from pydantic import BaseModel, Field
 from . import config, evaluate
 from .generate import available_generators
 from .pipeline import get_engine
+from .security import HEADERS, limiter, require_admin
+
+log = logging.getLogger("app")
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
@@ -27,8 +31,18 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="AI Student Assistance Chatbot", docs_url="/api/docs", redoc_url=None,
-              lifespan=lifespan)
+app = FastAPI(title="AI Student Assistance Chatbot", docs_url="/api/docs" if config.API_DOCS else None,
+              redoc_url=None, openapi_url="/api/openapi.json" if config.API_DOCS else None, lifespan=lifespan)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    for name, value in HEADERS.items():
+        response.headers.setdefault(name, value)
+    if request.url.path.startswith("/api/"):
+        response.headers.setdefault("Cache-Control", "no-store")
+    return response
 
 
 class Turn(BaseModel):
@@ -61,7 +75,7 @@ def health() -> dict:
         "retrievers": index.methods,
         "answers_with": index.best_method,
         "embedding_model": config.EMBED_MODEL if index.has_dense else None,
-        "embedding_error": "" if index.has_dense else index.encoder.error,
+        "embedding_error": "" if index.has_dense else "Embedding model unavailable; using keyword search.",
         "threshold": engine.threshold,
         "generators": available_generators(),
         "categories": [{"id": c, "label": config.CATEGORY_LABELS[c]} for c in config.CATEGORIES],
@@ -70,7 +84,8 @@ def health() -> dict:
 
 
 @app.post("/api/chat")
-def chat(request: ChatRequest) -> StreamingResponse:
+def chat(request: ChatRequest, http: Request) -> StreamingResponse:
+    limiter.check(http, "chat", config.CHAT_PER_MINUTE)
     engine = get_engine()
     history = [turn.model_dump() for turn in request.history]
 
@@ -79,8 +94,9 @@ def chat(request: ChatRequest) -> StreamingResponse:
             for event in engine.answer_stream(request.question, history=history,
                                               generator=request.generator, category=request.category):
                 yield json.dumps(event, ensure_ascii=False) + "\n"
-        except Exception as exc:  # never leave the browser waiting on a dead stream
-            yield json.dumps({"type": "error", "message": f"{type(exc).__name__}: {exc}"}) + "\n"
+        except Exception:  # never leave the browser waiting on a dead stream
+            log.exception("chat failed")
+            yield json.dumps({"type": "error", "message": "The server hit an error while answering. Try again."}) + "\n"
 
     return StreamingResponse(events(), media_type="application/x-ndjson",
                              headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})
@@ -122,7 +138,7 @@ def _safe_name(name: str) -> str:
     return stem + Path(name).suffix.lower()
 
 
-@app.post("/api/documents")
+@app.post("/api/documents", dependencies=[Depends(require_admin)])
 async def upload(file: UploadFile = File(...), category: str = Form(...)) -> dict:
     if category not in config.CATEGORIES:
         raise HTTPException(400, "Choose one of the five document categories.")
@@ -153,7 +169,7 @@ async def upload(file: UploadFile = File(...), category: str = Form(...)) -> dic
             "replaced": target in before}
 
 
-@app.delete("/api/documents/{doc_id}")
+@app.delete("/api/documents/{doc_id}", dependencies=[Depends(require_admin)])
 def delete_document(doc_id: str) -> dict:
     engine = get_engine()
     for d in engine.documents:
@@ -175,7 +191,7 @@ def eval_results() -> dict:
     return {"available": True, **json.loads(config.EVAL_RESULTS.read_text(encoding="utf-8"))}
 
 
-@app.post("/api/eval/run")
+@app.post("/api/eval/run", dependencies=[Depends(require_admin)])
 def eval_run() -> dict:
     """Re-run retrieval, abstention and extractive-answer evaluation (a few seconds)."""
     if not config.EVAL_QUESTIONS.exists():
@@ -185,7 +201,8 @@ def eval_run() -> dict:
 
 
 @app.post("/api/feedback")
-def feedback(item: Feedback) -> dict:
+def feedback(item: Feedback, http: Request) -> dict:
+    limiter.check(http, "feedback", config.FEEDBACK_PER_MINUTE)
     record = {"at": time.strftime("%Y-%m-%dT%H:%M:%S"), **item.model_dump()}
     with config.FEEDBACK_LOG.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, ensure_ascii=False) + "\n")

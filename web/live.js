@@ -102,12 +102,28 @@
   }
 
   /* ---------- API ---------- */
-  async function api(path, options = {}) {
+  // Admin actions (upload, delete) send X-Admin-Token. It lives in sessionStorage only,
+  // so it is gone when the tab closes; on a 401 the user is asked for it once and the call retried.
+  const TOKEN_KEY = "shd.adminToken";
+  const getToken = () => { try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } };
+  const setToken = (t) => { try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } };
+
+  async function api(path, options = {}, retried = false) {
+    const { admin, ...init } = options;
+    if (admin && getToken()) init.headers = { ...(init.headers || {}), "X-Admin-Token": getToken() };
     let response;
-    try { response = await fetch(path, options); }
+    try { response = await fetch(path, init); }
     catch { throw new Error("Can't reach the server. Start it with: python -m uvicorn app.main:app --port 8000"); }
     let body = null;
     try { body = await response.json(); } catch { /* not JSON */ }
+    if (admin && response.status === 401 && !retried) {
+      setToken("");
+      const token = prompt("This action needs the admin token. Enter it to continue:");
+      if (!token) throw new Error("Cancelled: the admin token is needed for this.");
+      setToken(token.trim());
+      return api(path, options, true);
+    }
+    if (response.status === 401) setToken("");
     if (!response.ok) {
       const detail = typeof body?.detail === "string" ? body.detail : `The server answered ${response.status}.`;
       throw new Error(detail);
@@ -126,7 +142,11 @@
     try {
       response = await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     } catch { throw new Error("Can't reach the server. Start it with: python -m uvicorn app.main:app --port 8000"); }
-    if (!response.ok || !response.body) throw new Error(`The server could not answer (${response.status}).`);
+    if (!response.ok || !response.body) {
+      let detail = "";
+      try { detail = (await response.json()).detail; } catch { /* not JSON */ }
+      throw new Error(typeof detail === "string" && detail ? detail : `The server could not answer (${response.status}).`);
+    }
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = "";
@@ -158,7 +178,7 @@
     form.append("file", file);
     form.append("category", category);
     toast(`Reading ${file.name}…`);
-    const result = await api("/api/documents", { method: "POST", body: form });
+    const result = await api("/api/documents", { method: "POST", body: form, admin: true });
     refreshCorpus();
     toast(`${result.replaced ? "Replaced" : "Added"} “${result.title}” (${plural(result.sections, "section")}).`);
     return result;
@@ -1041,7 +1061,13 @@
       const menuId = `menu-${c.id}`;
       const [menuBtn, menu] = menuWrap.children;
       menu.id = menuId;
-      menuBtn.setAttribute("onclick", `toggleMenu('${menuId}')`);
+      // A listener rather than an onclick attribute, so a stored id can never be read as code.
+      menuBtn.removeAttribute("onclick");
+      menuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        $$('[id^="menu-"]').forEach((m) => { if (m !== menu) m.classList.add("hidden"); });
+        menu.classList.toggle("hidden");
+      });
       const [renameBtn, exportBtn, delBtn] = $$("button", menu);
       renameBtn.addEventListener("click", () => {
         const name = prompt("Rename conversation", c.title);
@@ -1351,7 +1377,7 @@
     async function removeDoc(d) {
       if (!confirm(`Remove “${d.title}” from the library?`)) return;
       try {
-        await api(`/api/documents/${encodeURIComponent(d.doc_id)}`, { method: "DELETE" });
+        await api(`/api/documents/${encodeURIComponent(d.doc_id)}`, { method: "DELETE", admin: true });
         refreshCorpus();
         [h, docs] = await Promise.all([health(), loadDocs()]);
         toast(`Removed “${d.title}”.`);

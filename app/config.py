@@ -42,6 +42,12 @@ CATEGORY_LABELS = {
 
 UNIVERSITY_NAME = os.getenv("UNIVERSITY_NAME", "Sutlej Valley University")
 
+# Security for a public deployment (see app/security.py).
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "").strip()          # unset: uploads/deletes/eval only from localhost
+CHAT_PER_MINUTE = int(os.getenv("CHAT_PER_MINUTE", "20"))     # per client; 0 turns the limit off
+FEEDBACK_PER_MINUTE = int(os.getenv("FEEDBACK_PER_MINUTE", "30"))
+API_DOCS = os.getenv("API_DOCS", "0") == "1"                  # serve /api/docs (OpenAPI UI)
+
 # --- chunking -------------------------------------------------------------
 MAX_CHUNK_WORDS = 220      # a section longer than this is split into windows
 WINDOW_WORDS = 160

@@ -20,9 +20,15 @@ def engine():
     return get_engine()
 
 
+TEST_TOKEN = "test-admin-token"
+
+
 @pytest.fixture(scope="module")
 def client():
-    return TestClient(app)
+    saved = config.ADMIN_TOKEN
+    config.ADMIN_TOKEN = TEST_TOKEN
+    yield TestClient(app, headers={"X-Admin-Token": TEST_TOKEN})
+    config.ADMIN_TOKEN = saved
 
 
 def test_corpus_covers_all_five_categories():
@@ -233,3 +239,44 @@ def test_reranker_reorders_when_asked(engine):
     hits = index.search("What is the minimum attendance required in each course?", k=4, method="rerank")
     assert hits[0].rerank is not None and hits[0].chunk.doc_id == "REG-01"
     assert [h.rerank for h in hits] == sorted((h.rerank for h in hits), reverse=True)
+
+
+def test_corpus_changes_need_the_admin_token(client):
+    anonymous = TestClient(app)
+    upload = {"file": ("note.txt", b"Library opens at 9 am.", "text/plain")}
+    assert anonymous.post("/api/documents", data={"category": "notices"}, files=upload).status_code == 401
+    assert anonymous.delete("/api/documents/anything").status_code == 401
+    assert anonymous.post("/api/eval/run").status_code == 401
+    wrong = TestClient(app, headers={"X-Admin-Token": "nope"})
+    assert wrong.delete("/api/documents/anything").status_code == 401
+
+
+def test_without_a_token_writes_are_closed_to_remote_callers(client):
+    saved = config.ADMIN_TOKEN
+    config.ADMIN_TOKEN = ""
+    try:
+        proxied = TestClient(app, headers={"X-Forwarded-For": "203.0.113.9"})
+        assert proxied.delete("/api/documents/anything").status_code == 403
+    finally:
+        config.ADMIN_TOKEN = saved
+
+
+def test_feedback_is_rate_limited(client, tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "FEEDBACK_LOG", tmp_path / "feedback.jsonl")
+    saved = config.FEEDBACK_PER_MINUTE
+    config.FEEDBACK_PER_MINUTE = 2
+    visitor = TestClient(app, headers={"X-Forwarded-For": "198.51.100.7"})
+    body = {"question": "q", "answer": "a", "helpful": True}
+    try:
+        codes = [visitor.post("/api/feedback", json=body).status_code for _ in range(3)]
+    finally:
+        config.FEEDBACK_PER_MINUTE = saved
+    assert codes[:2] == [200, 200] and codes[2] == 429
+
+
+def test_security_headers_and_hidden_api_docs(client):
+    response = client.get("/api/health")
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert "frame-ancestors 'none'" in response.headers["Content-Security-Policy"]
+    assert response.headers["Cache-Control"] == "no-store"
+    assert client.get("/api/openapi.json").status_code == 404     # API_DOCS is off by default

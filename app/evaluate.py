@@ -2,6 +2,7 @@
 
 Run:  python -m app.evaluate                      (retrieval + extractive answers)
       python -m app.evaluate --generator gemini   (also score LLM-written answers)
+      python -m app.evaluate --design-choices     (also measure the rewrite and the reranker)
 
 What is measured, and why:
 
@@ -86,6 +87,8 @@ def evaluate_retrieval(engine: Engine, questions: list[dict]) -> dict:
     answerable = [q for q in questions if q["type"] == "answerable"]
     report: dict = {}
     for method in engine.index.methods:
+        if method == "rerank" and not engine.index.can_rerank:
+            continue                     # model could not be loaded: do not report hybrid under its name
         rows = []
         started = time.perf_counter()
         for q in answerable:
@@ -103,6 +106,44 @@ def evaluate_retrieval(engine: Engine, questions: list[dict]) -> dict:
                 entry[bucket][value] = _summarise_ranks([r[1] for r in rows if r[0][field] == value])
         report[method] = entry
     return report
+
+
+def evaluate_design_choices(engine: Engine, questions: list[dict]) -> dict:
+    """Measure two design choices so they rest on numbers, not on taste.
+
+    * rewriting: hybrid retrieval with and without the Hindi-English rewrite.
+    * reranking: does answering from reranked passages put more key facts into the
+      quoted answer than answering from plain hybrid passages? The decline gate is
+      left out, so only the passages and the sentence selection are compared.
+    """
+    from .generate import extractive_answer
+
+    answerable = [q for q in questions if q["type"] == "answerable"]
+    index = engine.index
+    out: dict = {"rewriting": {}, "reranking": {}}
+
+    for label, rewrite in (("with_rewrite", True), ("without_rewrite", False)):
+        rows = [(q, _rank_of_gold(index.search(q["question"], max(KS), "hybrid", rewrite=rewrite), q, "passage"))
+                for q in answerable]
+        out["rewriting"][label] = {
+            "all": _summarise_ranks([r for _, r in rows]),
+            "hinglish": _summarise_ranks([r for q, r in rows if q["style"] == "hinglish"]),
+        }
+
+    methods = ["hybrid"] + (["rerank"] if index.can_rerank else [])
+    for method in methods:
+        good = {"dev": [], "test": []}
+        started = time.perf_counter()
+        for q in answerable:
+            hits = index.search(q["question"], config.TOP_K, method)
+            answer, _ = extractive_answer(index, q["question"], hits)
+            good[split_of(q)].append(bool(answer) and all(_norm(f) in _norm(answer) for f in q.get("key_facts", [])))
+        out["reranking"][method] = {
+            "facts_complete_dev": round(sum(good["dev"]) / max(len(good["dev"]), 1), 4),
+            "facts_complete_test": round(sum(good["test"]) / max(len(good["test"]), 1), 4),
+            "ms_per_question": round((time.perf_counter() - started) * 1000 / max(len(answerable), 1)),
+        }
+    return out
 
 
 def _balanced(records: list[dict], threshold: float) -> dict:
@@ -207,7 +248,8 @@ def evaluate_answers(engine: Engine, questions: list[dict], generator: str) -> d
     return {"summary": summary, "rows": rows}
 
 
-def run(generators: list[str], limit: int | None = None, engine: Engine | None = None) -> dict:
+def run(generators: list[str], limit: int | None = None, engine: Engine | None = None,
+        design_choices: bool = False) -> dict:
     engine = engine or Engine()
     questions = load_questions()
 
@@ -227,6 +269,7 @@ def run(generators: list[str], limit: int | None = None, engine: Engine | None =
             previous = json.loads(config.EVAL_RESULTS.read_text(encoding="utf-8")).get("answers", {})
         except (json.JSONDecodeError, OSError):
             previous = {}
+    design = evaluate_design_choices(engine, questions) if design_choices else _previous_design()
     answers = {k: v for k, v in previous.items() if k not in generators}
     subset = questions[:limit] if limit else questions
     for generator in generators:
@@ -246,8 +289,18 @@ def run(generators: list[str], limit: int | None = None, engine: Engine | None =
         "abstention": abstention,
         "answers": answers,
     }
+    if design:
+        results["design_choices"] = design
     config.EVAL_RESULTS.write_text(json.dumps(results, indent=1), encoding="utf-8")
     return results
+
+
+def _previous_design() -> dict:
+    """Keep the last measured design choices when this run does not re-measure them."""
+    try:
+        return json.loads(config.EVAL_RESULTS.read_text(encoding="utf-8")).get("design_choices", {})
+    except (json.JSONDecodeError, OSError):
+        return {}
 
 
 def main() -> None:
@@ -255,8 +308,10 @@ def main() -> None:
     parser.add_argument("--generator", action="append", choices=["extractive", "gemini", "claude"],
                         help="generator(s) to score; default: extractive")
     parser.add_argument("--limit", type=int, default=None, help="score only the first N questions")
+    parser.add_argument("--design-choices", action="store_true",
+                        help="also measure the Hindi-English rewrite and the reranker (a few minutes)")
     args = parser.parse_args()
-    results = run(args.generator or ["extractive"], args.limit)
+    results = run(args.generator or ["extractive"], args.limit, design_choices=args.design_choices)
 
     print("\nRetrieval (gold passage in top k)")
     print(f"  {'retriever':<8} {'Hit@1':>7} {'Hit@3':>7} {'Hit@5':>7} {'MRR':>7}")

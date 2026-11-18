@@ -22,7 +22,7 @@
     { cat: "faqs", q: "How do I apply for a duplicate ID card?" },
     ...STARTERS,
   ];
-  const METHOD = { bm25: "BM25 (keywords)", dense: "Dense (embeddings)", hybrid: "Hybrid (BM25 + dense)" };
+  const METHOD = { bm25: "BM25 (keywords)", dense: "Dense (embeddings)", hybrid: "Hybrid (BM25 + dense)", rerank: "Hybrid + reranker" };
   const GENERATOR = { extractive: "Quoted from the documents", gemini: "Written by Gemini from the documents",
                       claude: "Written by Claude from the documents" };
   const GEN_SHORT = { extractive: "Quote the documents", gemini: "Gemini", claude: "Claude" };
@@ -536,7 +536,7 @@
 
     const breakdown = (title, sub, key, label) => {
       const values = Object.keys(data.retrieval[methods[0]][key]);
-      const short = { bm25: "BM25", dense: "Dense", hybrid: "Hybrid" };
+      const short = { bm25: "BM25", dense: "Dense", hybrid: "Hybrid", rerank: "Reranked" };
       return panel(title, sub, table([label, "Questions", ...methods.map((m) => short[m] || m)], values.map((v) =>
         el("tr", {}, el("th", { scope: "row", text: key === "by_category" ? categoryLabel(v) : v[0].toUpperCase() + v.slice(1) }),
           el("td", { text: data.retrieval[methods[0]][key][v].n }),
@@ -769,7 +769,8 @@
         score("Out-of-scope questions declined", `${data.questions.unanswerable} questions the documents do not cover`, summary.unanswerable_declined),
         score("Time to answer", "median, quoting the documents", null, ms >= 1000 ? `${(ms / 1000).toFixed(1)} s` : `${ms} ms`));
       $("#measured-title").textContent = `Tested on ${data.questions.total} student questions, including ones it should refuse`;
-      $("#measured-sub").textContent = `Informal and Hindi-English questions are the weak spot: ${pct(summary.by_style.colloquial)} of those are answered correctly, ` +
+      const hard = summary.by_style.hinglish != null ? ["Hindi-English", summary.by_style.hinglish] : ["Informal", summary.by_style.colloquial];
+      $("#measured-sub").textContent = `${hard[0]} questions are the hardest: ${pct(hard[1])} of those are answered correctly, ` +
         `against ${pct(summary.by_style.direct)} for questions that use the documents' own words.`;
       $("#home-measured").hidden = false;
       whenSeen($("#home-scores"), () => {
@@ -786,7 +787,7 @@
     $("#university").textContent = h.university;
     $("#topbar").hidden = !h.sample_corpus;
     $("#corpus-stat").textContent = `${h.university}. ${h.documents} documents, ${h.passages} passages. ` +
-      (h.retrievers.includes("hybrid") ? "Keyword and meaning search." : "Keyword search only.");
+      (h.answers_with === "rerank" ? "Keyword and meaning search, reranked." : h.retrievers.includes("hybrid") ? "Keyword and meaning search." : "Keyword search only.");
     document.title = `Student Help Desk, ${h.university}`;
   }
 

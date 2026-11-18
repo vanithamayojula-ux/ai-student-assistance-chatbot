@@ -208,3 +208,28 @@ def test_gemini_is_listed_and_needs_a_key(monkeypatch):
     assert "ollama" not in listed and listed["gemini"]["ready"] is False
     monkeypatch.setenv("GEMINI_API_KEY", "test-key")
     assert {g["id"]: g for g in available_generators(force=True)}["gemini"]["ready"] is True
+
+
+# --- Hindi-English questions and reranking --------------------------------------------------
+def test_hinglish_is_rewritten_and_english_is_left_alone():
+    from app.hinglish import to_search_english
+
+    assert to_search_english("What is the minimum attendance required?") == "What is the minimum attendance required?"
+    rewritten = to_search_english("hostel ka gate kitne baje band hota hai").lower()
+    assert "hostel" in rewritten and "gate" in rewritten and "close" in rewritten
+    assert " ka " not in f" {rewritten} " and "hai" not in rewritten.split()
+
+
+def test_hinglish_question_finds_the_right_document(engine):
+    hits = engine.index.search("hostel ka gate raat ko kitne baje band hota hai", k=3)
+    assert any("hostel" in hit.chunk.title.lower() for hit in hits)
+
+
+def test_reranker_reorders_when_asked(engine):
+    index = engine.index
+    assert index.best_method == "hybrid"          # off by default: slower, and answers were no better
+    if not index.can_rerank:
+        pytest.skip("reranker model not available: " + index.reranker.error)
+    hits = index.search("What is the minimum attendance required in each course?", k=4, method="rerank")
+    assert hits[0].rerank is not None and hits[0].chunk.doc_id == "REG-01"
+    assert [h.rerank for h in hits] == sorted((h.rerank for h in hits), reverse=True)

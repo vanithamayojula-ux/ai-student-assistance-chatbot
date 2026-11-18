@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-15T23:01:40",
+ "generated_at": "2026-11-16T14:07:51",
  "corpus": {
   "documents": 18,
   "passages": 160
  },
  "questions": {
-  "total": 80,
-  "answerable": 68,
-  "unanswerable": 12
+  "total": 130,
+  "answerable": 98,
+  "unanswerable": 32
  },
  "settings": {
   "embed_model": "BAAI/bge-small-en-v1.5",
@@ -17,27 +17,27 @@
  "retrieval": {
   "bm25": {
    "passage": {
-    "hit@1": 0.7206,
-    "hit@3": 0.8971,
-    "hit@5": 0.9412,
-    "mrr": 0.815,
-    "n": 68
+    "hit@1": 0.7245,
+    "hit@3": 0.9184,
+    "hit@5": 0.9592,
+    "mrr": 0.8226,
+    "n": 98
    },
    "document": {
-    "hit@1": 0.7794,
-    "hit@3": 0.9265,
-    "hit@5": 0.9706,
-    "mrr": 0.8615,
-    "n": 68
+    "hit@1": 0.7959,
+    "hit@3": 0.9388,
+    "hit@5": 0.9796,
+    "mrr": 0.8719,
+    "n": 98
    },
-   "ms_per_query": 7.1,
+   "ms_per_query": 6.2,
    "by_style": {
     "colloquial": {
-     "hit@1": 0.45,
-     "hit@3": 0.8,
-     "hit@5": 0.9,
-     "mrr": 0.6333,
-     "n": 20
+     "hit@1": 0.5667,
+     "hit@3": 0.8667,
+     "hit@5": 0.9333,
+     "mrr": 0.7167,
+     "n": 30
     },
     "direct": {
      "hit@1": 0.8636,
@@ -45,6 +45,13 @@
      "hit@5": 0.9545,
      "mrr": 0.9091,
      "n": 22
+    },
+    "hinglish": {
+     "hit@1": 0.7,
+     "hit@3": 0.95,
+     "hit@5": 1.0,
+     "mrr": 0.8183,
+     "n": 20
     },
     "paraphrase": {
      "hit@1": 0.8077,
@@ -56,65 +63,65 @@
    },
    "by_category": {
     "faqs": {
-     "hit@1": 0.8182,
+     "hit@1": 0.8824,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 0.9091,
-     "n": 11
-    },
-    "notices": {
-     "hit@1": 0.8,
-     "hit@3": 1.0,
-     "hit@5": 1.0,
-     "mrr": 0.9,
-     "n": 15
-    },
-    "policies": {
-     "hit@1": 0.6667,
-     "hit@3": 0.9167,
-     "hit@5": 1.0,
-     "mrr": 0.7986,
-     "n": 12
-    },
-    "regulations": {
-     "hit@1": 0.6471,
-     "hit@3": 0.7647,
-     "hit@5": 0.8235,
-     "mrr": 0.7108,
+     "mrr": 0.9314,
      "n": 17
     },
+    "notices": {
+     "hit@1": 0.7391,
+     "hit@3": 0.9565,
+     "hit@5": 1.0,
+     "mrr": 0.8565,
+     "n": 23
+    },
+    "policies": {
+     "hit@1": 0.75,
+     "hit@3": 0.9375,
+     "hit@5": 1.0,
+     "mrr": 0.849,
+     "n": 16
+    },
+    "regulations": {
+     "hit@1": 0.6667,
+     "hit@3": 0.8333,
+     "hit@5": 0.875,
+     "mrr": 0.7535,
+     "n": 24
+    },
     "syllabus": {
-     "hit@1": 0.6923,
-     "hit@3": 0.8462,
-     "hit@5": 0.9231,
-     "mrr": 0.7885,
-     "n": 13
+     "hit@1": 0.6111,
+     "hit@3": 0.8889,
+     "hit@5": 0.9444,
+     "mrr": 0.7454,
+     "n": 18
     }
    }
   },
   "dense": {
    "passage": {
-    "hit@1": 0.7794,
-    "hit@3": 0.9118,
-    "hit@5": 0.9559,
-    "mrr": 0.8478,
-    "n": 68
+    "hit@1": 0.7551,
+    "hit@3": 0.9082,
+    "hit@5": 0.9694,
+    "mrr": 0.8386,
+    "n": 98
    },
    "document": {
-    "hit@1": 0.8088,
-    "hit@3": 0.9265,
-    "hit@5": 0.9559,
-    "mrr": 0.8686,
-    "n": 68
+    "hit@1": 0.7857,
+    "hit@3": 0.949,
+    "hit@5": 0.9898,
+    "mrr": 0.8731,
+    "n": 98
    },
-   "ms_per_query": 6.8,
+   "ms_per_query": 6.4,
    "by_style": {
     "colloquial": {
-     "hit@1": 0.65,
-     "hit@3": 0.75,
-     "hit@5": 0.85,
-     "mrr": 0.7225,
-     "n": 20
+     "hit@1": 0.7333,
+     "hit@3": 0.8667,
+     "hit@5": 0.9667,
+     "mrr": 0.8217,
+     "n": 30
     },
     "direct": {
      "hit@1": 0.8636,
@@ -122,6 +129,13 @@
      "hit@5": 1.0,
      "mrr": 0.9167,
      "n": 22
+    },
+    "hinglish": {
+     "hit@1": 0.6,
+     "hit@3": 0.8,
+     "hit@5": 0.9,
+     "mrr": 0.7167,
+     "n": 20
     },
     "paraphrase": {
      "hit@1": 0.8077,
@@ -133,65 +147,65 @@
    },
    "by_category": {
     "faqs": {
-     "hit@1": 0.7273,
-     "hit@3": 0.9091,
-     "hit@5": 0.9091,
-     "mrr": 0.803,
-     "n": 11
-    },
-    "notices": {
-     "hit@1": 1.0,
+     "hit@1": 0.8824,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 1.0,
-     "n": 15
-    },
-    "policies": {
-     "hit@1": 0.8333,
-     "hit@3": 0.9167,
-     "hit@5": 0.9167,
-     "mrr": 0.875,
-     "n": 12
-    },
-    "regulations": {
-     "hit@1": 0.5294,
-     "hit@3": 0.8235,
-     "hit@5": 0.9412,
-     "mrr": 0.6833,
+     "mrr": 0.9314,
      "n": 17
     },
-    "syllabus": {
-     "hit@1": 0.8462,
-     "hit@3": 0.9231,
+    "notices": {
+     "hit@1": 0.8696,
+     "hit@3": 0.913,
      "hit@5": 1.0,
-     "mrr": 0.9,
-     "n": 13
+     "mrr": 0.913,
+     "n": 23
+    },
+    "policies": {
+     "hit@1": 0.6875,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.8333,
+     "n": 16
+    },
+    "regulations": {
+     "hit@1": 0.625,
+     "hit@3": 0.875,
+     "hit@5": 0.9583,
+     "mrr": 0.7549,
+     "n": 24
+    },
+    "syllabus": {
+     "hit@1": 0.7222,
+     "hit@3": 0.7778,
+     "hit@5": 0.8889,
+     "mrr": 0.7722,
+     "n": 18
     }
    }
   },
   "hybrid": {
    "passage": {
-    "hit@1": 0.7794,
-    "hit@3": 0.9412,
-    "hit@5": 0.9706,
-    "mrr": 0.862,
-    "n": 68
+    "hit@1": 0.7857,
+    "hit@3": 0.9592,
+    "hit@5": 0.9796,
+    "mrr": 0.8736,
+    "n": 98
    },
    "document": {
-    "hit@1": 0.8088,
-    "hit@3": 0.9559,
-    "hit@5": 0.9706,
-    "mrr": 0.8811,
-    "n": 68
+    "hit@1": 0.8265,
+    "hit@3": 0.9796,
+    "hit@5": 0.9898,
+    "mrr": 0.9022,
+    "n": 98
    },
-   "ms_per_query": 6.9,
+   "ms_per_query": 19.6,
    "by_style": {
     "colloquial": {
-     "hit@1": 0.6,
-     "hit@3": 0.8,
-     "hit@5": 0.9,
-     "mrr": 0.7058,
-     "n": 20
+     "hit@1": 0.6667,
+     "hit@3": 0.9333,
+     "hit@5": 0.9667,
+     "mrr": 0.8011,
+     "n": 30
     },
     "direct": {
      "hit@1": 0.9091,
@@ -199,6 +213,13 @@
      "hit@5": 1.0,
      "mrr": 0.9545,
      "n": 22
+    },
+    "hinglish": {
+     "hit@1": 0.8,
+     "hit@3": 0.9,
+     "hit@5": 0.95,
+     "mrr": 0.8542,
+     "n": 20
     },
     "paraphrase": {
      "hit@1": 0.8077,
@@ -210,185 +231,269 @@
    },
    "by_category": {
     "faqs": {
-     "hit@1": 0.8182,
+     "hit@1": 0.9412,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 0.8939,
-     "n": 11
-    },
-    "notices": {
-     "hit@1": 1.0,
-     "hit@3": 1.0,
-     "hit@5": 1.0,
-     "mrr": 1.0,
-     "n": 15
-    },
-    "policies": {
-     "hit@1": 0.8333,
-     "hit@3": 0.9167,
-     "hit@5": 1.0,
-     "mrr": 0.8958,
-     "n": 12
-    },
-    "regulations": {
-     "hit@1": 0.5882,
-     "hit@3": 0.8235,
-     "hit@5": 0.8824,
-     "mrr": 0.7078,
+     "mrr": 0.9706,
      "n": 17
     },
-    "syllabus": {
-     "hit@1": 0.6923,
+    "notices": {
+     "hit@1": 0.913,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 0.8462,
-     "n": 13
+     "mrr": 0.9493,
+     "n": 23
+    },
+    "policies": {
+     "hit@1": 0.875,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9375,
+     "n": 16
+    },
+    "regulations": {
+     "hit@1": 0.6667,
+     "hit@3": 0.875,
+     "hit@5": 0.9583,
+     "mrr": 0.7826,
+     "n": 24
+    },
+    "syllabus": {
+     "hit@1": 0.5556,
+     "hit@3": 0.9444,
+     "hit@5": 0.9444,
+     "mrr": 0.75,
+     "n": 18
+    }
+   }
+  },
+  "rerank": {
+   "passage": {
+    "hit@1": 0.8571,
+    "hit@3": 0.9694,
+    "hit@5": 1.0,
+    "mrr": 0.9182,
+    "n": 98
+   },
+   "document": {
+    "hit@1": 0.8776,
+    "hit@3": 0.9694,
+    "hit@5": 1.0,
+    "mrr": 0.9289,
+    "n": 98
+   },
+   "ms_per_query": 1626.9,
+   "by_style": {
+    "colloquial": {
+     "hit@1": 0.7667,
+     "hit@3": 0.9333,
+     "hit@5": 1.0,
+     "mrr": 0.8594,
+     "n": 30
+    },
+    "direct": {
+     "hit@1": 0.9545,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9773,
+     "n": 22
+    },
+    "hinglish": {
+     "hit@1": 0.8,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9,
+     "n": 20
+    },
+    "paraphrase": {
+     "hit@1": 0.9231,
+     "hit@3": 0.9615,
+     "hit@5": 1.0,
+     "mrr": 0.95,
+     "n": 26
+    }
+   },
+   "by_category": {
+    "faqs": {
+     "hit@1": 0.9412,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9706,
+     "n": 17
+    },
+    "notices": {
+     "hit@1": 0.9565,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9783,
+     "n": 23
+    },
+    "policies": {
+     "hit@1": 0.875,
+     "hit@3": 1.0,
+     "hit@5": 1.0,
+     "mrr": 0.9375,
+     "n": 16
+    },
+    "regulations": {
+     "hit@1": 0.7917,
+     "hit@3": 0.9167,
+     "hit@5": 1.0,
+     "mrr": 0.8639,
+     "n": 24
+    },
+    "syllabus": {
+     "hit@1": 0.7222,
+     "hit@3": 0.9444,
+     "hit@5": 1.0,
+     "mrr": 0.8472,
+     "n": 18
     }
    }
   }
  },
  "abstention": {
-  "threshold": 0.59,
-  "loose_threshold": 0.31,
+  "threshold": 0.58,
+  "loose_threshold": 0.34,
   "loose_dev": {
    "answered_when_answerable": 1.0,
-   "declined_when_unanswerable": 0.1667,
-   "balanced_accuracy": 0.5833,
-   "n_answerable": 34,
-   "n_unanswerable": 6
+   "declined_when_unanswerable": 0.125,
+   "balanced_accuracy": 0.5625,
+   "n_answerable": 49,
+   "n_unanswerable": 16
   },
   "loose_test": {
-   "answered_when_answerable": 0.9706,
-   "declined_when_unanswerable": 0.1667,
-   "balanced_accuracy": 0.5686,
-   "n_answerable": 34,
-   "n_unanswerable": 6
+   "answered_when_answerable": 1.0,
+   "declined_when_unanswerable": 0.1875,
+   "balanced_accuracy": 0.5938,
+   "n_answerable": 49,
+   "n_unanswerable": 16
   },
   "dev": {
-   "answered_when_answerable": 0.8529,
-   "declined_when_unanswerable": 0.8333,
-   "balanced_accuracy": 0.8431,
-   "n_answerable": 34,
-   "n_unanswerable": 6
+   "answered_when_answerable": 0.8163,
+   "declined_when_unanswerable": 0.5625,
+   "balanced_accuracy": 0.6894,
+   "n_answerable": 49,
+   "n_unanswerable": 16
   },
   "test": {
-   "answered_when_answerable": 0.8529,
-   "declined_when_unanswerable": 0.6667,
-   "balanced_accuracy": 0.7598,
-   "n_answerable": 34,
-   "n_unanswerable": 6
+   "answered_when_answerable": 0.7755,
+   "declined_when_unanswerable": 0.3125,
+   "balanced_accuracy": 0.544,
+   "n_answerable": 49,
+   "n_unanswerable": 16
   },
   "all": {
-   "answered_when_answerable": 0.8529,
-   "declined_when_unanswerable": 0.75,
-   "balanced_accuracy": 0.8015,
-   "n_answerable": 68,
-   "n_unanswerable": 12
+   "answered_when_answerable": 0.7959,
+   "declined_when_unanswerable": 0.4375,
+   "balanced_accuracy": 0.6167,
+   "n_answerable": 98,
+   "n_unanswerable": 32
   },
   "curve": [
    {
     "threshold": 0.2,
-    "answered_when_answerable": 0.9853,
-    "declined_when_unanswerable": 0.0,
-    "balanced_accuracy": 0.4926,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 1.0,
+    "declined_when_unanswerable": 0.0312,
+    "balanced_accuracy": 0.5156,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.25,
-    "answered_when_answerable": 0.9853,
-    "declined_when_unanswerable": 0.0833,
-    "balanced_accuracy": 0.5343,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 1.0,
+    "declined_when_unanswerable": 0.0938,
+    "balanced_accuracy": 0.5469,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.3,
-    "answered_when_answerable": 0.9853,
-    "declined_when_unanswerable": 0.1667,
-    "balanced_accuracy": 0.576,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 1.0,
+    "declined_when_unanswerable": 0.125,
+    "balanced_accuracy": 0.5625,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.35,
-    "answered_when_answerable": 0.9559,
-    "declined_when_unanswerable": 0.3333,
-    "balanced_accuracy": 0.6446,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 1.0,
+    "declined_when_unanswerable": 0.1875,
+    "balanced_accuracy": 0.5938,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.4,
-    "answered_when_answerable": 0.9412,
-    "declined_when_unanswerable": 0.3333,
-    "balanced_accuracy": 0.6373,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.9592,
+    "declined_when_unanswerable": 0.2188,
+    "balanced_accuracy": 0.589,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.45,
-    "answered_when_answerable": 0.9118,
-    "declined_when_unanswerable": 0.4167,
-    "balanced_accuracy": 0.6642,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.9286,
+    "declined_when_unanswerable": 0.3125,
+    "balanced_accuracy": 0.6205,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.5,
-    "answered_when_answerable": 0.9118,
-    "declined_when_unanswerable": 0.5,
-    "balanced_accuracy": 0.7059,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.8878,
+    "declined_when_unanswerable": 0.3438,
+    "balanced_accuracy": 0.6158,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.55,
-    "answered_when_answerable": 0.8676,
-    "declined_when_unanswerable": 0.5833,
-    "balanced_accuracy": 0.7255,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.8265,
+    "declined_when_unanswerable": 0.4062,
+    "balanced_accuracy": 0.6164,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.6,
-    "answered_when_answerable": 0.8529,
-    "declined_when_unanswerable": 0.9167,
-    "balanced_accuracy": 0.8848,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.7449,
+    "declined_when_unanswerable": 0.5312,
+    "balanced_accuracy": 0.6381,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.65,
-    "answered_when_answerable": 0.7941,
-    "declined_when_unanswerable": 0.9167,
-    "balanced_accuracy": 0.8554,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.7041,
+    "declined_when_unanswerable": 0.5625,
+    "balanced_accuracy": 0.6333,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.7,
-    "answered_when_answerable": 0.7353,
-    "declined_when_unanswerable": 0.9167,
-    "balanced_accuracy": 0.826,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.6531,
+    "declined_when_unanswerable": 0.5938,
+    "balanced_accuracy": 0.6234,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.75,
-    "answered_when_answerable": 0.6471,
-    "declined_when_unanswerable": 0.9167,
-    "balanced_accuracy": 0.7819,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.5306,
+    "declined_when_unanswerable": 0.625,
+    "balanced_accuracy": 0.5778,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    },
    {
     "threshold": 0.8,
-    "answered_when_answerable": 0.5441,
-    "declined_when_unanswerable": 0.9167,
-    "balanced_accuracy": 0.7304,
-    "n_answerable": 68,
-    "n_unanswerable": 12
+    "answered_when_answerable": 0.4388,
+    "declined_when_unanswerable": 0.7188,
+    "balanced_accuracy": 0.5788,
+    "n_answerable": 98,
+    "n_unanswerable": 32
    }
   ],
   "confidences": [
@@ -492,7 +597,7 @@
     "id": "Q017",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.3284
+    "confidence": 0.5953
    },
    {
     "id": "Q018",
@@ -522,7 +627,7 @@
     "id": "Q022",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.1449
+    "confidence": 0.5091
    },
    {
     "id": "Q023",
@@ -666,7 +771,7 @@
     "id": "Q046",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.4286
+    "confidence": 0.8597
    },
    {
     "id": "Q047",
@@ -750,7 +855,7 @@
     "id": "Q060",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.3394
+    "confidence": 0.5199
    },
    {
     "id": "Q061",
@@ -871,36 +976,337 @@
     "type": "unanswerable",
     "split": "test",
     "confidence": 0.4596
+   },
+   {
+    "id": "Q081",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.3918
+   },
+   {
+    "id": "Q082",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.8564
+   },
+   {
+    "id": "Q083",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.5682
+   },
+   {
+    "id": "Q084",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.4858
+   },
+   {
+    "id": "Q085",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.7492
+   },
+   {
+    "id": "Q086",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.6807
+   },
+   {
+    "id": "Q087",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.5876
+   },
+   {
+    "id": "Q088",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.4403
+   },
+   {
+    "id": "Q089",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.39
+   },
+   {
+    "id": "Q090",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.4295
+   },
+   {
+    "id": "Q091",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.7029
+   },
+   {
+    "id": "Q092",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.5123
+   },
+   {
+    "id": "Q093",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.5848
+   },
+   {
+    "id": "Q094",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.7277
+   },
+   {
+    "id": "Q095",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.4626
+   },
+   {
+    "id": "Q096",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.4672
+   },
+   {
+    "id": "Q097",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.4567
+   },
+   {
+    "id": "Q098",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.746
+   },
+   {
+    "id": "Q099",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.7618
+   },
+   {
+    "id": "Q100",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.5802
+   },
+   {
+    "id": "Q101",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.7681
+   },
+   {
+    "id": "Q102",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.5874
+   },
+   {
+    "id": "Q103",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.7437
+   },
+   {
+    "id": "Q104",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.8872
+   },
+   {
+    "id": "Q105",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.8521
+   },
+   {
+    "id": "Q106",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.7232
+   },
+   {
+    "id": "Q107",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.9338
+   },
+   {
+    "id": "Q108",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.5665
+   },
+   {
+    "id": "Q109",
+    "type": "answerable",
+    "split": "dev",
+    "confidence": 0.3633
+   },
+   {
+    "id": "Q110",
+    "type": "answerable",
+    "split": "test",
+    "confidence": 0.8813
+   },
+   {
+    "id": "Q111",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.5184
+   },
+   {
+    "id": "Q112",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.7782
+   },
+   {
+    "id": "Q113",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.8995
+   },
+   {
+    "id": "Q114",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.8431
+   },
+   {
+    "id": "Q115",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.9241
+   },
+   {
+    "id": "Q116",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.9983
+   },
+   {
+    "id": "Q117",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.961
+   },
+   {
+    "id": "Q118",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.6475
+   },
+   {
+    "id": "Q119",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 1.0
+   },
+   {
+    "id": "Q120",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.7719
+   },
+   {
+    "id": "Q121",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.7767
+   },
+   {
+    "id": "Q122",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.7329
+   },
+   {
+    "id": "Q123",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.4334
+   },
+   {
+    "id": "Q124",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.6922
+   },
+   {
+    "id": "Q125",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.8291
+   },
+   {
+    "id": "Q126",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.9642
+   },
+   {
+    "id": "Q127",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.0431
+   },
+   {
+    "id": "Q128",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.2403
+   },
+   {
+    "id": "Q129",
+    "type": "unanswerable",
+    "split": "dev",
+    "confidence": 0.3636
+   },
+   {
+    "id": "Q130",
+    "type": "unanswerable",
+    "split": "test",
+    "confidence": 0.4011
    }
   ]
  },
  "answers": {
   "extractive": {
    "summary": {
-    "n": 80,
-    "accuracy": 0.775,
-    "accuracy_test_split": 0.75,
-    "answerable_correct": 0.7794,
-    "answerable_declined": 0.1471,
-    "fact_coverage": 0.9277,
-    "cited_gold_document": 0.9483,
-    "unanswerable_declined": 0.75,
+    "n": 130,
+    "accuracy": 0.6462,
+    "accuracy_test_split": 0.5692,
+    "answerable_correct": 0.7143,
+    "answerable_declined": 0.2041,
+    "fact_coverage": 0.9135,
+    "cited_gold_document": 0.9487,
+    "unanswerable_declined": 0.4375,
     "latency_ms": {
-     "mean": 163,
-     "median": 180,
-     "p95": 332
+     "mean": 836,
+     "median": 1000,
+     "p95": 1478
     },
     "by_style": {
-     "colloquial": 0.55,
+     "colloquial": 0.7,
      "direct": 0.9545,
+     "hinglish": 0.35,
      "paraphrase": 0.8077
     },
     "by_category": {
-     "faqs": 0.8182,
-     "notices": 0.8667,
-     "policies": 0.5,
-     "regulations": 0.7647,
-     "syllabus": 0.9231
+     "faqs": 0.7647,
+     "notices": 0.7826,
+     "policies": 0.5625,
+     "regulations": 0.7083,
+     "syllabus": 0.7222
     }
    },
    "rows": [
@@ -918,7 +1324,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 444,
+     "latency_ms": 737,
      "generator_used": "extractive"
     },
     {
@@ -935,7 +1341,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 178,
+     "latency_ms": 925,
      "generator_used": "extractive"
     },
     {
@@ -952,7 +1358,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 238,
+     "latency_ms": 1224,
      "generator_used": "extractive"
     },
     {
@@ -969,7 +1375,7 @@
      "facts_found": 1,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 242,
+     "latency_ms": 1157,
      "generator_used": "extractive"
     },
     {
@@ -986,7 +1392,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 285,
+     "latency_ms": 1351,
      "generator_used": "extractive"
     },
     {
@@ -1003,7 +1409,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 7,
+     "latency_ms": 54,
      "generator_used": "extractive"
     },
     {
@@ -1020,7 +1426,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 199,
+     "latency_ms": 1063,
      "generator_used": "extractive"
     },
     {
@@ -1037,7 +1443,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 257,
+     "latency_ms": 1167,
      "generator_used": "extractive"
     },
     {
@@ -1054,7 +1460,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 179,
+     "latency_ms": 1012,
      "generator_used": "extractive"
     },
     {
@@ -1071,7 +1477,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 181,
+     "latency_ms": 943,
      "generator_used": "extractive"
     },
     {
@@ -1088,7 +1494,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 8,
+     "latency_ms": 65,
      "generator_used": "extractive"
     },
     {
@@ -1105,7 +1511,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 146,
+     "latency_ms": 923,
      "generator_used": "extractive"
     },
     {
@@ -1122,7 +1528,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 212,
+     "latency_ms": 1081,
      "generator_used": "extractive"
     },
     {
@@ -1139,7 +1545,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 158,
+     "latency_ms": 1074,
      "generator_used": "extractive"
     },
     {
@@ -1156,7 +1562,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 6,
+     "latency_ms": 65,
      "generator_used": "extractive"
     },
     {
@@ -1173,24 +1579,24 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 141,
+     "latency_ms": 964,
      "generator_used": "extractive"
     },
     {
      "id": "Q017",
      "question": "fever tha, medical certificate kitne din me submit karna hai?",
      "type": "answerable",
-     "style": "colloquial",
+     "style": "hinglish",
      "category": "policies",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.3284,
+     "answer": "A student who is ill must inform the class coordinator by email on the first day of absence. [1] On rejoining, the student must submit a medical certificate from a registered medical practitioner to the Dean Academics office within 7 days. [1] The medical certificate must be submitted to the Dean Academics office within 7 days of the student rejoining classes. [2]",
+     "abstained": false,
+     "confidence": 0.5953,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 7,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1016,
      "generator_used": "extractive"
     },
     {
@@ -1207,7 +1613,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 172,
+     "latency_ms": 1029,
      "generator_used": "extractive"
     },
     {
@@ -1224,7 +1630,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 219,
+     "latency_ms": 1182,
      "generator_used": "extractive"
     },
     {
@@ -1241,7 +1647,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 178,
+     "latency_ms": 1107,
      "generator_used": "extractive"
     },
     {
@@ -1258,24 +1664,24 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 9,
+     "latency_ms": 57,
      "generator_used": "extractive"
     },
     {
      "id": "Q022",
      "question": "hostl gate kab band hota hai",
      "type": "answerable",
-     "style": "colloquial",
+     "style": "hinglish",
      "category": "faqs",
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.1449,
+     "confidence": 0.5091,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 7,
+     "latency_ms": 32,
      "generator_used": "extractive"
     },
     {
@@ -1292,7 +1698,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 140,
+     "latency_ms": 923,
      "generator_used": "extractive"
     },
     {
@@ -1309,7 +1715,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 189,
+     "latency_ms": 1147,
      "generator_used": "extractive"
     },
     {
@@ -1326,7 +1732,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 8,
+     "latency_ms": 76,
      "generator_used": "extractive"
     },
     {
@@ -1343,7 +1749,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 227,
+     "latency_ms": 1206,
      "generator_used": "extractive"
     },
     {
@@ -1360,7 +1766,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 8,
+     "latency_ms": 49,
      "generator_used": "extractive"
     },
     {
@@ -1377,7 +1783,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 267,
+     "latency_ms": 1364,
      "generator_used": "extractive"
     },
     {
@@ -1394,7 +1800,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 161,
+     "latency_ms": 978,
      "generator_used": "extractive"
     },
     {
@@ -1411,7 +1817,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 148,
+     "latency_ms": 1043,
      "generator_used": "extractive"
     },
     {
@@ -1428,7 +1834,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 129,
+     "latency_ms": 920,
      "generator_used": "extractive"
     },
     {
@@ -1445,7 +1851,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 206,
+     "latency_ms": 1256,
      "generator_used": "extractive"
     },
     {
@@ -1462,7 +1868,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 150,
+     "latency_ms": 894,
      "generator_used": "extractive"
     },
     {
@@ -1479,7 +1885,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 146,
+     "latency_ms": 961,
      "generator_used": "extractive"
     },
     {
@@ -1489,14 +1895,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
+     "answer": "JEE Main percentile: 90 to 94.99, Waiver on tuition fee: 15%. [2] Item: Tuition fee, Amount per semester: Rs. 92,500. [3] The annual tuition fee is therefore Rs. 1,85,000 and the annual development and amenities fee is Rs. 15,000. [3]",
+     "abstained": false,
      "confidence": 0.5885,
      "facts_total": 0,
      "facts_found": 0,
-     "correct": true,
+     "correct": false,
      "cited_gold": null,
-     "latency_ms": 9,
+     "latency_ms": 1016,
      "generator_used": "extractive"
     },
     {
@@ -1513,7 +1919,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 213,
+     "latency_ms": 1057,
      "generator_used": "extractive"
     },
     {
@@ -1530,7 +1936,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 207,
+     "latency_ms": 1131,
      "generator_used": "extractive"
     },
     {
@@ -1547,7 +1953,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 161,
+     "latency_ms": 1061,
      "generator_used": "extractive"
     },
     {
@@ -1564,7 +1970,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 351,
+     "latency_ms": 1601,
      "generator_used": "extractive"
     },
     {
@@ -1581,7 +1987,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 112,
+     "latency_ms": 825,
      "generator_used": "extractive"
     },
     {
@@ -1598,7 +2004,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 9,
+     "latency_ms": 76,
      "generator_used": "extractive"
     },
     {
@@ -1615,7 +2021,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 291,
+     "latency_ms": 1351,
      "generator_used": "extractive"
     },
     {
@@ -1632,7 +2038,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 293,
+     "latency_ms": 1434,
      "generator_used": "extractive"
     },
     {
@@ -1649,7 +2055,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 332,
+     "latency_ms": 1525,
      "generator_used": "extractive"
     },
     {
@@ -1666,24 +2072,24 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 209,
+     "latency_ms": 1240,
      "generator_used": "extractive"
     },
     {
      "id": "Q046",
      "question": "winter break kab tak hai",
      "type": "answerable",
-     "style": "colloquial",
+     "style": "hinglish",
      "category": "notices",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4286,
+     "answer": "The winter break runs from 23 December 2026 to 8 January 2027. [1]",
+     "abstained": false,
+     "confidence": 0.8597,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 6,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1144,
      "generator_used": "extractive"
     },
     {
@@ -1700,7 +2106,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 165,
+     "latency_ms": 1036,
      "generator_used": "extractive"
     },
     {
@@ -1717,7 +2123,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 218,
+     "latency_ms": 1230,
      "generator_used": "extractive"
     },
     {
@@ -1734,7 +2140,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 132,
+     "latency_ms": 897,
      "generator_used": "extractive"
     },
     {
@@ -1751,7 +2157,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 8,
+     "latency_ms": 109,
      "generator_used": "extractive"
     },
     {
@@ -1768,7 +2174,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 236,
+     "latency_ms": 1252,
      "generator_used": "extractive"
     },
     {
@@ -1785,7 +2191,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": false,
-     "latency_ms": 198,
+     "latency_ms": 1170,
      "generator_used": "extractive"
     },
     {
@@ -1802,7 +2208,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 266,
+     "latency_ms": 1258,
      "generator_used": "extractive"
     },
     {
@@ -1819,7 +2225,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 342,
+     "latency_ms": 1478,
      "generator_used": "extractive"
     },
     {
@@ -1836,7 +2242,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 221,
+     "latency_ms": 1205,
      "generator_used": "extractive"
     },
     {
@@ -1853,7 +2259,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 208,
+     "latency_ms": 1537,
      "generator_used": "extractive"
     },
     {
@@ -1870,7 +2276,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 197,
+     "latency_ms": 1399,
      "generator_used": "extractive"
     },
     {
@@ -1887,7 +2293,7 @@
      "facts_found": 1,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 190,
+     "latency_ms": 1762,
      "generator_used": "extractive"
     },
     {
@@ -1904,24 +2310,24 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": false,
-     "latency_ms": 227,
+     "latency_ms": 2027,
      "generator_used": "extractive"
     },
     {
      "id": "Q060",
      "question": "hackathon ya sports ke liye jaye toh kitni attendance milti hai?",
      "type": "answerable",
-     "style": "colloquial",
+     "style": "hinglish",
      "category": "regulations",
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3394,
+     "confidence": 0.5199,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 9,
+     "latency_ms": 69,
      "generator_used": "extractive"
     },
     {
@@ -1938,7 +2344,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 178,
+     "latency_ms": 1189,
      "generator_used": "extractive"
     },
     {
@@ -1955,7 +2361,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 304,
+     "latency_ms": 1410,
      "generator_used": "extractive"
     },
     {
@@ -1972,7 +2378,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 7,
+     "latency_ms": 59,
      "generator_used": "extractive"
     },
     {
@@ -1989,7 +2395,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 165,
+     "latency_ms": 830,
      "generator_used": "extractive"
     },
     {
@@ -2006,7 +2412,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 9,
+     "latency_ms": 51,
      "generator_used": "extractive"
     },
     {
@@ -2023,7 +2429,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 131,
+     "latency_ms": 713,
      "generator_used": "extractive"
     },
     {
@@ -2040,7 +2446,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 166,
+     "latency_ms": 774,
      "generator_used": "extractive"
     },
     {
@@ -2057,7 +2463,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 216,
+     "latency_ms": 877,
      "generator_used": "extractive"
     },
     {
@@ -2074,7 +2480,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 7,
+     "latency_ms": 54,
      "generator_used": "extractive"
     },
     {
@@ -2091,7 +2497,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 190,
+     "latency_ms": 891,
      "generator_used": "extractive"
     },
     {
@@ -2108,7 +2514,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 246,
+     "latency_ms": 782,
      "generator_used": "extractive"
     },
     {
@@ -2125,7 +2531,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 180,
+     "latency_ms": 801,
      "generator_used": "extractive"
     },
     {
@@ -2142,7 +2548,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 189,
+     "latency_ms": 796,
      "generator_used": "extractive"
     },
     {
@@ -2159,7 +2565,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 216,
+     "latency_ms": 902,
      "generator_used": "extractive"
     },
     {
@@ -2176,7 +2582,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 8,
+     "latency_ms": 54,
      "generator_used": "extractive"
     },
     {
@@ -2193,7 +2599,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 195,
+     "latency_ms": 845,
      "generator_used": "extractive"
     },
     {
@@ -2210,7 +2616,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 237,
+     "latency_ms": 995,
      "generator_used": "extractive"
     },
     {
@@ -2227,7 +2633,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 295,
+     "latency_ms": 1119,
      "generator_used": "extractive"
     },
     {
@@ -2244,7 +2650,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 9,
+     "latency_ms": 45,
      "generator_used": "extractive"
     },
     {
@@ -2261,7 +2667,857 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 11,
+     "latency_ms": 63,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q081",
+     "question": "summer vacation kab se shuru hogi aur kab tak chalegi?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "notices",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.3918,
+     "facts_total": 2,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 71,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q082",
+     "question": "raat ka khana mess me kitne baje tak milta hai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "faqs",
+     "split": "test",
+     "answer": "Breakfast is served from 7:30 am to 9:00 am, lunch from 12:30 pm to 2:30 pm, evening snacks from 5:00 pm to 6:00 pm, and dinner from 7:30 pm to 9:30 pm. [1] There are two separate mess halls, one purely vegetarian and one with non-vegetarian items on Tuesdays, Thursdays and Sundays. [1] Students can choose their mess at the start of each semester. [1]",
+     "abstained": false,
+     "confidence": 0.8564,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1418,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q083",
+     "question": "wifi pe ek saath kitne devices connect kar sakte hain aur roz ka data limit kya hai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "faqs",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.5682,
+     "facts_total": 2,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 45,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q084",
+     "question": "hall ticket pe naam galat aa gaya toh kisko mail karna hai aur kab tak?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "notices",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4858,
+     "facts_total": 2,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 48,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q085",
+     "question": "credit card se fees bharne pe extra paisa lagta hai kya?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "notices",
+     "split": "dev",
+     "answer": "The fee can be paid online on the student portal by UPI, net banking, debit card or credit card. [1] There is no extra charge for UPI and net banking, and a charge of 1.5% is added for credit cards. [1] A character certificate costs Rs. 100, a no-dues certificate is free, and a migration certificate costs Rs. 500 and takes 10 working days. [2]",
+     "abstained": false,
+     "confidence": 0.7492,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1167,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q086",
+     "question": "grant ka form bharne ki last date kya hai bhai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "notices",
+     "split": "test",
+     "answer": "Results of the Merit-cum-Means Grant applications are expected on 15 December 2026, so grant holders will see a credit of Rs. 20,000 against the even semester fee after that date. [1] Students who have been sanctioned the grant after paying the fee will get a refund to their bank account within 21 working days. [1] The last date for payment of the even semester fee without any late fee is 31 December 2026. [2]",
+     "abstained": false,
+     "confidence": 0.6807,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 940,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q087",
+     "question": "state level pe medal jeeta hai toh fees me kitna discount milega?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "policies",
+     "split": "dev",
+     "answer": "SVU offers a Sports Excellence Scholarship to students who have won medals in recognised competitions. [1] A student who has won a medal at the national level receives a waiver of up to 25% of the tuition fee. [1] A student who has won a medal at the state level receives a waiver of 10% of the tuition fee. [1]",
+     "abstained": false,
+     "confidence": 0.5876,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 988,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q088",
+     "question": "agar doosri baar plagiarism me pakda gaya toh kya saza milegi?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "policies",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4403,
+     "facts_total": 2,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 59,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q089",
+     "question": "ghar me kisi ki death ho jaye toh kitne din ki chhutti mil sakti hai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "policies",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.39,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 52,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q090",
+     "question": "portal pe attendance kab update hoti hai, roz ya hafte me?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "regulations",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4295,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 41,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q091",
+     "question": "answer script ki photocopy chahiye toh kitne paise lagenge?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "regulations",
+     "split": "dev",
+     "answer": "A student who is not satisfied with the marks in an end-term examination may first request a photocopy of the answer script by paying Rs. 500 per course within 5 days of the result declaration. [1] The script is checked by a different examiner. [1] Bring the original and one self-attested photocopy of the Class 10 and Class 12 marksheets, the JEE Main or SVUET scorecard, the Aadhaar card, the migration or transfer certificate, a medical fitness certificate, the category certificate if applicable, and 6 passport-size photographs. [2]",
+     "abstained": false,
+     "confidence": 0.7029,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1179,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q092",
+     "question": "ek semester me SGPA 5 se neeche aa gaya toh kya hoga?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "regulations",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.5123,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 52,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q093",
+     "question": "campus me smoking karte hue pakde gaye toh kitna jurmana lagega?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "regulations",
+     "split": "dev",
+     "answer": "Damage to property must be paid for by the student responsible, and a fine of up to Rs. 5,000 may be added. [1] Smoking, vaping and the use of alcohol or any narcotic substance are prohibited on campus and in hostels. [1] A fine of Rs. 2,000 is charged for a first violation of the smoking rule. [1]",
+     "abstained": false,
+     "confidence": 0.5848,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 886,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q094",
+     "question": "CSE department ka office kis block aur room me hai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "syllabus",
+     "split": "test",
+     "answer": "Open electives are offered by other departments and must be taken from outside the CSE department. [1] The major project is done in teams of at most 4 students under a faculty guide from the CSE department. [1] The IT Helpdesk is in Block C, Room C-001, open from 9:00 am to 5:00 pm from Monday to Friday. [2]",
+     "abstained": false,
+     "confidence": 0.7277,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": true,
+     "latency_ms": 1131,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q095",
+     "question": "DS ke lab me kitne experiments karne padte hain aur kaunsi language me?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "syllabus",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4626,
+     "facts_total": 2,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 60,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q096",
+     "question": "admission ke time kitni passport size photo leke jaani hai?",
+     "type": "answerable",
+     "style": "hinglish",
+     "category": "faqs",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4672,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 56,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q097",
+     "question": "which room is the ml lab in",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "syllabus",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4567,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 48,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q098",
+     "question": "who is the dbms coordinator",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "syllabus",
+     "split": "test",
+     "answer": "Database Management Systems (DBMS) has the course code CS211 and is taught in Semester 4. [2] The course coordinator is Dr. Manpreet Singh Gill, Block C, Room C-221, email manpreet.gill@svu.example. [2] Regina Obe and Leo Hsu, PostgreSQL: Up and Running, O'Reilly. [3]",
+     "abstained": false,
+     "confidence": 0.746,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 817,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q099",
+     "question": "bus fee for zone b pls",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "faqs",
+     "split": "dev",
+     "answer": "The annual bus fee depends on the distance of the pick-up point: Rs. 18,000 for Zone A (within 15 km), Rs. 26,000 for Zone B (15 to 40 km) and Rs. 34,000 for Zone C (beyond 40 km, including Chandigarh and Ludhiana routes). [1] Apply on the portal under Transport, pay the fee, and collect the pass from the Transport Office in Block B, Room B-03. [1] The pass is valid only with the ID card. [1]",
+     "abstained": false,
+     "confidence": 0.7618,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1493,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q100",
+     "question": "how much is a bonafide cert n how fast do they give it",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "faqs",
+     "split": "test",
+     "answer": "Apply on the portal under Certificates and pay Rs. 100. [1] It is issued in 2 working days and collected from Room A-105. [1] A character certificate costs Rs. 100, a no-dues certificate is free, and a migration certificate costs Rs. 500 and takes 10 working days. [1]",
+     "abstained": false,
+     "confidence": 0.5802,
+     "facts_total": 2,
+     "facts_found": 2,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 930,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q101",
+     "question": "when is holi in 2027",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "notices",
+     "split": "dev",
+     "answer": "Occasion: Holi, Date: 22 March 2027. [1]",
+     "abstained": false,
+     "confidence": 0.7681,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1111,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q102",
+     "question": "can i walk out of the exam hall in the first hour",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "notices",
+     "split": "test",
+     "answer": "Students must report to the examination hall by 9:30 am, which is 30 minutes before the start. [1] No student may leave the hall during the first 60 minutes of the examination. [1] Students must reach the examination hall at least 30 minutes before the start of the paper and must carry their hall ticket and SVU identity card. [2]",
+     "abstained": false,
+     "confidence": 0.5874,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1025,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q103",
+     "question": "hostel fee per sem for a double room?",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "notices",
+     "split": "dev",
+     "answer": "For the year 2026-27, the hostel fee is Rs. 62,000 for triple occupancy, Rs. 78,000 for double occupancy and Rs. 98,000 for single occupancy. [1] Mess charges are Rs. 54,000 per year, or Rs. 4,500 per month. [1] Item: Hostel, double occupancy, Amount per semester: Rs. 39,000. [2]",
+     "abstained": false,
+     "confidence": 0.7437,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1142,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q104",
+     "question": "where is codesprint being held",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "notices",
+     "split": "test",
+     "answer": "CodeSprint 2027 is the annual 24-hour hackathon of SVU, to be held on 20 February 2027 and 21 February 2027. [1] The total prize pool of CodeSprint 2027 is Rs. 2,00,000. [2] Participation in CodeSprint can be counted as duty leave under the Attendance Regulations, up to a maximum of 10% of the total classes of a course, if the student obtains prior approval from the Dean Student Affairs. [2]",
+     "abstained": false,
+     "confidence": 0.8872,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": true,
+     "latency_ms": 1014,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q105",
+     "question": "is the instalment processing fee refundable",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "policies",
+     "split": "dev",
+     "answer": "Students who cannot pay the full semester fee at once may opt for the instalment facility on the student portal before 31 December 2026. [1] A processing fee of Rs. 1,000 is charged for the instalment facility. [1] These are the application fee of Rs. 1,500, the one-time registration fee of Rs. 10,000, the examination fee, the late fee, the processing fee of Rs. 1,000 for the instalment facility, and the condonation fee for attendance shortage. [2]",
+     "abstained": false,
+     "confidence": 0.8521,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1128,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q106",
+     "question": "if i enter class 10 min late do they mark me absent",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "regulations",
+     "split": "test",
+     "answer": "A student who enters a class more than 10 minutes after it has started is marked absent for that class. [1]",
+     "abstained": false,
+     "confidence": 0.7232,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1116,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q107",
+     "question": "cgpa needed for first class with distinction",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "regulations",
+     "split": "dev",
+     "answer": "The class is awarded on the final CGPA as follows:. [1] First Class with Distinction: CGPA of 8.0 or above, with all courses cleared in the first attempt. [1] First Class: CGPA of 6.5 or above, but less than 8.0 (or 8.0 or above with a reappear attempt). [1]",
+     "abstained": false,
+     "confidence": 0.9338,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1107,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q108",
+     "question": "can i take a break of study in 1st sem",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "regulations",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.5665,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 44,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q109",
+     "question": "where r ds practicals held",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "syllabus",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.3633,
+     "facts_total": 1,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 38,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q110",
+     "question": "admissions office timings?",
+     "type": "answerable",
+     "style": "colloquial",
+     "category": "faqs",
+     "split": "test",
+     "answer": "The Admissions Office is in Block A, Room A-102. [1] It is open from 9:30 am to 5:00 pm from Monday to Saturday. [1] Breakfast is served from 7:30 am to 9:00 am, lunch from 12:30 pm to 2:30 pm, evening snacks from 5:00 pm to 6:00 pm, and dinner from 7:30 pm to 9:30 pm. [2]",
+     "abstained": false,
+     "confidence": 0.8813,
+     "facts_total": 1,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 1412,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q111",
+     "question": "What is the hostel fee for a four-person shared room?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.5184,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 60,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q112",
+     "question": "Who is the course coordinator of Computer Networks CS214?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "Code: CS212, Course: Theory of Computation, L-T-P: 3-1-0, Credits: 4. [1] Code: CS214, Course: Computer Networks, L-T-P: 3-0-2, Credits: 4. [1]",
+     "abstained": false,
+     "confidence": 0.7782,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1006,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q113",
+     "question": "What are the Central Library timings during the mid-term examination weeks?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "The Central Library in Block A is open from 8:30 am to 10:00 pm from Monday to Saturday, and from 10:00 am to 5:00 pm on Sunday. [1] During end-term examination weeks it stays open until midnight. [1] Normal classes are suspended during the mid-term week. [2]",
+     "abstained": false,
+     "confidence": 0.8995,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1028,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q114",
+     "question": "What is the email address of the Campus Health Centre?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "The Campus Health Centre is in Block D and is open from 8:00 am to 8:00 pm every day. [1] A doctor is available during these hours, and a nurse is on duty at night. [1] Every student gets an email address in the format rollnumber@students.svu.example, with 30 GB of storage. [2]",
+     "abstained": false,
+     "confidence": 0.8431,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 861,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q115",
+     "question": "On what date will the results of the even semester end-term examinations of May 2027 be declared?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "Event: Mid-term examinations, Date: 22 to 27 February 2027. [1] Event: End-term examinations, Date: 10 to 25 May 2027. [1] The results will be declared on 8 January 2027. [2]",
+     "abstained": false,
+     "confidence": 0.9241,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1077,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q116",
+     "question": "What is the examination fee for the May 2027 end-term examinations?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "The fee is paid in two instalments: 60% by 31 December 2026 and 40% by 31 January 2027. [1] A student who misses both the instalment dates will not receive the hall ticket for the even semester end-term examinations of May 2027. [1] The end-term examinations for the odd semesters (Semesters 1, 3, 5 and 7) of all B.Tech programmes will be held from 7 December 2026 to 22 December 2026. [2]",
+     "abstained": false,
+     "confidence": 0.9983,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 830,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q117",
+     "question": "What is the hostel fee for the academic year 2027-28?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "For the year 2026-27, the hostel fee is Rs. 62,000 for triple occupancy, Rs. 78,000 for double occupancy and Rs. 98,000 for single occupancy. [1] Mess charges are Rs. 54,000 per year, or Rs. 4,500 per month. [1] Hostel residents pay the following per semester, in addition to the academic fee. [2]",
+     "abstained": false,
+     "confidence": 0.961,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1277,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q118",
+     "question": "Which textbooks are prescribed for the Compiler Design course CS302?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "Ellis Horowitz, Sartaj Sahni and Susan Anderson-Freed, Fundamentals of Data Structures in C, 2nd edition, Universities Press. [1] Mark Allen Weiss, Data Structures and Algorithm Analysis in C++, 4th edition, Pearson. [1] Code: CS103, Course: Digital Logic Design, L-T-P: 3-0-2, Credits: 4. [4]",
+     "abstained": false,
+     "confidence": 0.6475,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1263,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q119",
+     "question": "What is the late fee for paying the odd semester fee of 2026-27 after 20 July 2026?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "The last date for payment of the odd semester fee is 20 July 2026. [1] Online course registration for the odd semester is open from 27 July 2026 to 31 July 2026 on the student portal. [1] Event: Odd semester fee last date, Date: 20 July 2026. [1]",
+     "abstained": false,
+     "confidence": 1.0,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1320,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q120",
+     "question": "What is the fourth prize amount in the CodeSprint 2027 hackathon?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "The total prize pool of CodeSprint 2027 is Rs. 2,00,000. [1] The first prize is Rs. 1,00,000, the second prize is Rs. 60,000 and the third prize is Rs. 40,000. [1] CodeSprint 2027 is the annual 24-hour hackathon of SVU, to be held on 20 February 2027 and 21 February 2027. [2]",
+     "abstained": false,
+     "confidence": 0.7719,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1336,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q121",
+     "question": "What is the name of the Chief Warden of the SVU hostels?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "Apply on the student portal under Hostel after confirming admission. [1] The Chief Warden's office is in Block H, Room H-01. [1] Frequently asked questions about hostel life, the Central Library, university buses, the health centre and sports facilities at Sutlej Valley University (SVU) for the academic year 2026-27. [2]",
+     "abstained": false,
+     "confidence": 0.7767,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1209,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q122",
+     "question": "What is the fee for the bridge courses taken by lateral entry students?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "Lateral entry into Semester 3 is available for diploma holders who have scored at least 60% in a 3-year engineering diploma. [1] Lateral entry students need to earn 118 credits in Semesters 3 to 8 to complete the degree, and they must clear the bridge courses in Mathematics and Programming in their first year. [1] Diploma holders with at least 60% in a 3-year engineering diploma can take lateral entry directly into Semester 3, and they complete bridge courses in Mathematics and Programming in the first year. [2]",
+     "abstained": false,
+     "confidence": 0.7329,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 909,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q123",
+     "question": "In which room is the Vice-Chancellor's office?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4334,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 67,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q124",
+     "question": "What are the Semester 3 courses of the B.Tech Mechanical Engineering programme?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "Semester 1 of the B.Tech CSE programme carries 21 credits across six courses. [1] All Semester 1 courses are common to every B.Tech branch at SVU, and classes begin on 3 August 2026 for the new batch. [1] This document gives the semester-wise course structure of the B.Tech Computer Science and Engineering (CSE) programme at Sutlej Valley University (SVU) for the 2026-27 batch and curriculum. [2]",
+     "abstained": false,
+     "confidence": 0.6922,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1284,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q125",
+     "question": "What is the fee for a duplicate library card?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "A lost or damaged ID card can be replaced for Rs. 300. [1]",
+     "abstained": false,
+     "confidence": 0.8291,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1083,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q126",
+     "question": "What are the dates of the end-term examinations of the even semester 2027-28?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "The end-term examinations will be held from 7 December 2026 to 22 December 2026. [1] The results of the odd semester end-term examinations will be declared on 8 January 2027. [1] The end-term examinations for the odd semesters (Semesters 1, 3, 5 and 7) of all B.Tech programmes will be held from 7 December 2026 to 22 December 2026. [2]",
+     "abstained": false,
+     "confidence": 0.9642,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": null,
+     "latency_ms": 1036,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q127",
+     "question": "What is the capital city of Australia?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.0431,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 47,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q128",
+     "question": "Can you suggest a good biryani place near the campus?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.2403,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 57,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q129",
+     "question": "Write a Python function to reverse a linked list.",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "dev",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.3636,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 47,
+     "generator_used": "extractive"
+    },
+    {
+     "id": "Q130",
+     "question": "What is the petrol price in Chandigarh today?",
+     "type": "unanswerable",
+     "style": "direct",
+     "category": "out_of_scope",
+     "split": "test",
+     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
+     "abstained": true,
+     "confidence": 0.4011,
+     "facts_total": 0,
+     "facts_found": 0,
+     "correct": true,
+     "cited_gold": null,
+     "latency_ms": 55,
      "generator_used": "extractive"
     }
    ]

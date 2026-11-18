@@ -59,6 +59,7 @@ def health() -> dict:
         "documents": len(engine.documents),
         "passages": len(index.chunks),
         "retrievers": index.methods,
+        "answers_with": index.best_method,
         "embedding_model": config.EMBED_MODEL if index.has_dense else None,
         "embedding_error": "" if index.has_dense else index.encoder.error,
         "threshold": engine.threshold,

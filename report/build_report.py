@@ -243,11 +243,27 @@ n_docs, n_pass = R["corpus"]["documents"], R["corpus"]["passages"]
 n_q = len(QUESTIONS)
 n_ans = sum(q["type"] == "answerable" for q in QUESTIONS)
 n_oos = n_q - n_ans
-by_style_n = {s: sum(q["style"] == s and q["type"] == "answerable" for q in QUESTIONS) for s in ("direct", "paraphrase", "colloquial")}
-H = {m: RET[m]["passage"] for m in ("bm25", "dense", "hybrid")}
+STYLES = [s for s in ("direct", "paraphrase", "colloquial", "hinglish")
+          if any(q["style"] == s and q["type"] == "answerable" for q in QUESTIONS)]
+STYLE_NAME = {"direct": "Direct", "paraphrase": "Paraphrase", "colloquial": "Colloquial", "hinglish": "Hindi-English"}
+by_style_n = {s: sum(q["style"] == s and q["type"] == "answerable" for q in QUESTIONS) for s in STYLES}
+METHODS = [m for m in ("bm25", "dense", "hybrid", "rerank") if m in RET]
+SHORT = {"bm25": "BM25", "dense": "Dense", "hybrid": "Hybrid", "rerank": "Reranked"}
+H = {m: RET[m]["passage"] for m in METHODS}
+HAS_RR = "rerank" in RET
+DESIGN = R.get("design_choices", {})
 TH, LOOSE = ABS["threshold"], ABS["loose_threshold"]
 DEV, TEST = ABS["dev"], ABS["test"]
-RETR_NAME = {"bm25": "BM25 (keywords)", "dense": "Dense (embeddings)", "hybrid": "Hybrid (rank fusion)"}
+RETR_NAME = {"bm25": "BM25 (keywords)", "dense": "Dense (embeddings)", "hybrid": "Hybrid (rank fusion)",
+             "rerank": "Hybrid + reranker"}
+
+
+def ms(value: float) -> str:
+    return f"{value:.0f} ms" if value >= 10 else f"{value:.1f} ms"
+
+
+def join_names(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
 
 # ---- cover, certificate, declaration ---------------------------------------------------
 NAMES = {"[Your Specific Project Title]": TITLE, "[Student Name]": STUDENT, "[Month, Year]": MONTH_YEAR}
@@ -404,7 +420,7 @@ c = fill(46, (
     "systems assume a hosted language model, so their behaviour when no such model is available is "
     "not reported."))
 c.p("This project addresses these gaps on a small scale. It builds a labelled evaluation set with "
-    "three styles of wording and a set of out-of-scope questions, reports retrieval, abstention and "
+    "several styles of wording and a set of out-of-scope questions, reports retrieval, abstention and "
     "answer quality separately, and includes a generator that uses no language model at all, so the "
     "system can be measured and used without one.")
 
@@ -525,7 +541,23 @@ c.code("RRF(d) = 1 / (k + rank_BM25(d)) + 1 / (k + rank_dense(d)),   k = 60")
 c.p("A passage missing from a list contributes nothing for that list. The four passages with the "
     "highest fused score are passed on. Only rank positions are used, so the BM25 scores and cosine "
     "similarities, which are on different scales, never have to be compared.")
-c.h3("5.3.5 Confidence score and the decision to answer")
+c.h3("5.3.5 Rewriting Hindi-English questions")
+c.p("Students often type Hindi in Latin letters, for example \"fees ki last date kab hai\". The "
+    "documents are in English, so neither the keyword index nor the English embedding model can "
+    "match \"kab\" to \"when\". Before searching, a question that contains Hindi function words "
+    "is rewritten with a word list: common question words, time words and campus vocabulary are "
+    "replaced by English words, and grammatical particles are dropped. For example, \"medical "
+    "certificate kitne din me submit karna hai\" becomes \"medical certificate how many days "
+    "submit\". It is a word list and not a translator; words it does not know are kept as typed. "
+    "The rewritten text is used only for searching. A language model that writes the answer still "
+    "receives the student's own words.")
+c.h3("5.3.6 Reranking with a cross-encoder")
+c.p("BM25 and the embedding model each look at the question and the passage separately. A "
+    "cross-encoder [18] reads the two together, which is slower but more precise. The model "
+    "ms-marco-MiniLM-L-6-v2 scores the ten best fused passages against the question, and they are "
+    "reordered by that score. It is evaluated as a fourth retriever. Whether the assistant should "
+    "use it when answering was decided by measurement, reported in Chapter 8.")
+c.h3("5.3.7 Confidence score and the decision to answer")
 c.p("A confidence value between 0 and 1 is computed from the retrieved passages:")
 c.code("coverage   = IDF-weighted share of the question's content words found in the passages\n"
        "similarity = clip( (best cosine similarity - 0.45) / 0.40, 0, 1 )\n"
@@ -536,13 +568,14 @@ c.p(f"If the confidence is below a threshold, the assistant declines. The thresh
     f"ones), giving {TH}. When a language model writes the answer, a looser threshold of {LOOSE} is "
     f"used and the model is instructed to reply NO_ANSWER when the passages do not contain the "
     f"answer, which acts as a second check.")
-c.h3("5.3.6 Answer generation")
+c.h3("5.3.8 Answer generation")
 c.p("Three interchangeable generators are provided.")
 c.bullets([
     "Quote the documents||. No language model is used. The four passages are split into sentences, "
     "list items and table rows. Each unit is scored as 0.25 times its IDF-weighted word overlap "
     "with the question plus 0.75 times its embedding similarity to the question. The best unit, and "
-    "up to two more that score at least 72% of the best, are quoted with citations. For FAQ "
+    "up to two more that score at least 72% of the best, are quoted with citations. These three "
+    "values were chosen on the development half of the question set. For FAQ "
     "documents the score of a question line is passed on to the answer that follows it. This "
     "generator cannot state anything that is not in the documents.",
     "Gemini||. The question and the four numbered passages are sent to the Gemini API [16] (model "
@@ -551,12 +584,12 @@ c.bullets([
     "passages do not answer the question. The reply is streamed to the browser as it is written.",
     "Claude||. The same prompt is sent to the Claude API.",
 ])
-c.h3("5.3.7 Follow-up questions and evidence highlighting")
+c.h3("5.3.9 Follow-up questions and evidence highlighting")
 c.p("A question with two or fewer content words, or one that uses a pronoun such as \"it\" or "
     "\"that\", is treated as a follow-up, and the previous question is added to it before "
     "retrieval. After an answer is produced, the sentence in each cited passage that best matches "
     "the answer is marked, and the interface shows it highlighted.")
-c.h3("5.3.8 Evaluation method")
+c.h3("5.3.10 Evaluation method")
 c.p("Retrieval is scored with Hit@k (the share of questions whose labelled passage is among the top "
     "k results) for k = 1, 3, 5 and with mean reciprocal rank. Abstention is scored on the "
     "development and test halves of the question set, which were split alternately within each "
@@ -572,7 +605,7 @@ c.bullets([
     "A clear refusal, with the nearest passages shown, when the documents do not cover the question.",
     "A document library in which the corpus can be read and new documents can be added without "
     "any programming.",
-    "An evaluation page and a results file reporting retrieval accuracy for the three retrievers, "
+    "An evaluation page and a results file reporting retrieval accuracy for each retriever, "
     "the behaviour of the confidence threshold, and answer accuracy by question style and category.",
     "Evidence for or against the three hypotheses of Chapter 4, in particular that hybrid "
     "retrieval is at least as good as either single retriever.",
@@ -608,28 +641,27 @@ c.table("Table 7.1: Documents in the knowledge corpus",
 c.p(f"The question set has {n_q} questions. {n_ans} are answerable from the corpus and {n_oos} are "
     f"out of scope. Each answerable question is labelled with the document and section that contain "
     f"the answer, a reference answer, and the key facts (dates, amounts, percentages) that a correct "
-    f"answer must contain. To test robustness to wording, the answerable questions come in three "
-    f"styles (Table 7.2). The out-of-scope questions include near misses, such as a question about "
-    f"the PhD stipend when the corpus covers only the B.Tech programme, because these are the "
-    f"hardest to decline.")
-examples = {
-    "direct": "What is the minimum attendance required in each course?",
-    "paraphrase": "How many classes can I afford to miss before I am barred from the exam?",
-    "colloquial": "fever tha, medical certificate kitne din me submit karna hai?",
-}
-for style in examples:
+    f"answer must contain. To test robustness to wording, the answerable questions come in "
+    f"{len(STYLES)} styles (Table 7.2). The out-of-scope questions are mostly near misses: they ask "
+    f"about a topic the corpus covers, but for a fact it does not state, such as the hostel fee for "
+    f"a room type that is not listed. These are the hardest to decline.")
+c.p("The set was built in two rounds. The first 80 questions were written together with the "
+    "corpus. A further 50 were added later, because two groups were too small to measure reliably: "
+    "out-of-scope questions (12 at first) and Hindi-English questions (4 at first). The added "
+    "questions were written from the documents alone, without running the system on them, and the "
+    "choices described below had not seen them.")
+DESCRIBE = {"direct": "Uses the document's own words", "paraphrase": "Same meaning, different words",
+            "colloquial": "Informal English, as students type", "hinglish": "Hindi and English mixed, in Latin letters"}
+examples = {}
+for style in STYLES:
     found = [q for q in QUESTIONS if q["style"] == style and q["type"] == "answerable"]
-    if style == "colloquial":
-        found = [q for q in found if "kitne" in q["question"]] or found
-    examples[style] = found[0]["question"]
-oos_example = next(q["question"] for q in QUESTIONS if q["type"] == "unanswerable")
+    examples[style] = found[min(2, len(found) - 1)]["question"]
+oos_example = [q["question"] for q in QUESTIONS if q["type"] == "unanswerable"][-20]
 c.table("Table 7.2: Composition of the labelled question set",
         ["Type", "Questions", "Description", "Example"],
-        [["Direct", str(by_style_n["direct"]), "Uses the document's own words", examples["direct"]],
-         ["Paraphrase", str(by_style_n["paraphrase"]), "Same meaning, different words", examples["paraphrase"]],
-         ["Colloquial", str(by_style_n["colloquial"]), "As students type, including Hindi-English", examples["colloquial"]],
-         ["Out of scope", str(n_oos), "Not answered by the corpus", oos_example]],
-        widths=[1.0, 0.8, 1.9, 2.8])
+        [[STYLE_NAME[s], str(by_style_n[s]), DESCRIBE[s], examples[s]] for s in STYLES] +
+        [["Out of scope", str(n_oos), "Not answered by the corpus", oos_example]],
+        widths=[1.1, 0.8, 1.9, 2.7])
 c.p("The questions were divided into a development half and a test half, alternating within each "
     "type so that both halves have the same mix. Thresholds were chosen on the development half "
     "only.")
@@ -682,9 +714,9 @@ best = max(cosine(query_vec, passage_vec[h]) for h in hits)
 similarity = np.clip((best - 0.45) / 0.40, 0.0, 1.0)
 confidence = 0.5 * coverage + 0.5 * similarity
 abstain = confidence < threshold''')
-c.p("Three experiments were run with the command \"python -m app.evaluate\".")
+c.p("Four experiments were run with the command \"python -m app.evaluate --design-choices\".")
 c.bullets([
-    "Experiment 1, retrieval||. Each of the three retrievers ranked the passages for the "
+    f"Experiment 1, retrieval||. Each of the {len(METHODS)} retrievers ranked the passages for the "
     f"{n_ans} answerable questions, and Hit@1, Hit@3, Hit@5 and MRR were computed against the "
     "labelled passages.",
     "Experiment 2, abstention||. The confidence score was computed for all questions, the threshold "
@@ -693,7 +725,14 @@ c.bullets([
     "Experiment 3, answers||. The complete pipeline answered all questions with the quote-only "
     "generator" + (" and with Gemini" if LLM else "") + ", and each answer was "
     "scored against the labelled key facts.",
+    "Experiment 4, design choices||. Two choices were measured so that they rest on numbers: "
+    "hybrid retrieval with and without the Hindi-English rewriting, and quote-only answers built "
+    "from reranked passages against answers built from plain hybrid passages.",
 ])
+c.p("Two further questions were explored with separate scripts, kept in the experiments folder: "
+    "how sentences should be selected for quote-only answers, and whether a better signal for "
+    "declining could be found. In each case the choice was made on the development half and then "
+    "checked on the test half.")
 c.p("The experiments were run on a Windows 11 laptop using the CPU only.")
 
 # ---- 8. Results --------------------------------------------------------------------------
@@ -720,23 +759,23 @@ best_m = max(H, key=lambda m: H[m]["mrr"])
 c.table("Table 8.1: Retrieval performance (labelled passage within the top k results)",
         ["Retriever", "Hit@1", "Hit@3", "Hit@5", "MRR", "Time per query"],
         [[RETR_NAME[m], pc(H[m]["hit@1"]), pc(H[m]["hit@3"]), pc(H[m]["hit@5"]), f3(H[m]["mrr"]),
-          f"{RET[m]['ms_per_query']:.1f} ms"] for m in ("bm25", "dense", "hybrid")],
-        widths=[1.9, 0.8, 0.8, 0.8, 0.8, 1.2], bold_rows=(["bm25", "dense", "hybrid"].index(best_m),))
-c.figure("chart-retrieval.png", "Figure 8.7: Retrieval performance of the three retrievers", 5.6)
+          ms(RET[m]["ms_per_query"])] for m in METHODS],
+        widths=[1.9, 0.8, 0.8, 0.8, 0.8, 1.2], bold_rows=(METHODS.index(best_m),))
+c.figure("chart-retrieval.png", f"Figure 8.7: Retrieval performance of the {len(METHODS)} retrievers", 5.6)
 c.p("Table 8.2 and Figure 8.8 break the Hit@3 result down by the wording of the question.")
-styles = ("direct", "paraphrase", "colloquial")
+col_w = [1.6, 1.0] + [0.95] * len(METHODS)
 c.table("Table 8.2: Hit@3 by question wording",
-        ["Wording", "Questions", "BM25", "Dense", "Hybrid"],
-        [[s.capitalize(), str(RET["bm25"]["by_style"][s]["n"])] +
-         [pc(RET[m]["by_style"][s]["hit@3"]) for m in ("bm25", "dense", "hybrid")] for s in styles],
-        widths=[1.6, 1.0, 1.0, 1.0, 1.0])
+        ["Wording", "Questions"] + [SHORT[m] for m in METHODS],
+        [[STYLE_NAME[s], str(RET["bm25"]["by_style"][s]["n"])] +
+         [pc(RET[m]["by_style"][s]["hit@3"]) for m in METHODS] for s in STYLES],
+        widths=col_w)
 c.figure("chart-style.png", "Figure 8.8: Hit@3 by question wording", 5.6)
 cats = ("syllabus", "regulations", "notices", "faqs", "policies")
 c.table("Table 8.3: Hit@3 by document category",
-        ["Category", "Questions", "BM25", "Dense", "Hybrid"],
+        ["Category", "Questions"] + [SHORT[m] for m in METHODS],
         [[LABEL[k], str(RET["bm25"]["by_category"][k]["n"])] +
-         [pc(RET[m]["by_category"][k]["hit@3"]) for m in ("bm25", "dense", "hybrid")] for k in cats],
-        widths=[1.6, 1.0, 1.0, 1.0, 1.0])
+         [pc(RET[m]["by_category"][k]["hit@3"]) for m in METHODS] for k in cats],
+        widths=col_w)
 c.p(f"Table 8.4 gives the behaviour of the confidence threshold of {TH}, and Figure 8.9 shows "
     f"how the two rates change as the threshold moves.", "Abstention. ")
 c.table("Table 8.4: Answering and declining at the chosen confidence threshold",
@@ -752,8 +791,8 @@ gens = [("Quote the documents", EX)] + ([("Gemini", LLM)] if LLM else [])
 
 
 def latency(s: dict) -> str:
-    ms = s["latency_ms"]["median"]
-    return f"{ms} ms" if ms < 2000 else f"{ms / 1000:.1f} s"
+    value = s["latency_ms"]["median"]
+    return f"{value} ms" if value < 2000 else f"{value / 1000:.1f} s"
 
 
 metric_rows = [
@@ -764,9 +803,7 @@ metric_rows = [
     ["Key facts present in the answers given"] + [pc(s["fact_coverage"]) for _, s in gens],
     ["Answers citing the labelled document"] + [pc(s["cited_gold_document"]) for _, s in gens],
     ["Out-of-scope questions declined"] + [pc(s["unanswerable_declined"]) for _, s in gens],
-    ["Correct: direct wording"] + [pc(s["by_style"]["direct"]) for _, s in gens],
-    ["Correct: paraphrase"] + [pc(s["by_style"]["paraphrase"]) for _, s in gens],
-    ["Correct: colloquial"] + [pc(s["by_style"]["colloquial"]) for _, s in gens],
+] + [[f"Correct: {STYLE_NAME[st].lower()} wording"] + [pc(s["by_style"][st]) for _, s in gens] for st in STYLES] + [
     ["Median response time"] + [latency(s) for _, s in gens],
 ]
 c.p(f"Table 8.5 gives the quality of the final answers on all {n_q} questions.", "Answers. ")
@@ -778,56 +815,109 @@ c.table("Table 8.6: Correct answers by document category",
         [[LABEL[k]] + [pc(s["by_category"][k]) for _, s in gens] for k in cats],
         widths=[3.0] + [1.7] * len(gens))
 
-# 8.3 discussion: written from the numbers
-gain3 = H["hybrid"]["hit@3"] - max(H["bm25"]["hit@3"], H["dense"]["hit@3"])
-col = {m: RET[m]["by_style"]["colloquial"]["hit@3"] for m in H}
+if DESIGN:
+    rw, rr = DESIGN["rewriting"], DESIGN["reranking"]
+    c.p("Table 8.7 gives the two design choices that were measured.", "Design choices. ")
+    rows = [["Hybrid retrieval, Hindi-English questions: Hit@1 / Hit@3",
+             f"{pc(rw['without_rewrite']['hinglish']['hit@1'])} / {pc(rw['without_rewrite']['hinglish']['hit@3'])}",
+             f"{pc(rw['with_rewrite']['hinglish']['hit@1'])} / {pc(rw['with_rewrite']['hinglish']['hit@3'])}"],
+            ["Hybrid retrieval, all questions: Hit@1 / Hit@3",
+             f"{pc(rw['without_rewrite']['all']['hit@1'])} / {pc(rw['without_rewrite']['all']['hit@3'])}",
+             f"{pc(rw['with_rewrite']['all']['hit@1'])} / {pc(rw['with_rewrite']['all']['hit@3'])}"]]
+    c.table("Table 8.7: Effect of rewriting Hindi-English questions before searching",
+            ["Measure", "Without rewriting", "With rewriting"], rows, widths=[3.4, 1.5, 1.5])
+    if "rerank" in rr:
+        c.table("Table 8.8: Quote-only answers built from hybrid passages and from reranked passages",
+                ["Measure", "Hybrid", "Hybrid + reranker"],
+                [["Answers containing every key fact, development half", pc(rr["hybrid"]["facts_complete_dev"]), pc(rr["rerank"]["facts_complete_dev"])],
+                 ["Answers containing every key fact, test half", pc(rr["hybrid"]["facts_complete_test"]), pc(rr["rerank"]["facts_complete_test"])],
+                 ["Time per question (search and sentence selection)", ms(rr["hybrid"]["ms_per_question"]), ms(rr["rerank"]["ms_per_question"])]],
+                widths=[3.4, 1.5, 1.5])
+
+# 8.3 discussion: every figure below is read from the results
+single = lambda k: max(H["bm25"][k], H["dense"][k])
+h1_everywhere = all(H["hybrid"][k] >= single(k) for k in ("hit@1", "hit@3", "hit@5", "mrr"))
+gain = {s: RET["hybrid"]["by_style"][s]["hit@3"] - max(RET["bm25"]["by_style"][s]["hit@3"], RET["dense"]["by_style"][s]["hit@3"]) for s in STYLES}
+gain_text = join_names([f"{gain[s] * 100:+.1f} points for {STYLE_NAME[s].lower()} questions" for s in STYLES])
 c = fill(84, (
-    f"Hypothesis H1 (hybrid retrieval). The hybrid retriever has the highest MRR ({f3(H['hybrid']['mrr'])}, "
-    f"against {f3(H['dense']['mrr'])} for dense and {f3(H['bm25']['mrr'])} for BM25) and the highest "
-    f"Hit@3 and Hit@5. At Hit@1 it equals the dense retriever ({pc(H['hybrid']['hit@1'])}) and "
-    f"is above BM25 ({pc(H['bm25']['hit@1'])}). The first part of H1 is therefore supported: fusion "
-    f"is at least as good as either retriever at every cut-off. The correct passage is among the "
-    f"four given to the generator for nearly all questions (Hit@5 {pc(H['hybrid']['hit@5'])})."))
-c.p(f"The second part of H1, that the gain is largest for questions that do not reuse the "
-    f"document's wording, is only partly supported. Table 8.2 shows the expected pattern for the "
-    f"single retrievers: BM25 is strong on direct questions and falls on colloquial ones "
-    f"({pc(col['bm25'])} at Hit@3). However, on colloquial questions the hybrid result "
-    f"({pc(col['hybrid'])}) is no better than the best single retriever "
-    f"({pc(max(col['bm25'], col['dense']))}). The hybrid retriever misses four colloquial "
-    f"questions at Hit@3. Two are Hindi-English, for example \"fever tha, medical certificate kitne "
-    f"din me submit karna hai?\": the embedding model was trained on English and the keyword index "
-    f"cannot match \"kitne din\" to \"within how many days\", so neither ranking helps the other. "
-    f"The other two are short English questions that name the topic loosely, such as \"how much to "
-    f"apply for revaluation and by when\". All four Hindi-English questions in the set were "
-    f"finally declined by the confidence check, which is a safe outcome but not a helpful one. With "
-    f"only {by_style_n['colloquial']} colloquial questions, one question changes the figure by five "
-    f"points, so differences of this size should not be over-read.")
-c.p(f"Hypothesis H2 (declining). On the development half the threshold meets the target: "
-    f"{pc(DEV['answered_when_answerable'])} of answerable questions are answered and "
-    f"{pc(DEV['declined_when_unanswerable'])} of out-of-scope questions are declined. On the "
-    f"held-out test half the answer rate is the same ({pc(TEST['answered_when_answerable'])}) but "
-    f"only {pc(TEST['declined_when_unanswerable'])} of out-of-scope questions are declined, below "
-    f"the 80% target. H2 is therefore not supported on the test data. Figure 8.9 shows why the "
-    f"score cannot do better: the two curves cross, so any threshold that declines more out-of-scope "
-    f"questions also refuses more answerable ones. The out-of-scope questions that pass are near "
-    f"misses. The three that were answered ask for the JEE Main rank needed for a B.Tech seat, the "
-    f"B.Tech tuition fee at another institute, and the visa procedure for the exchange programme. "
-    f"Each retrieves passages on admission, fees or the exchange programme that share most of its "
-    f"words and are close in meaning; nothing in a retrieval score can tell that the passage does "
-    f"not contain the particular fact asked for. Deciding that needs reading the passage, which is the reason "
-    f"for the second check by the language model. It should also be noted that each half has only "
-    f"{TEST['n_unanswerable']} out-of-scope questions, so one question is worth 17 points.")
-c.p(f"Hypothesis H3 (quote-only answers). The quote-only generator answers {pc(EX['accuracy'])} of "
-    f"all questions correctly ({pc(EX['accuracy_test_split'])} on the test half), with a median "
-    f"response time of {EX['latency_ms']['median']} ms and a 95th percentile of "
-    f"{EX['latency_ms']['p95']} ms. H3 is supported. When it does answer, the answer contains "
-    f"{pc(EX['fact_coverage'])} of the labelled key facts and cites the labelled document "
-    f"{pc(EX['cited_gold_document'])} of the time. Most of its errors are not wrong answers but "
-    f"refusals: {pc(EX['answerable_declined'])} of answerable questions are declined by the "
-    f"confidence check. For a student assistant this is the safer kind of error. Accuracy follows "
-    f"the wording of the question, from {pc(EX['by_style']['direct'])} for direct questions to "
-    f"{pc(EX['by_style']['paraphrase'])} for paraphrases and {pc(EX['by_style']['colloquial'])} for "
-    f"colloquial ones.")
+    f"Hypothesis H1 (hybrid retrieval). Of the three first-stage retrievers, hybrid fusion has an "
+    f"MRR of {f3(H['hybrid']['mrr'])}, against {f3(H['dense']['mrr'])} for dense and "
+    f"{f3(H['bm25']['mrr'])} for BM25, and places the labelled passage in the top three for "
+    f"{pc(H['hybrid']['hit@3'])} of questions (dense {pc(H['dense']['hit@3'])}, BM25 "
+    f"{pc(H['bm25']['hit@3'])}). " +
+    ("It is at least as good as either single retriever at every cut-off, so the first part of H1 is supported. "
+     if h1_everywhere else
+     "It is not the best at every cut-off, so the first part of H1 is only partly supported. ") +
+    f"The second part of H1 said that the gain would be largest for questions that do not reuse the "
+    f"document's wording. The gain of hybrid over the better single retriever at Hit@3 is {gain_text}. " +
+    ("The gain is largest away from direct wording, as predicted, but it is not uniform: "
+     if max(gain, key=gain.get) != "direct" else "The prediction is not borne out: ") +
+    f"with between {min(by_style_n.values())} and {max(by_style_n.values())} questions in a group, one "
+    f"question moves a figure by three to five points, so small differences should not be over-read."))
+if DESIGN:
+    rw, rr = DESIGN["rewriting"], DESIGN["reranking"]
+    c.p(f"Hindi-English questions. Rewriting these questions into rough English before searching "
+        f"raises hybrid Hit@1 on them from {pc(rw['without_rewrite']['hinglish']['hit@1'])} to "
+        f"{pc(rw['with_rewrite']['hinglish']['hit@1'])} and Hit@3 from "
+        f"{pc(rw['without_rewrite']['hinglish']['hit@3'])} to {pc(rw['with_rewrite']['hinglish']['hit@3'])} "
+        f"(Table 8.7). English questions are not touched by the rewriting. Finding the passage is "
+        f"therefore no longer the main difficulty for this group. The final answers are still the "
+        f"weakest ({pc(EX['by_style'].get('hinglish', 0))} correct), because the confidence check "
+        f"declines many of them: a rewritten question is a string of keywords, which the embedding "
+        f"model finds less similar to a passage than a fluent sentence, and Hindi words missing from "
+        f"the word list count as question words that the passages do not contain.")
+    if "rerank" in rr and HAS_RR:
+        c.p(f"Reranking. The cross-encoder improves the ranking: Hit@1 rises from "
+            f"{pc(H['hybrid']['hit@1'])} to {pc(H['rerank']['hit@1'])} and MRR from "
+            f"{f3(H['hybrid']['mrr'])} to {f3(H['rerank']['mrr'])}. It does not improve the answers. "
+            f"The share of quote-only answers containing every key fact is "
+            f"{pc(rr['hybrid']['facts_complete_dev'])} with hybrid passages and "
+            f"{pc(rr['rerank']['facts_complete_dev'])} with reranked passages on the development "
+            f"half ({pc(rr['hybrid']['facts_complete_test'])} and {pc(rr['rerank']['facts_complete_test'])} "
+            f"on the test half), while the time per question rises from {ms(rr['hybrid']['ms_per_question'])} "
+            f"to {ms(rr['rerank']['ms_per_question'])} (Table 8.8). The reason is that the generator "
+            f"reads four passages, and hybrid fusion already has the labelled passage among its first "
+            f"five for {pc(H['hybrid']['hit@5'])} of questions; putting it first instead of second "
+            f"changes little. The reranker is therefore kept as an option and is switched off by "
+            f"default.")
+h2_dev = DEV["answered_when_answerable"] >= 0.8 and DEV["declined_when_unanswerable"] >= 0.8
+h2_test = TEST["answered_when_answerable"] >= 0.8 and TEST["declined_when_unanswerable"] >= 0.8
+passed = [r["question"] for r in ANS["extractive"]["rows"] if r["type"] == "unanswerable" and not r["abstained"]]
+c.p(f"Hypothesis H2 (declining). The target was to answer at least 80% of answerable questions "
+    f"while declining at least 80% of out-of-scope ones. On the development half the assistant "
+    f"answers {pc(DEV['answered_when_answerable'])} and declines {pc(DEV['declined_when_unanswerable'])}; "
+    f"on the held-out test half it answers {pc(TEST['answered_when_answerable'])} and declines "
+    f"{pc(TEST['declined_when_unanswerable'])}. H2 is " +
+    ("supported." if h2_dev and h2_test else "not supported.") +
+    f" Figure 8.9 shows why: the two curves cross, so a threshold that declines more out-of-scope "
+    f"questions also refuses more answerable ones. The questions that get through are near misses, "
+    f"for example \"{passed[0]}\" and \"{passed[len(passed) // 2]}\". Each retrieves passages on the "
+    f"right topic that share most of its words; a retrieval score cannot tell that the passage "
+    f"does not state the particular fact asked for.")
+c.p("Three other signals for declining were tried: the reranker's relevance score, a second "
+    "cross-encoder trained to judge whether a sentence answers a question (QNLI), and a logistic "
+    "regression fitted on seven retrieval signals. None carried over from the development half to "
+    "the test half. Balanced accuracy on the test half stayed between 0.47 and 0.66 for every "
+    "variant, and the fitted model fell from 0.91 on the development half to 0.61 on the test "
+    "half, which is over-fitting. The answer-checking model also took about 1.7 seconds per "
+    "question. The conclusion is that telling a near miss from an answerable question requires "
+    "reading the passage for the specific fact, which is the job of the language model's own "
+    "refusal in the second stage. Without a language model the assistant reliably declines only "
+    "questions that are clearly unrelated to the documents.")
+h3 = EX["accuracy"] >= 0.70 and EX["latency_ms"]["median"] < 1000
+c.p(f"Hypothesis H3 (quote-only answers). The target was at least 70% of answers correct, returned "
+    f"in under one second. The quote-only generator answers {pc(EX['accuracy'])} of all questions "
+    f"correctly ({pc(EX['accuracy_test_split'])} on the test half), with a median response time of "
+    f"{EX['latency_ms']['median']} ms and a 95th percentile of {EX['latency_ms']['p95']} ms. H3 is " +
+    ("supported. " if h3 else
+     ("not supported: the speed target is met, the accuracy target is not. " if EX["latency_ms"]["median"] < 1000
+      else "not supported. ")) +
+    f"When it does answer, the answer contains {pc(EX['fact_coverage'])} of the labelled key facts "
+    f"and cites the labelled document {pc(EX['cited_gold_document'])} of the time. Its errors are "
+    f"of two kinds. {pc(EX['answerable_declined'])} of answerable questions are declined by the "
+    f"confidence check, and {pc(1 - EX['unanswerable_declined'])} of out-of-scope questions are "
+    f"answered with the nearest passage. Accuracy follows the wording of the question: " +
+    join_names([f"{pc(EX['by_style'][s])} for {STYLE_NAME[s].lower()} questions" for s in STYLES]) + ".")
 c.p("A weakness seen when reading the quote-only answers is that they sometimes include a "
     "neighbouring sentence that is true but not needed, because sentences are selected one at a "
     "time and cannot be rewritten. The answer is still supported by the source, but it reads less "
@@ -844,14 +934,16 @@ c = fill(88, (
     f"shows each cited passage with the supporting sentence highlighted. All seven objectives of "
     f"Chapter 4 were met."))
 c.p(f"On the labelled set of {n_q} questions, hybrid retrieval placed the correct passage in the "
-    f"top three results for {pc(H['hybrid']['hit@3'])} of answerable questions and was at least as "
-    f"good as either single retriever. With no language model at all, {pc(EX['accuracy'])} of "
-    f"answers were correct and were returned in about {EX['latency_ms']['median']} ms on a laptop "
-    f"CPU. The confidence threshold declined {pc(ABS['all']['declined_when_unanswerable'])} of all "
-    f"out-of-scope questions, but only {pc(TEST['declined_when_unanswerable'])} on the held-out "
-    f"half, which is short of the target that was set.")
+    f"top three results for {pc(H['hybrid']['hit@3'])} of answerable questions and in the top five "
+    f"for {pc(H['hybrid']['hit@5'])}. With no language model at all, {pc(EX['accuracy'])} of answers "
+    f"were correct and were returned in about {EX['latency_ms']['median']} ms on a laptop CPU. "
+    f"The confidence check declined {pc(EX['unanswerable_declined'])} of out-of-scope questions "
+    f"({pc(TEST['declined_when_unanswerable'])} on the held-out half), well short of the 80% that "
+    f"was hoped for. The honest reading of the results is that the retrieval half of the system "
+    f"works well, and that reliably refusing near-miss questions needs the language-model stage, "
+    f"which was built but could not be scored.")
 c.p("The contribution of the work is a complete, measured and reproducible example of a grounded "
-    "student assistant built from small open components: a labelled evaluation set with three "
+    "student assistant built from small open components: a labelled evaluation set with four "
     "question styles and out-of-scope questions, separate measurements of retrieval, abstention and "
     "answer quality, and a generator that works without any language model.")
 CONCLUSION_CURSOR = c
@@ -859,14 +951,15 @@ c = fill(90, "The work has the following limitations.")
 c.bullets([
     "Sample data||. The corpus is fictional and small. Results on a real university's documents, "
     "which are longer, less consistent and partly scanned, will differ.",
-    "Informal and mixed-language questions||. These are the weakest case, because the embedding "
-    "model is English-only and the keyword index cannot match Hindi words written in Latin script.",
-    "The confidence check||. A retrieval score cannot reliably tell a near-miss out-of-scope "
-    "question from a paraphrased answerable one, and the out-of-scope set is too small "
-    f"({n_oos} questions) for precise measurement.",
-    "Selection of weights||. The weights used to select sentences in the quote-only generator were "
-    "chosen using all the answerable questions rather than the development half alone, so its "
-    "accuracy is slightly optimistic.",
+    "Hindi-English questions||. Rewriting them with a word list fixed most of the retrieval "
+    "failures, but they remain the hardest group for final answers. The word list covers common "
+    "words only, and the confidence check declines many of these questions.",
+    "The confidence check||. A retrieval score cannot tell a near-miss out-of-scope question from "
+    "an answerable one, and the alternatives that were tried did not generalise (Section 8.3). "
+    "Without a language model, only clearly unrelated questions are declined reliably.",
+    f"Small groups||. Choices were made on a development half of {DEV['n_answerable'] + DEV['n_unanswerable']} "
+    "questions. A difference of one or two questions is within noise, so the chosen settings are "
+    "reasonable ones and not proven best ones.",
     "Answer scoring||. Checking for labelled key facts is strict and automatic, but it does not "
     "judge fluency, and it cannot detect an extra incorrect statement in an answer.",
     "Language models not scored||. The Gemini and Claude generators are implemented but were not "
@@ -876,12 +969,11 @@ c.bullets([
 ])
 c.p("The following extensions are suggested.")
 c.bullets([
-    "Replace the embedding model with a multilingual one, and add transliteration, so that Hindi "
-    "and Hindi-English questions are handled.",
-    "Add a re-ranking model that reads the question and each passage together, both to improve "
-    "ranking and to give a better signal for declining.",
-    "Enlarge the evaluation set, especially the out-of-scope and colloquial questions, using "
-    "questions collected from real students.",
+    "Score the Gemini generator on the question set, in particular how many near-miss questions "
+    "its own refusal catches, since that is the stage designed to stop them.",
+    "Replace the embedding model with a multilingual one and extend the Hindi-English word list, "
+    "so that confidence is not lower for these questions.",
+    "Enlarge the evaluation set further using questions collected from real students.",
     "Run the system on the real documents of a university, with optical character recognition for "
     "scanned notices and scheduled re-ingestion when documents change.",
     "Add voice input and regional-language answers, and connect the assistant to the channels "
@@ -910,6 +1002,7 @@ REFS = [
     "Qdrant, \"FastEmbed: Fast, accurate, lightweight Python library to make state of the art embedding,\" software. [Online]. Available: https://github.com/qdrant/fastembed",
     "Google, \"Gemini API documentation,\" 2026. [Online]. Available: https://ai.google.dev/gemini-api/docs",
     "S. Ramirez, \"FastAPI,\" software. [Online]. Available: https://fastapi.tiangolo.com",
+    "R. Nogueira and K. Cho, \"Passage re-ranking with BERT,\" arXiv:1901.04085, 2019.",
 ]
 set_text(P[93], REFS[0])
 at = P[93]._p
@@ -953,6 +1046,8 @@ c.table("Table A.1: Parameter values",
          ["Candidates per retriever for fusion", "20"],
          ["RRF constant k", "60"],
          ["Passages given to the generator", "4"],
+         ["Reranker (measured, off by default)", "Xenova/ms-marco-MiniLM-L-6-v2, 10 candidates"],
+         ["Sentence selection, quote-only answers", "0.25 word overlap + 0.75 similarity; keep 72% of best; at most 3"],
          ["Confidence threshold, quote-only answers", str(TH)],
          ["Confidence threshold, language-model answers", str(LOOSE)],
          ["Language model (optional)", "gemini-3.8-flash via the Gemini API"]],

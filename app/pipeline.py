@@ -70,7 +70,7 @@ class Engine:
             return f"{previous[-1]} {question}"
         return question
 
-    def retrieve(self, query: str, k: int | None = None, method: str = "hybrid",
+    def retrieve(self, query: str, k: int | None = None, method: str | None = None,
                  category: str | None = None) -> tuple[list[Hit], float]:
         hits = self.index.search(query, k or config.TOP_K, method, category)
         return hits, self.index.confidence(query, hits)
@@ -103,7 +103,7 @@ class Engine:
     # ------------------------------------------------------------------
     def answer_stream(self, question: str, history: list[dict] | None = None,
                       generator: str = "extractive", category: str | None = None,
-                      method: str = "hybrid") -> Iterator[dict]:
+                      method: str | None = None) -> Iterator[dict]:
         """Yield events: one "meta", zero or more "token", then one "done"."""
         started = time.perf_counter()
         history = history or []

@@ -23,6 +23,7 @@ from typing import Iterator
 import numpy as np
 
 from . import config
+from .hinglish import to_search_english
 from .retrieval import Hit, Index
 from .textutil import clean_unit, split_blocks, tokenize
 
@@ -78,11 +79,14 @@ def _score_units(index: Index, query: str, units: list[dict], k: int) -> np.ndar
     overlap = np.array([sum(weights[t] for t in terms & found) / total for found in unit_terms],
                        dtype=np.float32)
     scores = overlap.copy()
-    if index.has_dense and units:
+    if config.SENTENCE_SCORER == "cross" and index.can_rerank and units:
+        # Read each sentence together with the question. Raw scores are logits; squash to 0..1.
+        raw = np.array(index.reranker.scores(query, [u["text"] for u in units]), dtype=np.float32)
+        scores = 1.0 / (1.0 + np.exp(-raw / 4.0))
+    elif index.has_dense and units:
         vectors = index.encoder.sentences([u["text"] for u in units])
-        # Meaning counts three times as much as shared words: of the mixes compared on
-        # the labelled questions this put the most key facts into answers of the same length.
-        scores = 0.25 * overlap + 0.75 * np.clip(vectors @ index.encoder.query(query), 0, 1)
+        mix = config.SENTENCE_OVERLAP_WEIGHT
+        scores = mix * overlap + (1 - mix) * np.clip(vectors @ index.encoder.query(query), 0, 1)
     rank_bonus = np.array([0.12 * (1 - u["source"] / max(k, 1)) for u in units], dtype=np.float32)
     return scores + rank_bonus
 
@@ -95,6 +99,7 @@ def extractive_answer(index: Index, query: str, hits: list[Hit]) -> tuple[str, d
     units = explode(hits)
     if not units:
         return "", {}
+    query = to_search_english(query)
     scores = _score_units(index, query, units, len(hits))
 
     # An FAQ question matches the student's question best, but the *answer* is the
@@ -117,7 +122,7 @@ def extractive_answer(index: Index, query: str, hits: list[Hit]) -> tuple[str, d
         return "", {}
     chosen = [best]
     for i in np.argsort(-scores)[1:]:
-        if len(chosen) >= 3 or scores[i] < 0.72 * scores[best]:
+        if len(chosen) >= config.SENTENCE_MAX or scores[i] < config.SENTENCE_KEEP_RATIO * scores[best]:
             break
         if units[i]["source"] <= units[best]["source"] + 1:    # stay with the top passages
             chosen.append(int(i))

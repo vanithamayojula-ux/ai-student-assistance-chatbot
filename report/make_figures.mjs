@@ -12,8 +12,8 @@ const R = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/eval/results.json'), 
 const OUT = path.join(HERE, 'figures');
 fs.mkdirSync(OUT, { recursive: true });
 
-const C = { bm25: '#2a78d6', dense: '#eb6834', hybrid: '#1baf7a' };
-const NAME = { bm25: 'BM25 (keywords)', dense: 'Dense (embeddings)', hybrid: 'Hybrid (fused)' };
+const C = { bm25: '#2a78d6', dense: '#eb6834', hybrid: '#1baf7a', rerank: '#eda100' };
+const NAME = { bm25: 'BM25 (keywords)', dense: 'Dense (embeddings)', hybrid: 'Hybrid (fused)', rerank: 'Hybrid + reranker' };
 const INK = '#0b0b0b', INK2 = '#52514e', GRID = '#e4e3df';
 const pct = v => (v * 100).toFixed(1);
 
@@ -36,13 +36,13 @@ function groupedBars(id, title, groups, series, get, W = 760, H = 380) {
     s += `<line x1="${L}" x2="${W - 20}" y1="${y(t)}" y2="${y(t)}" stroke="${GRID}"/>`;
     s += `<text x="${L - 8}" y="${y(t) + 4}" font-size="12" text-anchor="end" fill="${INK2}">${t * 100}%</text>`;
   }
-  const gw = PW / groups.length, bw = 46;
+  const gw = PW / groups.length, bw = Math.min(46, Math.floor((gw - 28) / series.length) - 2);
   groups.forEach((g, gi) => {
     const x0 = L + gi * gw + (gw - series.length * (bw + 2)) / 2;
     series.forEach((k, si) => {
       const v = get(k, g.key), x = x0 + si * (bw + 2), yy = y(v);
       s += `<path d="M${x},${T + PH} V${yy + 4} q0,-4 4,-4 H${x + bw - 4} q4,0 4,4 V${T + PH} Z" fill="${C[k]}"/>`;
-      s += `<text x="${x + bw / 2}" y="${yy - 6}" font-size="11.5" text-anchor="middle" fill="${INK}">${pct(v)}</text>`;
+      s += `<text x="${x + bw / 2}" y="${yy - 6}" font-size="${bw < 40 ? 10 : 11.5}" text-anchor="middle" fill="${INK}">${bw < 40 ? Math.round(v * 100) : pct(v)}</text>`;
     });
     s += `<text x="${L + gi * gw + gw / 2}" y="${H - 18}" font-size="13" text-anchor="middle" fill="${INK}">${g.label}</text>`;
   });
@@ -50,12 +50,14 @@ function groupedBars(id, title, groups, series, get, W = 760, H = 380) {
   return s;
 }
 
-const ret = R.retrieval, S = ['bm25', 'dense', 'hybrid'];
-const chartA = groupedBars('chart-retrieval', 'Labelled passage found in the top k results (68 answerable questions)',
+const ret = R.retrieval, S = ['bm25', 'dense', 'hybrid', 'rerank'].filter((m) => ret[m]);
+const STYLE = { direct: 'Direct', paraphrase: 'Paraphrase', colloquial: 'Colloquial', hinglish: 'Hindi-English' };
+const answerable = ret.bm25.passage.n;
+const chartA = groupedBars('chart-retrieval', `Labelled passage found in the top k results (${answerable} answerable questions)`,
   [{ key: 'hit@1', label: 'Hit@1' }, { key: 'hit@3', label: 'Hit@3' }, { key: 'hit@5', label: 'Hit@5' }],
   S, (k, g) => ret[k].passage[g]);
 const chartB = groupedBars('chart-style', 'Hit@3 by how the question is worded',
-  [{ key: 'direct', label: 'Direct (22)' }, { key: 'paraphrase', label: 'Paraphrase (26)' }, { key: 'colloquial', label: 'Colloquial (20)' }],
+  Object.keys(STYLE).filter((k) => ret.bm25.by_style[k]).map((k) => ({ key: k, label: `${STYLE[k]} (${ret.bm25.by_style[k].n})` })),
   S, (k, g) => ret[k].by_style[g]['hit@3']);
 
 function curve() {
@@ -65,7 +67,7 @@ function curve() {
   const X = v => L + PW * (v - x0) / (x1 - x0), Y = v => T + PH * (1 - v);
   const cols = { a: '#2a78d6', d: '#eb6834' };
   let s = `<svg id="chart-threshold" xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" font-family="Segoe UI, Arial"><rect width="${W}" height="${H}" fill="#fff"/>`;
-  s += `<text x="${L}" y="26" font-size="16" font-weight="600" fill="${INK}">Effect of the confidence threshold (all 80 questions)</text>`;
+  s += `<text x="${L}" y="26" font-size="16" font-weight="600" fill="${INK}">Effect of the confidence threshold (all ${R.questions.total} questions)</text>`;
   s += legend(['a', 'd'], L, 50, { a: 'Answerable questions answered', d: 'Out-of-scope questions declined' }, cols);
   for (const t of [0, .25, .5, .75, 1]) {
     s += `<line x1="${L}" x2="${L + PW}" y1="${Y(t)}" y2="${Y(t)}" stroke="${GRID}"/>`;
@@ -124,7 +126,7 @@ function flow() {
   s += arr(`240,360 300,360 300,250 ${BX - 2},250`);
   s += box(BX, 48, BW, 46, ['Student question'], { rx: 23, fill: '#1D2768', ink: '#fff', stroke: '#1D2768' });
   s += arr(`${MX},94 ${MX},120`);
-  s += box(BX, 122, BW, 60, ['Follow-up check', 'short, or uses "it / that": add previous question']);
+  s += box(BX, 122, BW, 60, ['Prepare the question', 'follow-up: add previous question; Hindi-English: rewrite']);
   s += arr(`${MX},182 ${MX},208`);
   s += box(BX, 210, BW, 78, ['Hybrid retrieval', 'rank by BM25 and by embedding similarity,', 'merge with reciprocal rank fusion, keep top 4']);
   s += arr(`${MX},288 ${MX},314`);

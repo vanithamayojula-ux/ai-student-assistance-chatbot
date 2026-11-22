@@ -43,9 +43,9 @@ CATEGORY_LABELS = {
 UNIVERSITY_NAME = os.getenv("UNIVERSITY_NAME", "Sutlej Valley University")
 
 # Security for a public deployment (see app/security.py).
-ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "").strip()          # unset: uploads/deletes/eval only from localhost
 CHAT_PER_MINUTE = int(os.getenv("CHAT_PER_MINUTE", "20"))     # per client; 0 turns the limit off
 FEEDBACK_PER_MINUTE = int(os.getenv("FEEDBACK_PER_MINUTE", "30"))
+WRITES_PER_MINUTE = int(os.getenv("WRITES_PER_MINUTE", "10"))   # uploads, deletes and evaluation runs
 API_DOCS = os.getenv("API_DOCS", "0") == "1"                  # serve /api/docs (OpenAPI UI)
 
 # --- chunking -------------------------------------------------------------
@@ -87,6 +87,13 @@ GEMINI_URL = os.getenv("GEMINI_URL", "https://generativelanguage.googleapis.com/
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 GEMINI_API_REVISION = os.getenv("GEMINI_API_REVISION", "2026-05-20")
 CLAUDE_MODEL = os.getenv("CLAUDE_MODEL", "claude-opus-5-5")
+
+# The locally trained model (app/local_model.py, trained by training/train.py).
+LOCAL_MODEL_DIR = Path(os.getenv("LOCAL_MODEL_DIR", str(ROOT / "models" / "svu-flan-t5")))
+LOCAL_PASSAGES = int(os.getenv("LOCAL_PASSAGES", "3"))                  # top passages the model reads (4 costs a third more CPU time)
+LOCAL_MAX_INPUT_TOKENS = int(os.getenv("LOCAL_MAX_INPUT_TOKENS", "1024"))
+LOCAL_BEAMS = int(os.getenv("LOCAL_BEAMS", "4"))
+LOCAL_NUMBER_CHECK = os.getenv("LOCAL_NUMBER_CHECK", "1") == "1"        # reject answers with figures not in the passages
 
 MAX_UPLOAD_BYTES = 10 * 1024 * 1024
 ALLOWED_UPLOAD_EXT = {".md", ".txt", ".pdf", ".docx"}

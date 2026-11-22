@@ -20,15 +20,9 @@ def engine():
     return get_engine()
 
 
-TEST_TOKEN = "test-admin-token"
-
-
 @pytest.fixture(scope="module")
 def client():
-    saved = config.ADMIN_TOKEN
-    config.ADMIN_TOKEN = TEST_TOKEN
-    yield TestClient(app, headers={"X-Admin-Token": TEST_TOKEN})
-    config.ADMIN_TOKEN = saved
+    return TestClient(app)
 
 
 def test_corpus_covers_all_five_categories():
@@ -241,24 +235,12 @@ def test_reranker_reorders_when_asked(engine):
     assert [h.rerank for h in hits] == sorted((h.rerank for h in hits), reverse=True)
 
 
-def test_corpus_changes_need_the_admin_token(client):
-    anonymous = TestClient(app)
-    upload = {"file": ("note.txt", b"Library opens at 9 am.", "text/plain")}
-    assert anonymous.post("/api/documents", data={"category": "notices"}, files=upload).status_code == 401
-    assert anonymous.delete("/api/documents/anything").status_code == 401
-    assert anonymous.post("/api/eval/run").status_code == 401
-    wrong = TestClient(app, headers={"X-Admin-Token": "nope"})
-    assert wrong.delete("/api/documents/anything").status_code == 401
-
-
-def test_without_a_token_writes_are_closed_to_remote_callers(client):
-    saved = config.ADMIN_TOKEN
-    config.ADMIN_TOKEN = ""
-    try:
-        proxied = TestClient(app, headers={"X-Forwarded-For": "203.0.113.9"})
-        assert proxied.delete("/api/documents/anything").status_code == 403
-    finally:
-        config.ADMIN_TOKEN = saved
+def test_corpus_changes_need_no_login(client):
+    upload = {"file": ("open-note.txt", b"# Open note\n\nThe reading room opens at 9 am on Sundays.", "text/plain")}
+    added = client.post("/api/documents", data={"category": "notices"}, files=upload)
+    assert added.status_code == 200
+    assert client.delete(f"/api/documents/{added.json()['doc_id']}").status_code == 200
+    assert client.delete("/api/documents/anything").status_code == 404
 
 
 def test_feedback_is_rate_limited(client, tmp_path, monkeypatch):

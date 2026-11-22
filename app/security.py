@@ -1,7 +1,8 @@
-"""Request protection for a public deployment: admin token, per-client rate limits, security headers."""
+"""Request protection for a public deployment: per-client rate limits and security headers.
+
+There is no login and no admin token: every endpoint is open, and the limits below are the only brake."""
 from __future__ import annotations
 
-import hmac
 import threading
 import time
 from collections import defaultdict, deque
@@ -10,34 +11,15 @@ from fastapi import HTTPException, Request
 
 from . import config
 
-LOOPBACK = {"127.0.0.1", "::1", "localhost"}
-
 
 def client_ip(request: Request) -> str:
     # Behind Vercel and Render the left-most X-Forwarded-For entry is the visitor.
     # It can be spoofed by a caller who hits the backend directly, so limits keyed on
-    # it are a cost brake, not an access control; the admin token is the access control.
+    # it are a cost brake, not an access control.
     forwarded = request.headers.get("x-forwarded-for", "")
     if forwarded:
         return forwarded.split(",")[0].strip()[:64]
     return request.client.host if request.client else "unknown"
-
-
-def require_admin(request: Request) -> None:
-    """Gate for endpoints that change the corpus or burn CPU.
-
-    With ADMIN_TOKEN set, the caller must send it in X-Admin-Token. Without it, only
-    direct local requests are allowed, so a fresh deployment is closed by default.
-    """
-    token = config.ADMIN_TOKEN
-    if token:
-        sent = request.headers.get("x-admin-token", "")
-        if not hmac.compare_digest(sent.encode(), token.encode()):
-            raise HTTPException(401, "This action needs the admin token.")
-        return
-    proxied = "x-forwarded-for" in request.headers
-    if proxied or not request.client or request.client.host not in LOOPBACK:
-        raise HTTPException(403, "Uploads and evaluation are turned off here. Set ADMIN_TOKEN on the server to enable them.")
 
 
 class RateLimiter:

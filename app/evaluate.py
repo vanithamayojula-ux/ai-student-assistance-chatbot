@@ -305,7 +305,7 @@ def _previous_design() -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate the chatbot on the labelled question set.")
-    parser.add_argument("--generator", action="append", choices=["extractive", "gemini", "claude"],
+    parser.add_argument("--generator", action="append", choices=["extractive", "local", "gemini", "claude"],
                         help="generator(s) to score; default: extractive")
     parser.add_argument("--limit", type=int, default=None, help="score only the first N questions")
     parser.add_argument("--design-choices", action="store_true",

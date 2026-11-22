@@ -1,0 +1,60 @@
+{"question": "What was the name of the student who won the Merit-cum-Means Grant last year?", "style": "direct", "kind": "near"}
+{"question": "how many students got the merit cum means grant last year", "style": "colloquial", "kind": "near"}
+{"question": "Who won CodeSprint 2026?", "style": "direct", "kind": "near"}
+{"question": "What will the problem statements for CodeSprint 2027 be about?", "style": "direct", "kind": "near"}
+{"question": "can outside college students join codesprint?", "style": "colloquial", "kind": "near"}
+{"question": "Which sports are counted as recognised competitions for the sports scholarship?", "style": "direct", "kind": "near"}
+{"question": "How many Sports Excellence Scholarships does SVU give each year?", "style": "direct", "kind": "near"}
+{"question": "What is the email address of the Sports Officer?", "style": "direct", "kind": "near"}
+{"question": "What is the phone number of the Scholarship Cell?", "style": "direct", "kind": "near"}
+{"question": "can i take casual leave during the end-term exams?", "style": "colloquial", "kind": "near"}
+{"question": "Who is the current Student Ombudsperson?", "style": "direct", "kind": "near"}
+{"question": "Who are the two student representatives on the Grievance Redressal Committee?", "style": "direct", "kind": "near"}
+{"question": "How many complaints did the GRC receive last year?", "style": "direct", "kind": "near"}
+{"question": "What is the phone number of the Internal Complaints Committee?", "style": "direct", "kind": "near"}
+{"question": "what is the fine if i stay out of hostel without a leave card the second time", "style": "colloquial", "kind": "near"}
+{"question": "Which software does SVU use for similarity checking?", "style": "paraphrase", "kind": "near"}
+{"question": "What similarity percentage is allowed for program code in lab assignments?", "style": "paraphrase", "kind": "near"}
+{"question": "What is the maximum page limit for a major project report?", "style": "paraphrase", "kind": "near"}
+{"question": "Who are the other members of the Academic Integrity Committee besides the Dean Academics?", "style": "paraphrase", "kind": "near"}
+{"question": "How much interest does SVU pay if a fee refund is delayed?", "style": "paraphrase", "kind": "near"}
+{"question": "What is the fee for applying for a break of study?", "style": "paraphrase", "kind": "near"}
+{"question": "Can I get condonation in a third semester if I pay a higher fee?", "style": "paraphrase", "kind": "near"}
+{"question": "How many students were detained under the DT grade last semester?", "style": "paraphrase", "kind": "near"}
+{"question": "What are the working hours of the Dean Academics office?", "style": "paraphrase", "kind": "near"}
+{"question": "hackathon me jeetne wali team ka prize kis account me aata hai?", "style": "hinglish", "kind": "near"}
+{"question": "scholarship cell ka phone number kya hai?", "style": "hinglish", "kind": "near"}
+{"question": "grievance committee me kaun kaun se faculty members hain?", "style": "hinglish", "kind": "near"}
+{"question": "plagiarism check karne wala software kaunsa hai?", "style": "hinglish", "kind": "near"}
+{"question": "kya mujhe sports scholarship ke liye trials ka exact date milega?", "style": "hinglish", "kind": "near"}
+{"question": "how many lateral entry students joined SVU last year", "style": "colloquial", "kind": "near"}
+{"question": "What is the average salary offered to B.Tech students in campus placements?", "style": "direct", "kind": "far"}
+{"question": "Which companies visit SVU for placements?", "style": "direct", "kind": "far"}
+{"question": "What is the fee structure for the MBA programme at SVU?", "style": "direct", "kind": "far"}
+{"question": "Does SVU offer a mechanical engineering diploma?", "style": "direct", "kind": "far"}
+{"question": "How do I apply for a student visa to study in Canada?", "style": "direct", "kind": "far"}
+{"question": "What is the price of a masala dosa in the canteen?", "style": "direct", "kind": "far"}
+{"question": "Who is the Vice-Chancellor's wife?", "style": "direct", "kind": "far"}
+{"question": "What is the capital of Australia?", "style": "direct", "kind": "far"}
+{"question": "Write a Python function to reverse a linked list.", "style": "direct", "kind": "far"}
+{"question": "What is the weather in Chandigarh tomorrow?", "style": "direct", "kind": "far"}
+{"question": "Who won the cricket world cup in 2011?", "style": "direct", "kind": "far"}
+{"question": "what is the home address of my maths professor", "style": "colloquial", "kind": "far"}
+{"question": "can u help me debug my java code, it says nullpointerexception", "style": "colloquial", "kind": "far"}
+{"question": "best laptop under 50000 for coding?", "style": "colloquial", "kind": "far"}
+{"question": "is it going to rain this weekend", "style": "colloquial", "kind": "far"}
+{"question": "which movie should i watch tonight", "style": "colloquial", "kind": "far"}
+{"question": "how to get a job at google after btech", "style": "colloquial", "kind": "far"}
+{"question": "what is the highest package in the Civil Engineering department?", "style": "colloquial", "kind": "far"}
+{"question": "How can someone prepare for the GATE exam in three months?", "style": "paraphrase", "kind": "far"}
+{"question": "What is the best way to learn guitar quickly?", "style": "paraphrase", "kind": "far"}
+{"question": "Which MBA entrance exam should I take after graduation?", "style": "paraphrase", "kind": "far"}
+{"question": "How is the stock market doing today?", "style": "paraphrase", "kind": "far"}
+{"question": "Explain how photosynthesis works.", "style": "paraphrase", "kind": "far"}
+{"question": "How many students study in the Pharmacy department?", "style": "paraphrase", "kind": "far"}
+{"question": "placement me kitna package milta hai average?", "style": "hinglish", "kind": "far"}
+{"question": "aaj ka mausam kaisa rahega?", "style": "hinglish", "kind": "far"}
+{"question": "canteen me chai ka rate kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "bhai passport banwane ka process kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "cricket match ka score kya hai abhi?", "style": "hinglish", "kind": "far"}
+{"question": "mujhe C++ me bubble sort ka code likh do", "style": "hinglish", "kind": "far"}

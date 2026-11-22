@@ -13,7 +13,7 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Literal
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 from . import config, evaluate
 from .generate import available_generators
 from .pipeline import get_engine
-from .security import HEADERS, limiter, require_admin
+from .security import HEADERS, limiter
 
 log = logging.getLogger("app")
 
@@ -53,7 +53,7 @@ class Turn(BaseModel):
 class ChatRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     history: list[Turn] = Field(default_factory=list, max_length=20)
-    generator: Literal["extractive", "gemini", "claude"] = "extractive"
+    generator: Literal["extractive", "local", "gemini", "claude"] = "extractive"
     category: Literal["syllabus", "regulations", "notices", "faqs", "policies"] | None = None
 
 
@@ -138,8 +138,9 @@ def _safe_name(name: str) -> str:
     return stem + Path(name).suffix.lower()
 
 
-@app.post("/api/documents", dependencies=[Depends(require_admin)])
-async def upload(file: UploadFile = File(...), category: str = Form(...)) -> dict:
+@app.post("/api/documents")
+async def upload(http: Request, file: UploadFile = File(...), category: str = Form(...)) -> dict:
+    limiter.check(http, "write", config.WRITES_PER_MINUTE)
     if category not in config.CATEGORIES:
         raise HTTPException(400, "Choose one of the five document categories.")
     name = _safe_name(file.filename or "document.txt")
@@ -169,8 +170,9 @@ async def upload(file: UploadFile = File(...), category: str = Form(...)) -> dic
             "replaced": target in before}
 
 
-@app.delete("/api/documents/{doc_id}", dependencies=[Depends(require_admin)])
-def delete_document(doc_id: str) -> dict:
+@app.delete("/api/documents/{doc_id}")
+def delete_document(doc_id: str, http: Request) -> dict:
+    limiter.check(http, "write", config.WRITES_PER_MINUTE)
     engine = get_engine()
     for d in engine.documents:
         if d.doc_id == doc_id:
@@ -191,9 +193,10 @@ def eval_results() -> dict:
     return {"available": True, **json.loads(config.EVAL_RESULTS.read_text(encoding="utf-8"))}
 
 
-@app.post("/api/eval/run", dependencies=[Depends(require_admin)])
-def eval_run() -> dict:
+@app.post("/api/eval/run")
+def eval_run(http: Request) -> dict:
     """Re-run retrieval, abstention and extractive-answer evaluation (a few seconds)."""
+    limiter.check(http, "write", config.WRITES_PER_MINUTE)
     if not config.EVAL_QUESTIONS.exists():
         raise HTTPException(404, "data/eval/questions.jsonl is missing.")
     results = evaluate.run(["extractive"], engine=get_engine())

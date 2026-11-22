@@ -37,6 +37,34 @@ Other commands:
 .venv\Scripts\python -m app.evaluate --generator gemini    # also score Gemini answers (needs a key)
 ```
 
+## The local model
+
+The chatbot can write its answers with a small language model trained for this corpus.
+It runs on this computer's CPU: no API key, and nothing is sent to another service.
+
+Double-click `train_local_model.bat` (plug the laptop in first; training is 1 to 2 hours
+of CPU work), or:
+
+```
+.venv\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+.venv\Scripts\python -m pip install -r requirements-model.txt
+.venv\Scripts\python -m training.data          # build the training set from data/train/raw/
+.venv\Scripts\python -m training.train         # fine-tune google/flan-t5-small (--resume continues a stopped run)
+.venv\Scripts\python -m training.test_model    # test it on the held-out questions
+.venv\Scripts\python -m training.report        # write report/Local_Model_Training_and_Testing_Report.docx
+```
+
+Then restart the server and choose **Local model** under "Answer by". The model is saved
+in `models/svu-flan-t5/`, which is not committed to git (it is about 300 MB), so a
+deployed copy of the site uses it only if that folder is put on the server.
+
+How it is trained: 990 questions were written from the 18 documents (810 with answers,
+180 the documents do not answer). Each one is run through the real retriever, and the
+model learns to write the answer with a `[n]` citation from the top 3 passages, or
+`NO_ANSWER` when they do not contain it. The labelled questions in `data/eval/` are
+never used for training. If the model writes a number that is not in the passages, the
+chatbot discards its answer and quotes the documents instead.
+
 ## Turning on Gemini
 
 The assistant works without any language model ("Quote the documents"). To have Gemini
@@ -85,9 +113,11 @@ Questions and the retrieved passages are then sent to Google's API.
 3. **Decide whether to answer** (`Index.confidence`). A score from 0 to 1 combines how
    many of the question's important words appear in the retrieved passages with the
    best embedding similarity. Below a threshold the assistant declines.
-4. **Generate** (`app/generate.py`). Three interchangeable generators:
+4. **Generate** (`app/generate.py`). Four interchangeable generators:
    - *Quote the documents*: no language model. Picks the sentences that best answer
      the question and quotes them. It cannot invent anything and needs no internet.
+   - *Local model*: a FLAN-T5 model fine-tuned on this corpus writes the answer on
+     this computer (`app/local_model.py`; see "The local model" above).
    - *Gemini*: the Gemini API writes the answer from the passages (needs
      `GEMINI_API_KEY`, default model `gemini-3.8-flash`).
    - *Claude*: the Claude API writes the answer (needs `ANTHROPIC_API_KEY`).
@@ -106,12 +136,15 @@ app/
   textutil.py    tokenizer, sentence and table-row splitting
   retrieval.py   BM25, dense embeddings, hybrid fusion, confidence
   generate.py    quote-only, Gemini and Claude answer generators
+  local_model.py the locally trained answer model
   pipeline.py    the RAG pipeline (retrieve, gate, generate, cite)
   evaluate.py    evaluation on the labelled question set
   main.py        FastAPI server and API
 web/             the website: home page, Ask, Library, Evaluation (plain HTML, CSS, JavaScript)
 data/corpus/     the knowledge corpus, one folder per category
 data/eval/       questions.jsonl (labels), results.json (last evaluation)
+training/        build the training set, fine-tune, test and report on the local model
+data/train/      training questions (raw/) and the built training set
 tests/           automated tests
 ```
 
@@ -129,6 +162,9 @@ git, so a key in it is not committed).
 | `ANTHROPIC_API_KEY` | not set | Turns on the Claude generator |
 | `CLAUDE_MODEL` | claude-opus-5-5 | Claude model |
 | `TOP_K` | 4 | Passages given to the generator |
+| `LOCAL_PASSAGES` | 3 | Passages the local model reads (it was trained with 3) |
+| `LOCAL_NUMBER_CHECK` | 1 | Discard a local-model answer containing a number that is not in the passages |
+| `WRITES_PER_MINUTE` | 10 | Uploads, deletes and evaluation runs allowed per visitor per minute |
 | `ABSTAIN_THRESHOLD` | from the last evaluation | Confidence below which the assistant declines |
 
 ## The evaluation set

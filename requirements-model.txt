@@ -1,0 +1,8 @@
+# Only needed for the locally trained answer model (app/local_model.py, training/).
+# The rest of the project runs without these.
+# CPU build of PyTorch:  pip install torch --index-url https://download.pytorch.org/whl/cpu
+torch>=2.2
+transformers>=4.44
+sentencepiece>=0.2
+protobuf>=4.25
+matplotlib>=3.8        # training-curve figure in the model report

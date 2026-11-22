@@ -1,0 +1,60 @@
+{"question": "Who was the topper of the Data Structures course last year?", "style": "direct", "kind": "near"}
+{"question": "What was the question paper pattern of last year's CS201 end-term?", "style": "direct", "kind": "near"}
+{"question": "What are the office hours of Dr. Harpreet Kaur Sandhu?", "style": "direct", "kind": "near"}
+{"question": "Is Operating Systems lab in Semester 3 taught in Linux or Windows?", "style": "direct", "kind": "near"}
+{"question": "Is Deep Learning a separate core course in the CSE course structure?", "style": "direct", "kind": "near"}
+{"question": "What is the syllabus of the Computer Vision elective?", "style": "direct", "kind": "near"}
+{"question": "What is the course code of Cloud Security in the B.Tech CSE structure?", "style": "direct", "kind": "near"}
+{"question": "What is the pass percentage of students in DBMS?", "style": "direct", "kind": "near"}
+{"question": "How many marks did the ML course project toppers score?", "style": "direct", "kind": "near"}
+{"question": "Which MongoDB version is used in the DBMS lab?", "style": "direct", "kind": "near"}
+{"question": "What is the CGPA cutoff for getting a Ph.D. admission after B.Tech?", "style": "direct", "kind": "near"}
+{"question": "When will the results of the Special Backlog Examination be declared?", "style": "direct", "kind": "near"}
+{"question": "How many marks is the Operating Systems lab worth?", "style": "direct", "kind": "near"}
+{"question": "What are the topics of the Natural Language Processing elective in detail?", "style": "direct", "kind": "near"}
+{"question": "Which faculty teaches Compiler Design in Semester 5?", "style": "direct", "kind": "near"}
+{"question": "will the end term of cs211 have questions on mongodb queries", "style": "colloquial", "kind": "near"}
+{"question": "who is the best teacher for ml at svu", "style": "colloquial", "kind": "near"}
+{"question": "is there a grace marks rule if i fail by 1 mark", "style": "colloquial", "kind": "near"}
+{"question": "what is the exact date of the cs301 final exam", "style": "colloquial", "kind": "near"}
+{"question": "can i see the solved papers of ds mid-term from 2023", "style": "colloquial", "kind": "near"}
+{"question": "how many students failed in cs201 last sem", "style": "colloquial", "kind": "near"}
+{"question": "Which exact chapters of Weiss will be asked in the end-term?", "style": "paraphrase", "kind": "near"}
+{"question": "What is the rank list of the previous batch in Semester 4?", "style": "paraphrase", "kind": "near"}
+{"question": "In which year was the B.Tech CSE curriculum first introduced at SVU?", "style": "paraphrase", "kind": "near"}
+{"question": "Does the course structure include a course on Quantum Computing and what are its credits?", "style": "paraphrase", "kind": "near"}
+{"question": "How much does the Python for Data Science Lab record cost to print?", "style": "paraphrase", "kind": "near"}
+{"question": "ML ke lab mein kitne students ko GPU mil jaata hai ek time par kaun decide karta hai?", "style": "hinglish", "kind": "near"}
+{"question": "dbms ke important questions kaun se hain end-term ke liye?", "style": "hinglish", "kind": "near"}
+{"question": "cs201 ka toppers ka naam kya hai pichle saal ka?", "style": "hinglish", "kind": "near"}
+{"question": "Semester 6 ka timetable kab aayega?", "style": "hinglish", "kind": "near"}
+{"question": "What is the average salary package of CSE graduates at SVU?", "style": "direct", "kind": "far"}
+{"question": "Which companies visit the campus for placements?", "style": "direct", "kind": "far"}
+{"question": "What is the fee structure of the MBA programme?", "style": "direct", "kind": "far"}
+{"question": "What is the syllabus of Thermodynamics in Mechanical Engineering?", "style": "direct", "kind": "far"}
+{"question": "How do I apply for a student visa to study in Germany?", "style": "direct", "kind": "far"}
+{"question": "What is the price of a samosa in the canteen?", "style": "direct", "kind": "far"}
+{"question": "What is the capital of Australia?", "style": "direct", "kind": "far"}
+{"question": "Write a Python program to reverse a linked list.", "style": "direct", "kind": "far"}
+{"question": "Explain how gradient descent works with an example.", "style": "direct", "kind": "far"}
+{"question": "What is the weather in Chandigarh today?", "style": "direct", "kind": "far"}
+{"question": "What is the home address of the Vice-Chancellor?", "style": "direct", "kind": "far"}
+{"question": "Is the dean married?", "style": "direct", "kind": "far"}
+{"question": "What is the phone number of the Civil Engineering department head?", "style": "direct", "kind": "far"}
+{"question": "Who won the cricket world cup in 2011?", "style": "direct", "kind": "far"}
+{"question": "how do i fix a segmentation fault in my c code", "style": "colloquial", "kind": "far"}
+{"question": "whats a good laptop for coding under 50k", "style": "colloquial", "kind": "far"}
+{"question": "which movie should i watch this weekend", "style": "colloquial", "kind": "far"}
+{"question": "is it going to rain tomorrow", "style": "colloquial", "kind": "far"}
+{"question": "how do i make maggi in the hostel room", "style": "colloquial", "kind": "far"}
+{"question": "What is the best way to prepare for a job interview at Google?", "style": "paraphrase", "kind": "far"}
+{"question": "Can you recommend a good gym near the university?", "style": "paraphrase", "kind": "far"}
+{"question": "How can I get a work permit in Canada after graduation?", "style": "paraphrase", "kind": "far"}
+{"question": "Tell me a joke about programmers.", "style": "paraphrase", "kind": "far"}
+{"question": "What is the salary of a professor in the Physics department?", "style": "paraphrase", "kind": "far"}
+{"question": "mujhe mba mein admission lena hai, uski fees kitni hai?", "style": "hinglish", "kind": "far"}
+{"question": "aaj ka mausam kaisa rahega?", "style": "hinglish", "kind": "far"}
+{"question": "canteen mein thali kitne ki hai?", "style": "hinglish", "kind": "far"}
+{"question": "python mein bubble sort ka code likh do", "style": "hinglish", "kind": "far"}
+{"question": "mechanical department ke HOD ka number kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "IPL ka match aaj kis team ke beech hai?", "style": "hinglish", "kind": "far"}

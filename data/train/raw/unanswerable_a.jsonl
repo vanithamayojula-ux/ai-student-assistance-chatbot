@@ -1,0 +1,60 @@
+{"question": "What is the weekly mess menu for the vegetarian hall?", "style": "direct", "kind": "near"}
+{"question": "What is the Wi-Fi speed in the hostel rooms?", "style": "direct", "kind": "near"}
+{"question": "Which bus stops are on the Chandigarh route?", "style": "direct", "kind": "near"}
+{"question": "How many books are available in the Central Library?", "style": "direct", "kind": "near"}
+{"question": "What is the fee for a rank-wise hostel room upgrade?", "style": "direct", "kind": "near"}
+{"question": "What is the cutoff JEE Main percentile for Computer Science admission?", "style": "direct", "kind": "near"}
+{"question": "What is the fee for revaluation of an answer sheet?", "style": "direct", "kind": "near"}
+{"question": "What is the phone number of the Chief Warden?", "style": "direct", "kind": "near"}
+{"question": "Is there a swimming pool on campus?", "style": "direct", "kind": "near"}
+{"question": "How much does an MS Office licence cost for a personal laptop?", "style": "direct", "kind": "near"}
+{"question": "whats the dress code for the exam hall?", "style": "colloquial", "kind": "near"}
+{"question": "do they serve eggs in the veg mess", "style": "colloquial", "kind": "near"}
+{"question": "can i bring my own laptop to the open computer lab", "style": "colloquial", "kind": "near"}
+{"question": "is the library ac or not", "style": "colloquial", "kind": "near"}
+{"question": "how many seats are left in ece this year", "style": "colloquial", "kind": "near"}
+{"question": "what time does the first morning bus leave from ropar", "style": "colloquial", "kind": "near"}
+{"question": "do i get a refund if the bus pass is cancelled midway", "style": "colloquial", "kind": "near"}
+{"question": "will i get my hall ticket on whatsapp", "style": "colloquial", "kind": "near"}
+{"question": "Which hospital doctor visits the Campus Health Centre on weekends?", "style": "paraphrase", "kind": "near"}
+{"question": "How many washing machines does each hostel block have?", "style": "paraphrase", "kind": "near"}
+{"question": "What is the passing mark in the end-term examination?", "style": "paraphrase", "kind": "near"}
+{"question": "What is the dress and conduct code inside the hostel mess?", "style": "paraphrase", "kind": "near"}
+{"question": "What are the marks required in SVUET to get a seat in Civil Engineering?", "style": "paraphrase", "kind": "near"}
+{"question": "Who is the current Controller of Examinations by name?", "style": "paraphrase", "kind": "near"}
+{"question": "mess mein aaj ka menu kya hai?", "style": "hinglish", "kind": "near"}
+{"question": "hostel mein AC room milta hai kya aur uska kitna charge hai?", "style": "hinglish", "kind": "near"}
+{"question": "library mein newspaper aur magazines kaun kaun se aate hain?", "style": "hinglish", "kind": "near"}
+{"question": "campus wifi ka password kya hai?", "style": "hinglish", "kind": "near"}
+{"question": "SVUET ka syllabus kya hota hai?", "style": "hinglish", "kind": "near"}
+{"question": "bus mein AC hai ya nahi?", "style": "hinglish", "kind": "near"}
+{"question": "What is the average placement salary for CSE graduates?", "style": "direct", "kind": "far"}
+{"question": "Which companies visit the campus for recruitment?", "style": "direct", "kind": "far"}
+{"question": "What is the fee structure of the MBA programme at SVU?", "style": "direct", "kind": "far"}
+{"question": "How do I apply for a student visa to study in Canada?", "style": "direct", "kind": "far"}
+{"question": "What is the price of a plate of samosa in the canteen?", "style": "direct", "kind": "far"}
+{"question": "What is the capital of Australia?", "style": "direct", "kind": "far"}
+{"question": "Who is the vice chancellor and what is his home address?", "style": "direct", "kind": "far"}
+{"question": "Which mechanical engineering lab has the CNC machine?", "style": "direct", "kind": "far"}
+{"question": "whats the weather in ropar today", "style": "colloquial", "kind": "far"}
+{"question": "write me a python code to reverse a string", "style": "colloquial", "kind": "far"}
+{"question": "can u help me with my ielts speaking prep", "style": "colloquial", "kind": "far"}
+{"question": "who won the ipl last year", "style": "colloquial", "kind": "far"}
+{"question": "is there a good gym in chandigarh outside campus", "style": "colloquial", "kind": "far"}
+{"question": "how much does a pg near campus cost per month", "style": "colloquial", "kind": "far"}
+{"question": "What is the salary package offered to students by top recruiters this year?", "style": "paraphrase", "kind": "far"}
+{"question": "How can I get a work permit in Germany after graduation?", "style": "paraphrase", "kind": "far"}
+{"question": "Explain how a binary search works with code in Java.", "style": "paraphrase", "kind": "far"}
+{"question": "What is the tuition for the Master of Business Administration course?", "style": "paraphrase", "kind": "far"}
+{"question": "What are the personal phone numbers of the professors?", "style": "paraphrase", "kind": "far"}
+{"question": "Which train goes from Delhi to Ropar in the morning?", "style": "paraphrase", "kind": "far"}
+{"question": "Which university is ranked first in the world?", "style": "paraphrase", "kind": "far"}
+{"question": "What is the faculty strength of the Pharmacy department?", "style": "paraphrase", "kind": "far"}
+{"question": "campus placement mein kitna package milta hai?", "style": "hinglish", "kind": "far"}
+{"question": "canteen mein chai ka rate kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "aaj mausam kaisa rahega Ropar mein?", "style": "hinglish", "kind": "far"}
+{"question": "mujhe ek C++ program likh kar do jo prime numbers print kare", "style": "hinglish", "kind": "far"}
+{"question": "UK ka visa lagwane ka process kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "MBA ki admission last date kab hai?", "style": "hinglish", "kind": "far"}
+{"question": "professor sharma ka personal mobile number kya hai?", "style": "hinglish", "kind": "far"}
+{"question": "India ke prime minister kaun hain?", "style": "hinglish", "kind": "far"}

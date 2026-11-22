@@ -1,0 +1,24 @@
+{"id": "U01", "question": "What time does the Sports Complex close?", "type": "answerable", "style": "direct", "key_facts": ["9:30 PM"]}
+{"id": "U02", "question": "till when is the badminton hall open?", "type": "answerable", "style": "colloquial", "key_facts": ["8:45 PM"]}
+{"id": "U03", "question": "How many times can I enter the sports complex without my ID card?", "type": "answerable", "style": "direct", "key_facts": ["2"]}
+{"id": "U04", "question": "How much is the gym membership fee for day scholars?", "type": "answerable", "style": "direct", "key_facts": ["Rs. 1,200"]}
+{"id": "U05", "question": "do hostel students have to pay for the gym?", "type": "answerable", "style": "colloquial", "key_facts": ["free"]}
+{"id": "U06", "question": "On which days is the gym orientation session held?", "type": "answerable", "style": "direct", "key_facts": ["Monday", "Thursday"]}
+{"id": "U07", "question": "What is the maximum number of students allowed in the gymnasium at once?", "type": "answerable", "style": "paraphrase", "key_facts": ["40"]}
+{"id": "U08", "question": "How long is one court booking slot?", "type": "answerable", "style": "direct", "key_facts": ["45 minutes"]}
+{"id": "U09", "question": "ek hafte mein kitni court booking kar sakte hain?", "type": "answerable", "style": "hinglish", "key_facts": ["3"]}
+{"id": "U10", "question": "what happens if i keep missing the court slots i booked?", "type": "answerable", "style": "colloquial", "key_facts": ["30 days"]}
+{"id": "U11", "question": "What is the fine for returning sports equipment late?", "type": "answerable", "style": "direct", "key_facts": ["Rs. 50"]}
+{"id": "U12", "question": "During which months is the swimming pool open?", "type": "answerable", "style": "direct", "key_facts": ["1 March", "31 October"]}
+{"id": "U13", "question": "swimming pool ka registration fee kitna hai?", "type": "answerable", "style": "hinglish", "key_facts": ["Rs. 800"]}
+{"id": "U14", "question": "Is a medical certificate needed to register for the pool?", "type": "answerable", "style": "paraphrase", "key_facts": ["6 months"]}
+{"id": "U15", "question": "When are the pool timings reserved for women students?", "type": "answerable", "style": "direct", "key_facts": ["4:00 PM", "5:00 PM"]}
+{"id": "U16", "question": "When are the selection trials for university teams?", "type": "answerable", "style": "direct", "key_facts": ["August"]}
+{"id": "U17", "question": "How much kit allowance does a university team player get?", "type": "answerable", "style": "paraphrase", "key_facts": ["Rs. 3,000"]}
+{"id": "U18", "question": "how much practice attendance do team members need?", "type": "answerable", "style": "colloquial", "key_facts": ["80%"]}
+{"id": "U19", "question": "What is the name of the gym instructor?", "type": "unanswerable", "style": "direct", "key_facts": []}
+{"id": "U20", "question": "How deep is the swimming pool at the deep end?", "type": "unanswerable", "style": "direct", "key_facts": []}
+{"id": "U21", "question": "cricket ground ki booking kaise hoti hai?", "type": "unanswerable", "style": "hinglish", "key_facts": []}
+{"id": "U22", "question": "How much is the yoga class fee at the sports complex?", "type": "unanswerable", "style": "direct", "key_facts": []}
+{"id": "U23", "question": "which brand of treadmills does the gym have?", "type": "unanswerable", "style": "colloquial", "key_facts": []}
+{"id": "U24", "question": "Who won the inter-university badminton tournament last year?", "type": "unanswerable", "style": "direct", "key_facts": []}

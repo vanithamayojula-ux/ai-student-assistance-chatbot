@@ -102,28 +102,12 @@
   }
 
   /* ---------- API ---------- */
-  // Admin actions (upload, delete) send X-Admin-Token. It lives in sessionStorage only,
-  // so it is gone when the tab closes; on a 401 the user is asked for it once and the call retried.
-  const TOKEN_KEY = "shd.adminToken";
-  const getToken = () => { try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch { return ""; } };
-  const setToken = (t) => { try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ } };
-
-  async function api(path, options = {}, retried = false) {
-    const { admin, ...init } = options;
-    if (admin && getToken()) init.headers = { ...(init.headers || {}), "X-Admin-Token": getToken() };
+  async function api(path, init = {}) {
     let response;
     try { response = await fetch(path, init); }
     catch { throw new Error("Can't reach the server. Start it with: python -m uvicorn app.main:app --port 8000"); }
     let body = null;
     try { body = await response.json(); } catch { /* not JSON */ }
-    if (admin && response.status === 401 && !retried) {
-      setToken("");
-      const token = prompt("This action needs the admin token. Enter it to continue:");
-      if (!token) throw new Error("Cancelled: the admin token is needed for this.");
-      setToken(token.trim());
-      return api(path, options, true);
-    }
-    if (response.status === 401) setToken("");
     if (!response.ok) {
       const detail = typeof body?.detail === "string" ? body.detail : `The server answered ${response.status}.`;
       throw new Error(detail);
@@ -178,7 +162,7 @@
     form.append("file", file);
     form.append("category", category);
     toast(`Reading ${file.name}…`);
-    const result = await api("/api/documents", { method: "POST", body: form, admin: true });
+    const result = await api("/api/documents", { method: "POST", body: form });
     refreshCorpus();
     toast(`${result.replaced ? "Replaced" : "Added"} “${result.title}” (${plural(result.sections, "section")}).`);
     return result;
@@ -783,6 +767,7 @@
       let saved = null;
       try { saved = localStorage.getItem(GEN_KEY); } catch { /* ignore */ }
       if (saved && h.generators.some((g) => g.id === saved && g.ready)) genSelect.value = saved;
+      else genSelect.value = ["local", "gemini"].find((id) => h.generators.some((g) => g.id === id && g.ready)) || genSelect.value;
       setCategory(state.category);
       renderKb();
       if (!current()) renderThread();
@@ -1377,7 +1362,7 @@
     async function removeDoc(d) {
       if (!confirm(`Remove “${d.title}” from the library?`)) return;
       try {
-        await api(`/api/documents/${encodeURIComponent(d.doc_id)}`, { method: "DELETE", admin: true });
+        await api(`/api/documents/${encodeURIComponent(d.doc_id)}`, { method: "DELETE" });
         refreshCorpus();
         [h, docs] = await Promise.all([health(), loadDocs()]);
         toast(`Removed “${d.title}”.`);
@@ -1546,8 +1531,6 @@
       const send = input.parentElement.querySelector("button") || input.parentElement.parentElement.querySelector("button");
       send?.addEventListener("click", go);
     }
-    const sso = $$("button").find((b) => b.textContent.trim() === "Continue with SSO");
-    sso?.addEventListener("click", () => { location.href = "login.html"; });
   }
 
   /* ---------- start ---------- */

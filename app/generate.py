@@ -1,9 +1,11 @@
 """Generation: turn retrieved passages into an answer with citations.
 
-Three generators share one contract (question + passages in, cited answer out):
+Four generators share one contract (question + passages in, cited answer out):
 
 * extractive - no language model. Picks the sentences that best answer the
                question and quotes them. Cannot hallucinate, works offline.
+* local      - a small model fine-tuned on this corpus writes the answer on this
+               computer (app/local_model.py).
 * gemini     - the Gemini API writes the answer from the passages.
 * claude     - the Claude API writes the answer from the passages.
 
@@ -22,7 +24,7 @@ from typing import Iterator
 
 import numpy as np
 
-from . import config
+from . import config, local_model
 from .hinglish import to_search_english
 from .retrieval import Hit, Index
 from .textutil import clean_unit, split_blocks, tokenize
@@ -314,6 +316,13 @@ def available_generators(force: bool = False) -> list[dict]:
         "detail": "Answers with the exact sentences from the documents. No language model.",
     }]
 
+    local = {"id": "local", "label": "Local model (trained on this corpus)", "ready": False,
+             "detail": "Train it first: python -m training.train"}
+    if local_model.is_trained():
+        missing = local_model.runtime_missing()
+        local.update(ready=not missing, detail=missing or "A model fine-tuned for this corpus writes the answer on this computer.")
+    generators.append(local)
+
     gemini = {"id": "gemini", "label": f"Gemini ({config.GEMINI_MODEL})", "ready": False,
               "detail": "Set GEMINI_API_KEY (environment variable or .env file) to turn this on."}
     if gemini_api_key():
@@ -335,4 +344,4 @@ def available_generators(force: bool = False) -> list[dict]:
     return generators
 
 
-STREAMS = {"gemini": gemini_stream, "claude": claude_stream}
+STREAMS = {"local": local_model.local_stream, "gemini": gemini_stream, "claude": claude_stream}

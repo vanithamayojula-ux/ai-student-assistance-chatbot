@@ -6,3 +6,4 @@ data/uploads/
 data/feedback.jsonl
 .env
 .playwright-mcp/
+models/

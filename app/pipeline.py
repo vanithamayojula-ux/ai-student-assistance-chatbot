@@ -141,7 +141,8 @@ class Engine:
         if generator in STREAMS:
             buffer, released = "", False
             try:
-                for piece in STREAMS[generator](question, hits, history):
+                asked = query if generator == "local" else question   # the local model sees no history
+                for piece in STREAMS[generator](asked, hits, history):
                     buffer += piece
                     # Hold back the first few characters: if the model is saying
                     # NO_ANSWER the student should see the abstain message, not the token.

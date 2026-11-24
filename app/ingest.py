@@ -19,6 +19,11 @@ HEADING = re.compile(r"^(#{1,3})\s+(.*\S)\s*$")
 
 @dataclass
 class Chunk:
+    """One passage: a small piece of a document that can be searched and cited.
+
+    The chatbot never searches whole files. It searches chunks, and the chunk that is
+    found is also the one shown to the student as the source.
+    """
     chunk_id: str      # e.g. "REG-01#3"
     doc_id: str
     title: str
@@ -29,6 +34,7 @@ class Chunk:
     origin: str        # "sample" (shipped corpus) or "upload"
 
     def to_dict(self) -> dict:
+        """The chunk as a plain dictionary (easy to turn into JSON)."""
         return asdict(self)
 
     @property
@@ -39,6 +45,7 @@ class Chunk:
 
 @dataclass
 class Document:
+    """One whole file from the knowledge base, already split into its sections."""
     doc_id: str
     title: str
     category: str
@@ -52,6 +59,7 @@ class Document:
 # reading files
 # --------------------------------------------------------------------------
 def _read_pdf(path: Path) -> str:
+    """Pull the text out of a PDF, page by page (a scanned PDF has no text to pull)."""
     from pypdf import PdfReader
 
     reader = PdfReader(str(path))
@@ -59,6 +67,11 @@ def _read_pdf(path: Path) -> str:
 
 
 def _read_docx(path: Path) -> str:
+    """Pull the text out of a Word file.
+
+    Word headings are turned into "## heading" lines and tables into "| a | b |" rows,
+    so a Word file ends up looking like the markdown files and can be chunked the same way.
+    """
     import docx
 
     document = docx.Document(str(path))
@@ -80,6 +93,7 @@ def _read_docx(path: Path) -> str:
 
 
 def read_text(path: Path) -> str:
+    """Read any supported file as text, choosing the right reader by file extension."""
     ext = path.suffix.lower()
     if ext == ".pdf":
         return _read_pdf(path)
@@ -89,6 +103,12 @@ def read_text(path: Path) -> str:
 
 
 def _parse_front_matter(raw: str) -> tuple[dict, str]:
+    """Separate a document's "label" from its text.
+
+    Our sample documents start with a small block between --- lines holding details
+    such as doc_id, title, category and updated date (called front matter). This returns
+    those details as a dictionary, plus the remaining text.
+    """
     match = FRONT_MATTER.match(raw)
     if not match:
         return {}, raw
@@ -108,6 +128,7 @@ def _split_sections(body: str, fallback_title: str) -> tuple[str, list[tuple[str
     buffer: list[str] = []
 
     def flush() -> None:
+        """Save the lines collected so far as one finished section."""
         text = "\n".join(buffer).strip()
         if text:
             sections.append((heading, text))
@@ -128,10 +149,15 @@ def _split_sections(body: str, fallback_title: str) -> tuple[str, list[tuple[str
 
 
 def _slug_id(path: Path) -> str:
+    """Make an id for an uploaded file from its name, e.g. "hostel rules.pdf" -> "UP-HOSTEL-RULES"."""
     return "UP-" + re.sub(r"[^A-Za-z0-9]+", "-", path.stem).strip("-").upper()[:40]
 
 
 def load_document(path: Path, category: str, origin: str) -> Document | None:
+    """Turn one file into a Document: read it, read its label, split it into sections.
+
+    Returns None when the file has no text.
+    """
     raw = read_text(path)
     if not raw.strip():
         return None
@@ -150,6 +176,11 @@ def load_document(path: Path, category: str, origin: str) -> Document | None:
 
 
 def load_all_documents() -> list[Document]:
+    """Load every document: the sample corpus (data/corpus) and the uploads (data/uploads).
+
+    The folder a file sits in gives its category (syllabus, notices ...). A file that
+    cannot be read is skipped with a message, so one bad upload never breaks the chatbot.
+    """
     docs: list[Document] = []
     seen: set[str] = set()
     for base, origin in ((config.CORPUS_DIR, "sample"), (config.UPLOAD_DIR, "upload")):
@@ -196,6 +227,12 @@ def _windows(text: str) -> list[str]:
 
 
 def chunk_document(doc: Document) -> list[Chunk]:
+    """CHUNKING: cut one document into passages.
+
+    Rule: one section (the text under one heading) = one chunk. Only a section longer
+    than MAX_CHUNK_WORDS (220 words) is cut further, into overlapping windows of 160
+    words. Each chunk gets an id like "REG-01#3" (document id + running number).
+    """
     chunks: list[Chunk] = []
     n = 0
     for heading, body in doc.sections:
@@ -218,6 +255,7 @@ def chunk_document(doc: Document) -> list[Chunk]:
 
 
 def build_chunks() -> tuple[list[Document], list[Chunk]]:
+    """The whole ingestion step in one call: load all documents, then chunk each one."""
     docs = load_all_documents()
     chunks = [chunk for doc in docs for chunk in chunk_document(doc)]
     return docs, chunks

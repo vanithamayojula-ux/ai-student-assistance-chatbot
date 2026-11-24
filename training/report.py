@@ -26,10 +26,16 @@ KIND = {"answer": "Answer in the passages (retrieval order)", "shuffled": "Answe
 
 
 def pct(value: float) -> str:
+    """Format a share as a percentage: 0.875 -> "87.5%"."""
     return f"{100 * value:.1f}%"
 
 
 def figure(log: dict) -> bool:
+    """Draw the training chart: loss going down and dev accuracy after each epoch.
+
+    Saves it as a PNG. Returns False when matplotlib is not installed (the report is
+    then written without the chart).
+    """
     try:
         import matplotlib
         matplotlib.use("Agg")
@@ -61,6 +67,11 @@ def figure(log: dict) -> bool:
 
 
 def blocks() -> list[tuple]:
+    """Build the report's content as a list of blocks (heading, paragraph, table ...).
+
+    Every number is read from the saved training log and test results. The same list
+    is then written out twice: as markdown and as a Word file.
+    """
     log = json.loads((config.LOCAL_MODEL_DIR / "training_log.json").read_text(encoding="utf-8"))
     data = json.loads(SUMMARY_FILE.read_text(encoding="utf-8"))
     test = json.loads(RESULTS.read_text(encoding="utf-8"))
@@ -77,6 +88,7 @@ def blocks() -> list[tuple]:
     has_figure = figure(log)
 
     def versus(a: float, b: float) -> str:
+        """Describe the gap between two scores in words, e.g. "2.5 points above"."""
         gap = 100 * (a - b)
         return "the same as" if abs(gap) < 0.05 else f"{abs(gap):.1f} points {'above' if gap > 0 else 'below'}"
 
@@ -259,6 +271,7 @@ def blocks() -> list[tuple]:
 
 
 def to_markdown(items: list[tuple]) -> str:
+    """Write the report blocks as markdown text (# headings, | tables |, - bullets)."""
     lines: list[str] = []
     for kind, *rest in items:
         if kind in ("h1", "h2", "h3"):
@@ -280,6 +293,7 @@ def to_markdown(items: list[tuple]) -> str:
 
 
 def to_docx(items: list[tuple], path) -> None:
+    """Write the same report blocks as a Word (.docx) file, using the python-docx library."""
     from docx import Document
     from docx.shared import Inches, Pt
 
@@ -319,6 +333,7 @@ def to_docx(items: list[tuple], path) -> None:
 
 
 def main() -> None:
+    """Build the report once and save it in both formats."""
     items = blocks()
     (REPORT_DIR / f"{NAME}.md").write_text(to_markdown(items), encoding="utf-8")
     to_docx(items, REPORT_DIR / f"{NAME}.docx")

@@ -13,6 +13,7 @@ from . import config
 
 
 def client_ip(request: Request) -> str:
+    """Find out which visitor a request came from (their IP address)."""
     # Behind Vercel and Render the left-most X-Forwarded-For entry is the visitor.
     # It can be spoofed by a caller who hits the backend directly, so limits keyed on
     # it are a cost brake, not an access control.
@@ -23,13 +24,24 @@ def client_ip(request: Request) -> str:
 
 
 class RateLimiter:
-    """Sliding-window limit per client and bucket, kept in memory (one process)."""
+    """Sliding-window limit per client and bucket, kept in memory (one process).
+
+    A rate limiter stops one visitor from flooding the server (or running up the bill
+    of a paid language-model API) by allowing only N requests per minute.
+    """
 
     def __init__(self) -> None:
+        """Start with an empty record: (bucket, visitor) -> times of their recent requests."""
         self._hits: dict[tuple[str, str], deque[float]] = defaultdict(deque)
         self._lock = threading.Lock()
 
     def check(self, request: Request, bucket: str, limit: int, window: float = 60.0) -> None:
+        """Allow the request, or refuse it with error 429 "Too many requests".
+
+        It forgets requests older than the window (60 s), counts the rest, and refuses
+        when the visitor has already made `limit` requests. `bucket` keeps separate
+        counts for separate actions ("chat", "write", "feedback").
+        """
         if limit <= 0:
             return
         key = (bucket, client_ip(request))
@@ -49,6 +61,8 @@ class RateLimiter:
 
 limiter = RateLimiter()
 
+# CSP (Content-Security-Policy) is a list of the places the browser may load scripts,
+# styles, fonts and images from. Anything from another place is blocked by the browser.
 # Tailwind's CDN build and Stitch's markup need inline scripts and styles, so the CSP
 # allows 'unsafe-inline' but pins every origin the pages load from.
 CSP = "; ".join([

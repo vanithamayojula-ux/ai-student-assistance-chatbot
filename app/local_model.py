@@ -27,10 +27,15 @@ class UngroundedAnswer(RuntimeError):
 
 
 def is_trained() -> bool:
+    """True when a trained model has been saved in the models/ folder."""
     return (config.LOCAL_MODEL_DIR / "config.json").exists()
 
 
 def runtime_missing() -> str:
+    """Check that PyTorch and Transformers are installed.
+
+    Returns "" when everything is there, otherwise a message saying what to install.
+    """
     try:
         import torch  # noqa: F401
         import transformers  # noqa: F401
@@ -55,6 +60,7 @@ def build_input(question: str, passages: list[tuple[str, str, str]]) -> str:
 
 
 def passages_of(hits) -> list[tuple[str, str, str]]:
+    """Keep the top few retrieved passages as (title, section, text) for the model to read."""
     return [(h.chunk.title, h.chunk.section, h.chunk.text) for h in hits[:config.LOCAL_PASSAGES]]
 
 
@@ -75,7 +81,12 @@ def load(model_dir=None):
 
 
 def generate(texts: list[str], model_dir=None, max_new_tokens: int = 96) -> list[str]:
-    """Raw model output for each input text (used by the pipeline, training and testing)."""
+    """Raw model output for each input text (used by the pipeline, training and testing).
+
+    The tokenizer turns text into numbers (tokens), the model produces the answer's
+    tokens, and the tokenizer turns those back into text. num_beams means the model
+    explores several candidate answers side by side and keeps the best (beam search).
+    """
     import torch
 
     tokenizer, model = load(model_dir)
@@ -88,11 +99,16 @@ def generate(texts: list[str], model_dir=None, max_new_tokens: int = 96) -> list
 
 
 def declined(answer: str) -> bool:
+    """True when the model said NO_ANSWER (or said nothing), i.e. it refused to answer."""
     return not answer.strip() or NO_ANSWER in answer.upper().replace(" ", "_")
 
 
 def unsupported_numbers(answer: str, passages: list[tuple[str, str, str]]) -> list[str]:
-    """Figures in the answer that appear nowhere in the passages (a made-up fee or date)."""
+    """Figures in the answer that appear nowhere in the passages (a made-up fee or date).
+
+    A safety check against hallucination: every number the model writes must also be
+    in the passages it read. If one is not, the answer is rejected.
+    """
     context = " ".join(f"{title} {section} {text}" for title, section, text in passages).replace(",", "")
     found = set(_NUMBER.findall(context))
     figures = _NUMBER.findall(_CITATION.sub(" ", answer).replace(",", ""))
@@ -105,7 +121,12 @@ def tidy(answer: str, n_passages: int) -> str:
 
 
 def local_stream(question: str, hits, history: list[dict]) -> Iterator[str]:
-    """Generator used by the pipeline. The answer is short, so it is sent in one piece."""
+    """Generator used by the pipeline. The answer is short, so it is sent in one piece.
+
+    Steps: build the model input from the question and passages, let the model write,
+    pass on NO_ANSWER if it declined, reject an answer containing a number that is not
+    in the passages, and finally remove citations that point at no passage.
+    """
     passages = passages_of(hits)
     answer = generate([build_input(question, passages)])[0]
     if declined(answer):

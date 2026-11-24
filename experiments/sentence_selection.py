@@ -8,6 +8,8 @@ from app.pipeline import get_engine
 e = get_engine()
 qs = [q for q in load_questions() if q["type"] == "answerable"]
 cache = {q["id"]: e.index.search(q["question"], config.TOP_K) for q in qs}
+# Score one settings combination on one split ("dev" or "test"). Returns:
+# share of answers containing every key fact, average sentences quoted, seconds per question.
 def run(split):
     ok = n = sents = 0; t = time.time()
     for q in qs:

@@ -42,10 +42,12 @@ LLM = ANS.get("gemini", {}).get("summary")
 QUESTIONS = [json.loads(line) for line in (ROOT / "data/eval/questions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
+# Format a share as a percentage: 0.875 -> "87.5%".
 def pc(v: float, d: int = 1) -> str:
     return f"{v * 100:.{d}f}%"
 
 
+# Format a number with three decimals (used for MRR).
 def f3(v: float) -> str:
     return f"{v:.3f}"
 
@@ -57,6 +59,7 @@ BODY_PROTO = P[38]                # a "[Text]" paragraph: justified body text
 REF_PROTO = P[93]                 # a numbered reference entry
 
 
+# Make sure the Word file has a paragraph style with this name (used for captions); create it if missing.
 def ensure_style(name: str, size: float, bold: bool = False, italic: bool = False):
     if name in [s.name for s in doc.styles]:
         return doc.styles[name]
@@ -92,6 +95,7 @@ def set_text(par: Paragraph, text: str) -> None:
                 props.remove(el)
 
 
+# Replace placeholder text such as [Student Name] inside a paragraph, keeping its formatting.
 def replace_in(par: Paragraph, mapping: dict[str, str]) -> None:
     for run in par.runs:
         for old, new in mapping.items():
@@ -99,6 +103,7 @@ def replace_in(par: Paragraph, mapping: dict[str, str]) -> None:
                 run.text = run.text.replace(old, new)
 
 
+# Insert a new paragraph after a given element, copying the formatting of a template paragraph.
 def new_par(after, proto: Paragraph = BODY_PROTO, text: str = "") -> Paragraph:
     element = copy.deepcopy(proto._p)
     for child in list(element):
@@ -114,9 +119,11 @@ def new_par(after, proto: Paragraph = BODY_PROTO, text: str = "") -> Paragraph:
 class Cursor:
     """Inserts blocks one after another, starting after a given paragraph."""
 
+    # Start writing right after the given paragraph.
     def __init__(self, par: Paragraph):
         self.at = par._p
 
+    # Add a body paragraph (optionally starting with a bold lead-in).
     def p(self, text: str, bold_lead: str = "") -> Paragraph:
         par = new_par(self.at)
         par.paragraph_format.space_before = Pt(6)
@@ -126,6 +133,7 @@ class Cursor:
         self.at = par._p
         return par
 
+    # Add a bulleted or numbered list. Writing "Lead||rest" makes the lead part bold.
     def bullets(self, items: list[str], numbered: bool = False) -> None:
         for i, item in enumerate(items, start=1):
             par = new_par(self.at)
@@ -144,6 +152,7 @@ class Cursor:
             fmt.tab_stops.add_tab_stop(Inches(0.45))
             self.at = par._p
 
+    # Add a bold sub-heading.
     def h3(self, text: str) -> None:
         par = new_par(self.at)
         par.alignment = WD_ALIGN_PARAGRAPH.LEFT
@@ -152,6 +161,7 @@ class Cursor:
         par.add_run(text).bold = True
         self.at = par._p
 
+    # Add a picture from report/figures with a centred caption below it.
     def figure(self, file: str, caption: str, width: float = 6.0) -> None:
         par = new_par(self.at)
         par.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -165,6 +175,7 @@ class Cursor:
         cap.add_run(caption)
         self.at = cap._p
 
+    # Add a captioned table with borders, a shaded header row and optional bold rows.
     def table(self, caption: str, header: list[str], rows: list[list[str]],
               widths: list[float] | None = None, bold_rows: tuple[int, ...] = ()) -> None:
         cap = new_par(self.at)
@@ -213,6 +224,7 @@ class Cursor:
         spacer.paragraph_format.space_after = Pt(4)
         self.at = spacer._p
 
+    # Add a block of code in a fixed-width font.
     def code(self, text: str) -> None:
         for line in text.strip("\n").split("\n"):
             par = new_par(self.at)
@@ -258,10 +270,12 @@ RETR_NAME = {"bm25": "BM25 (keywords)", "dense": "Dense (embeddings)", "hybrid":
              "rerank": "Hybrid + reranker"}
 
 
+# Format a time in milliseconds.
 def ms(value: float) -> str:
     return f"{value:.0f} ms" if value >= 10 else f"{value:.1f} ms"
 
 
+# Join names in plain English: ["a", "b", "c"] -> "a, b and c".
 def join_names(names: list[str]) -> str:
     return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " and " + names[-1]
 
@@ -790,6 +804,7 @@ c.figure("chart-threshold.png", "Figure 8.9: Effect of the confidence threshold 
 gens = [("Quote the documents", EX)] + ([("Gemini", LLM)] if LLM else [])
 
 
+# Median response time as text: milliseconds below 2 s, seconds above.
 def latency(s: dict) -> str:
     value = s["latency_ms"]["median"]
     return f"{value} ms" if value < 2000 else f"{value / 1000:.1f} s"

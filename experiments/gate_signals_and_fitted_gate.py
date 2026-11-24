@@ -27,12 +27,15 @@ for q in qs:
                  "gap": 1 / (1 + math.exp(-((ce[0] - ce[1]) if len(ce) > 1 else 0) / 3)),
                  "nterms": min(len(terms), 10) / 10})
 
+# Balanced accuracy of a gate: the average of "answerable questions let through" and
+# "unanswerable questions stopped", when the confidence formula `conf` is cut at threshold t.
 def ba(rs, conf, t):
     a = [r for r in rs if r["q"]["type"] == "answerable"]; u = [r for r in rs if r["q"]["type"] != "answerable"]
     ans = sum(conf(r) >= t for r in a) / len(a); dec = sum(conf(r) < t for r in u) / len(u)
     return (ans + dec) / 2, ans, dec
 dev = [r for r in rows if r["q"]["split"] == "dev"]; test = [r for r in rows if r["q"]["split"] == "test"]
 
+# Try every threshold for one confidence formula on DEV, pick the best, print dev and test scores.
 def report(name, conf):
     grid = [round(0.02 + 0.01*i, 2) for i in range(97)]
     scored = [(ba(dev, conf, t)[0], t) for t in grid]
@@ -54,6 +57,8 @@ for name, conf in {
 feats = ["cov", "cov1", "oov", "sim1", "ce", "gap", "nterms"]
 X = lambda rs: np.array([[r[f] for f in feats] for r in rs]); Y = lambda rs: np.array([1.0 if r["q"]["type"] == "answerable" else 0.0 for r in rs])
 Xd, yd = X(dev), Y(dev); mu, sd = Xd.mean(0), Xd.std(0) + 1e-6
+# Train a tiny logistic-regression classifier by gradient descent: it learns one weight per
+# signal to predict "answerable or not". l2 keeps the weights small so it does not overfit.
 def fit(Xs, y, l2=1.0, steps=4000, lr=0.1):
     wts = np.zeros(Xs.shape[1]); b = 0.0
     cw = np.where(y == 1, 0.5 / y.mean(), 0.5 / (1 - y.mean()))

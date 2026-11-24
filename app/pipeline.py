@@ -25,6 +25,7 @@ class Engine:
     """Holds the index and answers questions. One instance per server process."""
 
     def __init__(self) -> None:
+        """Set up the engine: load the confidence thresholds, then build the search index."""
         self._lock = threading.Lock()
         self.documents: list[Document] = []
         self.index: Index | None = None
@@ -52,6 +53,12 @@ class Engine:
         return strict, min(loose, strict)
 
     def rebuild(self) -> None:
+        """Read all documents again and rebuild the search index.
+
+        Called at startup and after every upload or delete, so the chatbot always
+        answers from the current set of documents. The lock makes sure two rebuilds
+        never run at the same time.
+        """
         with self._lock:
             documents, chunks = build_chunks()
             self.documents, self.index = documents, Index(chunks)
@@ -72,11 +79,22 @@ class Engine:
 
     def retrieve(self, query: str, k: int | None = None, method: str | None = None,
                  category: str | None = None) -> tuple[list[Hit], float]:
+        """The "R" of RAG: find the best passages for a question.
+
+        Returns the top passages (hits) and a confidence score from 0 to 1 that says
+        how well those passages seem to cover the question.
+        """
         hits = self.index.search(query, k or config.TOP_K, method, category)
         return hits, self.index.confidence(query, hits)
 
     @staticmethod
     def _sources(hits: list[Hit], highlights: dict[int, set[tuple[int, int]]] | None = None) -> list[dict]:
+        """Prepare the retrieved passages for display as numbered "sources" [1], [2] ...
+
+        Each source carries its document title, section and text. The sentences the
+        answer was taken from are marked ("hit": True) so the page can highlight them.
+        This is what lets a student verify the answer against the original document.
+        """
         highlights = highlights or {}
         out = []
         for n, hit in enumerate(hits):
@@ -104,13 +122,29 @@ class Engine:
     def answer_stream(self, question: str, history: list[dict] | None = None,
                       generator: str = "extractive", category: str | None = None,
                       method: str | None = None) -> Iterator[dict]:
-        """Yield events: one "meta", zero or more "token", then one "done"."""
+        """The whole RAG pipeline for one question. This is the heart of the project.
+
+        Yields events: one "meta", zero or more "token", then one "done".
+
+        Step by step:
+        1. Greeting check   - "hi" / "thanks" get a welcome message, no search needed.
+        2. Contextualise    - a follow-up question is joined with the previous one.
+        3. Retrieve         - search the documents for the best passages (the R in RAG).
+        4. Confidence gate  - if the passages do not cover the question, decline
+                              ("abstain") instead of guessing.
+        5. Generate         - write the answer from the passages (the G in RAG), either
+                              with a language model or by quoting the best sentences.
+        6. Cite             - attach the source passages and highlight the supporting
+                              sentences, so every answer can be checked.
+        If the language model fails at any point, we fall back to quoting the documents.
+        """
         started = time.perf_counter()
         history = history or []
         question = question.strip()
 
         def done(answer: str, hits: list[Hit], highlights, abstained: bool, used: str,
                  confidence: float, note: str = "") -> dict:
+            """Build the final "done" event: answer, sources, confidence and time taken."""
             return {
                 "type": "done", "answer": answer, "abstained": abstained, "generator": used,
                 "confidence": confidence, "note": note,
@@ -196,6 +230,11 @@ _engine_lock = threading.Lock()
 
 
 def get_engine() -> Engine:
+    """Return the one shared Engine, creating it the first time it is needed.
+
+    Building the engine is slow (it loads models and indexes every document), so it is
+    built once and reused by every request. This is the "singleton" pattern.
+    """
     global _engine
     with _engine_lock:
         if _engine is None:

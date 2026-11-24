@@ -17,6 +17,7 @@ const NAME = { bm25: 'BM25 (keywords)', dense: 'Dense (embeddings)', hybrid: 'Hy
 const INK = '#0b0b0b', INK2 = '#52514e', GRID = '#e4e3df';
 const pct = v => (v * 100).toFixed(1);
 
+// Draw a chart legend: one coloured square and a name per series (returns SVG text).
 function legend(keys, x, y, names = NAME, cols = C) {
   let s = '', cx = x;
   for (const k of keys) {
@@ -27,6 +28,7 @@ function legend(keys, x, y, names = NAME, cols = C) {
   return s;
 }
 
+// Draw a grouped bar chart as SVG: one group per label, one bar per retriever, values from 0 to 100%.
 function groupedBars(id, title, groups, series, get, W = 760, H = 380) {
   const L = 52, T = 74, B = 44, PW = W - L - 20, PH = H - T - B;
   const y = v => T + PH * (1 - v);
@@ -60,6 +62,8 @@ const chartB = groupedBars('chart-style', 'Hit@3 by how the question is worded',
   Object.keys(STYLE).filter((k) => ret.bm25.by_style[k]).map((k) => ({ key: k, label: `${STYLE[k]} (${ret.bm25.by_style[k].n})` })),
   S, (k, g) => ret[k].by_style[g]['hit@3']);
 
+// Draw the threshold chart: how the share of answerable questions answered and of out-of-scope
+// questions declined changes as the confidence threshold moves.
 function curve() {
   const W = 760, H = 400, L = 52, T = 74, B = 50, PW = W - L - 150, PH = H - T - B;
   const cv = R.abstention.curve, th = R.abstention.threshold;
@@ -90,8 +94,11 @@ function curve() {
   return s;
 }
 
+// Draw the flowchart of the system: INGEST on the left (documents -> passages -> indexes) and
+// ANSWER on the right (question -> retrieve -> confidence gate -> generate -> answer with sources).
 function flow() {
   const W = 820, H = 960;
+  // A rectangle with centred lines of text (one step of the flowchart).
   const box = (x, y, w, h, lines, o = {}) => {
     let t = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx ?? 8}" fill="${o.fill || '#fff'}" stroke="${o.stroke || '#2B3990'}" stroke-width="1.5"/>`;
     const y0 = y + h / 2 - (lines.length - 1) * 9 + 5;
@@ -100,6 +107,7 @@ function flow() {
     });
     return t;
   };
+  // A diamond with text (a yes/no decision in the flowchart).
   const dia = (cx, cy, w, h, lines) => {
     let t = `<polygon points="${cx},${cy - h / 2} ${cx + w / 2},${cy} ${cx},${cy + h / 2} ${cx - w / 2},${cy}" fill="#FFF6C2" stroke="#8a6d00" stroke-width="1.5"/>`;
     lines.forEach((l, i) => {
@@ -107,6 +115,7 @@ function flow() {
     });
     return t;
   };
+  // An arrow along the given points, with an optional label such as Yes / No.
   const arr = (pts, label, lx, ly) =>
     `<polyline points="${pts}" fill="none" stroke="#3a3a3a" stroke-width="1.5" marker-end="url(#ah)"/>` +
     (label ? `<text x="${lx}" y="${ly}" font-size="12.5" font-weight="600" fill="${INK}">${label}</text>` : '');

@@ -59,14 +59,22 @@ def load_questions() -> list[dict]:
 
 
 def split_of(question: dict) -> str:
+    """Which half a question belongs to: "dev" (used for tuning) or "test" (used for the final score)."""
     return question["split"]
 
 
 def _norm(text: str) -> str:
+    """Lower-case, drop commas and extra spaces, so "Rs. 1,500" and "rs. 1500" compare equal."""
     return re.sub(r"\s+", " ", text.lower().replace(",", "")).strip()
 
 
 def _rank_of_gold(hits, question: dict, level: str) -> int | None:
+    """Position (1 = first) of the correct passage in the search results, or None if absent.
+
+    "Gold" means the passage a human labelled as the one holding the answer.
+    level "document" accepts any passage of the right document; "passage" also needs
+    the right section.
+    """
     for rank, hit in enumerate(hits, start=1):
         if hit.chunk.doc_id not in question["gold_doc_ids"]:
             continue
@@ -76,6 +84,11 @@ def _rank_of_gold(hits, question: dict, level: str) -> int | None:
 
 
 def _summarise_ranks(ranks: list[int | None]) -> dict:
+    """Turn a list of ranks into the two retrieval metrics.
+
+    Hit@k - share of questions whose correct passage is within the top k results.
+    MRR   - mean reciprocal rank: the average of 1/rank (1 if first, 0.5 if second ...).
+    """
     n = len(ranks) or 1
     out = {f"hit@{k}": round(sum(1 for r in ranks if r and r <= k) / n, 4) for k in KS}
     out["mrr"] = round(sum(1 / r for r in ranks if r) / n, 4)
@@ -84,6 +97,12 @@ def _summarise_ranks(ranks: list[int | None]) -> dict:
 
 
 def evaluate_retrieval(engine: Engine, questions: list[dict]) -> dict:
+    """Measure how good the SEARCH is, separately for each retriever.
+
+    Every answerable question is searched with bm25, dense, hybrid and rerank; we note
+    where the correct passage landed and report Hit@k, MRR and the time per query,
+    also broken down by question style and document category.
+    """
     answerable = [q for q in questions if q["type"] == "answerable"]
     report: dict = {}
     for method in engine.index.methods:
@@ -147,6 +166,11 @@ def evaluate_design_choices(engine: Engine, questions: list[dict]) -> dict:
 
 
 def _balanced(records: list[dict], threshold: float) -> dict:
+    """Score one candidate threshold.
+
+    A good threshold lets answerable questions through AND stops unanswerable ones.
+    Balanced accuracy is the average of those two rates, so neither can be ignored.
+    """
     answerable = [r for r in records if r["type"] == "answerable"]
     unanswerable = [r for r in records if r["type"] == "unanswerable"]
     answered = sum(1 for r in answerable if r["confidence"] >= threshold) / max(len(answerable), 1)
@@ -160,6 +184,12 @@ def _balanced(records: list[dict], threshold: float) -> dict:
 
 
 def tune_threshold(engine: Engine, questions: list[dict]) -> dict:
+    """Choose the confidence threshold below which the chatbot declines to answer.
+
+    Every value from 0.20 to 0.80 is tried on the DEV questions and the one with the
+    best balanced accuracy is kept. It is then reported on the TEST questions, which
+    played no part in choosing it, so the reported number is honest.
+    """
     records = []
     for q in questions:
         _, confidence = engine.retrieve(q["question"])
@@ -195,6 +225,12 @@ def tune_threshold(engine: Engine, questions: list[dict]) -> dict:
 
 
 def evaluate_answers(engine: Engine, questions: list[dict], generator: str) -> dict:
+    """Measure how good the final ANSWERS of one generator are.
+
+    Each labelled question is asked for real. An answerable question counts as correct
+    when the answer contains every key fact; an unanswerable one counts as correct
+    when the chatbot declined. Also reports citations and response time (latency).
+    """
     rows = []
     for i, q in enumerate(questions, start=1):
         result = engine.answer(q["question"], generator=generator)
@@ -223,6 +259,7 @@ def evaluate_answers(engine: Engine, questions: list[dict], generator: str) -> d
     latencies = sorted(r["latency_ms"] for r in rows)
 
     def rate(items, key) -> float:
+        """Share of rows (0..1) for which the given field is true."""
         return round(sum(1 for r in items if r[key]) / max(len(items), 1), 4)
 
     summary = {
@@ -250,6 +287,11 @@ def evaluate_answers(engine: Engine, questions: list[dict], generator: str) -> d
 
 def run(generators: list[str], limit: int | None = None, engine: Engine | None = None,
         design_choices: bool = False) -> dict:
+    """Run the whole evaluation and save it to data/eval/results.json.
+
+    Order: retrieval metrics -> tune the decline threshold -> score the answers of
+    each requested generator. The website reads the saved file to show the scores.
+    """
     engine = engine or Engine()
     questions = load_questions()
 
@@ -304,6 +346,7 @@ def _previous_design() -> dict:
 
 
 def main() -> None:
+    """Command-line entry point: read the options, run the evaluation, print a summary table."""
     parser = argparse.ArgumentParser(description="Evaluate the chatbot on the labelled question set.")
     parser.add_argument("--generator", action="append", choices=["extractive", "local", "gemini", "claude"],
                         help="generator(s) to score; default: extractive")

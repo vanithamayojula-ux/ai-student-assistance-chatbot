@@ -35,10 +35,17 @@ ZERO_SHOT = ("Answer the question using only the context. Cite the passage numbe
 
 
 def _words(text: str) -> list[str]:
+    """The words of a text, lower-cased, with citations like [1] and commas removed."""
     return re.findall(r"[a-z0-9%]+", CITED.sub(" ", text).lower().replace(",", ""))
 
 
 def token_f1(answer: str, reference: str) -> float:
+    """Word-overlap score (0..1) between the model's answer and the reference answer.
+
+    precision = share of the answer's words that are in the reference
+    recall    = share of the reference's words that are in the answer
+    F1 combines the two, so an answer must be both correct and complete to score high.
+    """
     a, r = _words(answer), _words(reference)
     common = sum(min(a.count(w), r.count(w)) for w in set(a))
     if not common:
@@ -48,6 +55,11 @@ def token_f1(answer: str, reference: str) -> float:
 
 
 def rouge_l(answer: str, reference: str) -> float:
+    """ROUGE-L: a standard score (0..1) for comparing a written answer with a reference.
+
+    It finds the longest run of words that appear in the SAME ORDER in both texts
+    (the longest common subsequence), so word order counts, unlike token_f1.
+    """
     a, r = _words(answer), _words(reference)
     if not a or not r:
         return 0.0
@@ -66,6 +78,7 @@ def rouge_l(answer: str, reference: str) -> float:
 
 
 def rate(flags: list[bool]) -> float:
+    """Share of True values in a list, e.g. [True, True, False, False] -> 0.5."""
     return round(sum(flags) / max(len(flags), 1), 4)
 
 
@@ -122,6 +135,11 @@ def summarise(questions: list[dict], answers: list[str], hits_of: list | None = 
 
 
 def pipeline_summary(engine: Engine, questions: list[dict], generator: str) -> dict:
+    """Score the WHOLE chatbot (search + gate + generator), not the model on its own.
+
+    Adds two rates: answerable questions answered wrongly, and answers where the
+    chatbot fell back to quoting the documents.
+    """
     result = evaluate.evaluate_answers(engine, questions, generator)
     answerable = [r for r in result["rows"] if r["type"] == "answerable"]
     result["summary"]["answerable_wrong"] = rate([not r["correct"] and not r["abstained"] for r in answerable])
@@ -130,6 +148,7 @@ def pipeline_summary(engine: Engine, questions: list[dict], generator: str) -> d
 
 
 def main() -> None:
+    """Run the six tests listed at the top of this file and save the results as JSON."""
     parser = argparse.ArgumentParser(description="Test the trained local answer model.")
     parser.add_argument("--limit", type=int, default=None,
                         help="quick check on the first N questions of each set; results go to a separate file")
@@ -179,6 +198,7 @@ def main() -> None:
     runs = {"dev": pipeline_summary(engine, dev_q, "local"), "test": pipeline_summary(engine, test_q, "local")}
 
     def with_strict_gate(result: dict) -> dict:
+        """Work out the scores the same run would get behind the stricter confidence gate."""
         rows = [{**r, "abstained": True, "correct": r["type"] != "answerable"} if r["confidence"] < strict else r
                 for r in result["rows"]]
         answerable = [r for r in rows if r["type"] == "answerable"]

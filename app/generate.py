@@ -37,12 +37,18 @@ CITATION = re.compile(r"\[(\d+)\]")
 # passages -> units
 # --------------------------------------------------------------------------
 def _is_question(unit: str) -> bool:
+    """True when a sentence from a document is itself a question (an FAQ's "Q: ..." line)."""
     plain = unit.replace("*", "").strip()
     return plain.lower().startswith("q:") or plain.endswith("?")
 
 
 def explode(hits: list[Hit]) -> list[dict]:
-    """One record per citeable unit of every retrieved passage."""
+    """One record per citeable unit of every retrieved passage.
+
+    Breaks the retrieved passages into their smallest quotable pieces ("units": a
+    sentence, a list item or a table row) and remembers where each piece came from,
+    so the answer can later point back to the exact sentence it used.
+    """
     units: list[dict] = []
     for rank, hit in enumerate(hits):
         position = 0
@@ -73,6 +79,7 @@ def _score_units(index: Index, query: str, units: list[dict], k: int) -> np.ndar
     unit_terms = [set(tokenize(u["text"])) for u in units]
 
     def weight(term: str) -> float:
+        """Importance of one question word: high when it is rare, both overall and here."""
         local = sum(1 for found in unit_terms if term in found)
         return index.bm25.term_weight(term) * math.log(1 + len(units) / (1 + local))
 
@@ -97,7 +104,13 @@ def _score_units(index: Index, query: str, units: list[dict], k: int) -> np.ndar
 # extractive generator
 # --------------------------------------------------------------------------
 def extractive_answer(index: Index, query: str, hits: list[Hit]) -> tuple[str, dict[int, set[tuple[int, int]]]]:
-    """Return (answer text with [n] citations, {source: {(block, unit), ...}} highlights)."""
+    """Return (answer text with [n] citations, {source: {(block, unit), ...}} highlights).
+
+    The EXTRACTIVE generator: it writes nothing new. It scores every sentence of the
+    retrieved passages against the question, picks the best one (plus up to two more
+    that score nearly as well) and quotes them with their source number. Because every
+    word comes from the documents, it cannot invent facts ("hallucinate").
+    """
     units = explode(hits)
     if not units:
         return "", {}
@@ -147,7 +160,12 @@ def extractive_answer(index: Index, query: str, hits: list[Hit]) -> tuple[str, d
 
 
 def support_highlights(index: Index, answer: str, question: str, hits: list[Hit]) -> dict[int, set[tuple[int, int]]]:
-    """For an LLM-written answer, find the units in each cited passage that back it up."""
+    """For an LLM-written answer, find the units in each cited passage that back it up.
+
+    The language model writes in its own words and cites passages as [1], [2]. For each
+    cited passage we find the one or two sentences sharing the most important words with
+    the answer and highlight them, so the student can see the evidence.
+    """
     cited = {int(n) - 1 for n in CITATION.findall(answer)}
     cited = {n for n in cited if 0 <= n < len(hits)}
     units = explode(hits)
@@ -173,6 +191,9 @@ def support_highlights(index: Index, answer: str, question: str, hits: list[Hit]
 # --------------------------------------------------------------------------
 # LLM generators
 # --------------------------------------------------------------------------
+# The system prompt is the standing instruction given to the language model with every
+# question. It is what makes this RAG and not a free chatbot: use ONLY the passages,
+# cite them, and say NO_ANSWER when the passages do not contain the answer.
 SYSTEM_PROMPT = """You are the student help desk assistant for {university}. Students ask you about \
 syllabus, regulations, notices, FAQs and academic policies.
 
@@ -192,6 +213,12 @@ A passage on a nearby topic is not an answer.
 
 
 def build_messages(question: str, hits: list[Hit], history: list[dict]) -> list[dict]:
+    """Build the text sent to the language model. This is the "A" (augmented) of RAG.
+
+    The prompt contains: the retrieved passages numbered [1], [2] ..., the last few
+    turns of the conversation, and finally the student's question. The model therefore
+    answers from the passages we give it, not from its own memory.
+    """
     passages = "\n\n".join(
         f"[{n}] {hit.chunk.title} > {hit.chunk.section}"
         + (f" (updated {hit.chunk.updated})" if hit.chunk.updated else "")
@@ -208,21 +235,30 @@ def build_messages(question: str, hits: list[Hit], history: list[dict]) -> list[
 
 
 def _system() -> str:
+    """The system prompt with the university name and the NO_ANSWER keyword filled in."""
     return SYSTEM_PROMPT.format(university=config.UNIVERSITY_NAME, no_answer=NO_ANSWER)
 
 
 def gemini_api_key() -> str:
+    """Read the Gemini API key from the environment ("" when it is not set)."""
     return os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
 
 
 def _http_client():
+    """A web client for calling the Gemini API; gives up after 90 seconds of waiting."""
     import httpx
 
     return httpx.Client(timeout=httpx.Timeout(90.0, connect=10.0))
 
 
 def gemini_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterator[str]:
-    """Stream an answer from the Gemini API (Interactions API, server-sent events)."""
+    """Stream an answer from the Gemini API (Interactions API, server-sent events).
+
+    Sends the system prompt + passages + question to Google's Gemini model and yields
+    the answer piece by piece as it is written. Every failure (bad key, rate limit, no
+    internet) is turned into a clear error; the pipeline then falls back to quoting
+    the documents.
+    """
     import httpx
 
     key = gemini_api_key()
@@ -273,6 +309,11 @@ def gemini_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterat
 
 
 def claude_stream(question: str, hits: list[Hit], history: list[dict]) -> Iterator[str]:
+    """Stream an answer from the Claude API (Anthropic), piece by piece.
+
+    Same idea as gemini_stream: same system prompt, same passages, a different model.
+    API errors are turned into clear messages so the pipeline can fall back.
+    """
     import anthropic
 
     client = anthropic.Anthropic()   # reads ANTHROPIC_API_KEY from the environment
@@ -308,6 +349,12 @@ _availability: dict = {"at": 0.0, "value": None}
 
 
 def available_generators(force: bool = False) -> list[dict]:
+    """List the four answer generators and say which ones can run right now.
+
+    "extractive" always works. "local" needs the trained model and its libraries.
+    "gemini" and "claude" need an API key. The result is remembered for 30 seconds so
+    this check is not repeated on every request.
+    """
     if not force and _availability["value"] is not None and time.time() - _availability["at"] < 30:
         return _availability["value"]
 
@@ -344,4 +391,5 @@ def available_generators(force: bool = False) -> list[dict]:
     return generators
 
 
+# Generator name -> the function that streams its answer. The pipeline looks the name up here.
 STREAMS = {"local": local_model.local_stream, "gemini": gemini_stream, "claude": claude_stream}

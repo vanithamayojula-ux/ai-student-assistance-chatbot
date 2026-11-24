@@ -39,6 +39,7 @@ _NUMBER = re.compile(r"\d+(?:[.,:]\d+)*")
 
 
 def _read(pattern: str) -> list[dict]:
+    """Read every raw question file matching the pattern (one JSON record per line)."""
     rows = []
     for path in sorted(RAW_DIR.glob(pattern)):
         with path.open(encoding="utf-8") as handle:
@@ -47,14 +48,17 @@ def _read(pattern: str) -> list[dict]:
 
 
 def _norm(text: str) -> str:
+    """Lower-case, drop commas and extra spaces, so two spellings of the same text compare equal."""
     return re.sub(r"\s+", " ", text.lower().replace(",", "")).strip()
 
 
 def _words(text: str) -> set[str]:
+    """The set of distinct words in a text."""
     return set(re.findall(r"[a-z0-9]+", text.lower()))
 
 
 def _overlap(a: set[str], b: set[str]) -> float:
+    """How similar two word sets are: shared words / all words (0 = nothing shared, 1 = identical)."""
     return len(a & b) / max(len(a | b), 1)
 
 
@@ -92,6 +96,14 @@ def answer_leaks(row: dict, hits) -> bool:
 
 
 def build(seed: int = 7) -> dict:
+    """Create the training file data/train/train.jsonl and return a summary of it.
+
+    For every written question: search the documents exactly as the chatbot would,
+    then save (question + retrieved passages) as the model INPUT and (answer + citation)
+    as the TARGET it should learn to write. Examples where the model must say NO_ANSWER
+    are added too, so it also learns when NOT to answer. The fixed seed makes the
+    random choices repeat exactly on every run.
+    """
     rng = random.Random(seed)
     engine = Engine()
     k = config.LOCAL_PASSAGES
@@ -102,6 +114,7 @@ def build(seed: int = 7) -> dict:
             eval_words = [_words(json.loads(line)["question"]) for line in handle if line.strip()]
 
     def too_close(question: str) -> bool:
+        """True when a training question nearly repeats a test question (that would be cheating)."""
         words = _words(question)
         return any(_overlap(words, other) >= NEAR_DUPLICATE for other in eval_words)
 

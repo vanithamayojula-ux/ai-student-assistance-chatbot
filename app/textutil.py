@@ -32,6 +32,12 @@ def stem(word: str) -> str:
 
 
 def tokenize(text: str, keep_stopwords: bool = False) -> list[str]:
+    """Break text into the words that matter for searching.
+
+    Lower-cases the text, splits it into words and numbers, removes filler words
+    ("the", "is", "please" - called stopwords) and trims word endings (stemming).
+    Example: "What are the exam fees?" -> ["exam", "fee"].
+    """
     tokens = TOKEN.findall(text.lower())
     if keep_stopwords:
         return [stem(t) for t in tokens]
@@ -46,6 +52,7 @@ _LIST_ITEM = re.compile(r"(?:[-+]|\*(?!\*)|\d+[.)])\s+")
 
 
 def _sentences(paragraph: str) -> list[str]:
+    """Split a paragraph into sentences, without breaking after short forms like "Rs." or "Dr."."""
     merged: list[str] = []
     for piece in _SENTENCE_END.split(paragraph):
         if merged and _ABBREV.search(merged[-1]):
@@ -66,6 +73,7 @@ def split_blocks(text: str) -> list[dict]:
     blocks: list[dict] = []
 
     def add(kind: str, units: list[str]) -> None:
+        """Add units to the result; consecutive list items or table rows stay in one block."""
         if not units:
             return
         if blocks and blocks[-1]["kind"] == kind and kind != "prose":
@@ -97,6 +105,7 @@ def split_blocks(text: str) -> list[dict]:
 
 
 def table_cells(row: str) -> list[str]:
+    """Split one table row "| A | 80-89 |" into its cells ["A", "80-89"]."""
     return [c.strip() for c in row.strip().strip("|").split("|")]
 
 

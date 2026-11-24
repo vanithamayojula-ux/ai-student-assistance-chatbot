@@ -3,6 +3,7 @@
 (() => {
   "use strict";
 
+  // Shortcut: find the first element on the page that matches a CSS selector.
   const $ = (sel, root = document) => root.querySelector(sel);
   const STORE = "shd.conversations.v1";
 
@@ -41,6 +42,8 @@
   };
 
   /* ---------- tiny DOM helper ---------- */
+  // Build an HTML element in one call: tag name, attributes/events, then child nodes.
+  // Text is set with textContent, so text coming from the server can never run as code (prevents XSS).
   function el(tag, props, ...children) {
     const node = document.createElement(tag);
     for (const [key, value] of Object.entries(props || {})) {
@@ -58,6 +61,7 @@
     return node;
   }
 
+  // Show a small pop-up message for a few seconds (styled red when it is an error).
   function toast(message, isError = false) {
     const node = $("#toast");
     node.textContent = message;
@@ -66,6 +70,7 @@
     toast.timer = setTimeout(() => { node.className = "toast"; }, isError ? 6000 : 3000);
   }
 
+  // Call the backend and return its JSON reply; a failed request becomes a readable error message.
   async function api(path, options) {
     const response = await fetch(path, options);
     if (!response.ok) {
@@ -76,15 +81,20 @@
     return response.json();
   }
 
+  // Read the saved conversations from the browser's localStorage.
   function load() {
     try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; }
   }
+  // Save the 30 most recent conversations in localStorage (they stay on this device, not on the server).
   function save() {
     try { localStorage.setItem(STORE, JSON.stringify(state.conversations.slice(0, 30))); } catch { /* storage full */ }
   }
+  // The conversation that is open right now (or null).
   const current = () => state.conversations.find((c) => c.id === state.currentId) || null;
+  // Display name of a category id, e.g. "faqs" -> "FAQs".
   const categoryLabel = (id) => (state.health?.categories.find((c) => c.id === id)?.label) || id;
 
+  // Show a date in a readable form, e.g. "5 Dec 2026".
   function formatDate(iso) {
     if (!iso) return "";
     const date = new Date(iso);
@@ -93,6 +103,7 @@
   }
 
   /* ---------- rendering document text ---------- */
+  // Add text to an element, turning **bold** markdown into real bold text.
   function inline(text, parent) {
     // **bold** is the only inline markdown the corpus uses
     text.split(/(\*\*[^*]+\*\*)/g).forEach((part) => {
@@ -101,8 +112,11 @@
     });
     return parent;
   }
+  // Split a markdown table row "| a | b |" into its cells.
   const cells = (row) => row.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
 
+  // Draw a passage (paragraphs, lists, tables). Sentences marked "hit" are the evidence
+  // for the answer, so they are wrapped in <mark> and appear highlighted.
   function renderBlocks(blocks) {
     const root = el("div", { class: "doc-text" });
     for (const block of blocks) {
@@ -133,9 +147,11 @@
   }
 
   /* ---------- rendering an answer ---------- */
+  // Draw the answer text. Every citation like [1] becomes a button that opens that source passage.
   function renderAnswer(text, message) {
     const frag = document.createDocumentFragment();
     let list = null;
+    // Fill one line of the answer: citations become buttons, **bold** becomes bold, the rest is plain text.
     const fill = (line, parent) => {
       line.split(/(\[\d+\]|\*\*[^*]+\*\*)/g).forEach((part) => {
         const cite = /^\[(\d+)\]$/.exec(part);
@@ -166,6 +182,8 @@
     return frag;
   }
 
+  // Build one assistant message: the answer, a details line (who wrote it, passages cited,
+  // time taken) and the Helpful / Not helpful buttons.
   function botNode(message) {
     const answer = el("div", { class: "answer" + (message.abstained ? " declined" : "") });
     if (message.pending && !message.content) {
@@ -189,6 +207,7 @@
           onclick: () => showEvidence(message, null, true) }));
       }
       meta.append(el("span", { class: "spacer" }));
+      // Remember the student's thumbs-up/down and send it to the backend (POST /api/feedback).
       const vote = (helpful) => async (event) => {
         message.helpful = helpful; save();
         event.target.parentElement.querySelectorAll("[data-vote]").forEach((b) =>
@@ -209,6 +228,7 @@
     return node;
   }
 
+  // Redraw the whole conversation. When it is empty, show the welcome screen with starter questions.
   function renderThread(keepScroll = false, animateLast = false) {
     const thread = $("#thread");
     const conversation = current();
@@ -237,6 +257,7 @@
     if (!keepScroll) thread.scrollTop = thread.scrollHeight;
   }
 
+  // Redraw the sidebar list of saved conversations, each with an open and a delete button.
   function renderChats() {
     const list = $("#chat-list");
     list.replaceChildren();
@@ -257,6 +278,7 @@
     }
   }
 
+  // Switch to a saved conversation and show the sources of its last answer.
   function openConversation(id) {
     state.currentId = id;
     const conversation = current();
@@ -265,6 +287,8 @@
   }
 
   /* ---------- evidence panel ---------- */
+  // Fill the evidence panel with the source passages of an answer: the cited ones first, then the
+  // other retrieved ones. focusN scrolls to one particular source (when a [n] citation is clicked).
   function showEvidence(message, focusN = null, openSheet = false) {
     state.shown = message;
     const body = $("#evidence-body");
@@ -284,6 +308,7 @@
 
     const cited = message.sources.filter((s) => s.cited);
     const others = message.sources.filter((s) => !s.cited);
+    // Build the card for one source passage: number, category, title, section and the text.
     const card = (source) => {
       const node = el("article", { class: "source" + (source.cited ? " cited" : ""), id: `source-${source.n}`, "data-n": source.n },
         el("div", { class: "source-head" },
@@ -328,6 +353,9 @@
   }
 
   /* ---------- asking ---------- */
+  // MAIN FLOW of the chat page: send the question to POST /api/chat and read the reply as a stream.
+  // The server sends one JSON event per line: "meta" (passages found), "token" (a piece of the
+  // answer), then "done" (final answer + sources). The screen is updated as each event arrives.
   async function ask(question) {
     question = question.trim();
     if (!question || state.busy) return;
@@ -353,6 +381,7 @@
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
+      // React to one streamed event from the server.
       const handle = (event) => {
         if (event.type === "meta") {
           // passages are known before the answer is written: show them while the model works
@@ -390,6 +419,7 @@
     }
   }
 
+  // Redraw only the last assistant message (called for every streamed piece) and scroll to it.
   function updateLast(message) {
     const nodes = document.querySelectorAll(".msg-bot");
     const last = nodes[nodes.length - 1];
@@ -399,6 +429,7 @@
     thread.scrollTop = thread.scrollHeight;
   }
 
+  // Grow the question box as the student types, up to a maximum height.
   function autosize() {
     const box = $("#question");
     box.style.height = "auto";
@@ -407,6 +438,7 @@
   }
 
   /* ---------- library ---------- */
+  // Library page: fetch the list of documents (GET /api/documents) and draw them grouped by category.
   async function loadLibrary() {
     try {
       state.docs = (await api("/api/documents")).documents;
@@ -436,6 +468,8 @@
     if (!state.docs.length) list.append(el("p", { class: "empty", text: "No documents yet. Add one above to start." }));
   }
 
+  // Fetch one document (GET /api/documents/{id}) and show it section by section in the reader.
+  // Uploaded documents also get a "Remove document" button.
   async function openDoc(docId) {
     state.openDoc = docId;
     document.querySelectorAll(".doc-item").forEach((b) => b.setAttribute("aria-current", String(b.dataset.doc === docId)));
@@ -467,6 +501,7 @@
     } catch (error) { toast(error.message, true); }
   }
 
+  // Send the chosen file and category to the backend (POST /api/documents), then refresh the library.
   async function upload(event) {
     event.preventDefault();
     const file = $("#upload-file").files[0];
@@ -486,6 +521,7 @@
   }
 
   /* ---------- evaluation ---------- */
+  // Small helpers for the Evaluation page: a percentage text, a bar, a titled panel and a table.
   const pct = (value) => `${(value * 100).toFixed(1)}%`;
   const bar = (value) => el("div", { class: "bar" }, el("span", { text: pct(value) }), el("i", { style: `--v:${(value * 100).toFixed(1)}%` }));
   const panel = (title, sub, ...body) => el("section", { class: "panel" },
@@ -494,6 +530,7 @@
   const table = (head, rows) => el("div", { class: "table-scroll" }, el("table", { class: "data" },
     el("thead", {}, el("tr", {}, head.map((h) => el("th", { scope: "col", text: h })))), el("tbody", {}, rows)));
 
+  // Evaluation page: fetch the saved results (GET /api/eval/results) and draw them.
   async function loadEval() {
     try { state.evalData = await api("/api/eval/results"); }
     catch (error) { toast(error.message, true); return; }
@@ -501,6 +538,8 @@
     renderEval();
   }
 
+  // Draw the whole evaluation report: summary numbers, retrieval table (Hit@k, MRR), breakdowns,
+  // the "knowing when not to answer" table, answer quality and the question-by-question list.
   function renderEval() {
     const data = state.evalData;
     const body = $("#eval-body");
@@ -534,6 +573,7 @@
           el("td", { text: p.mrr.toFixed(3) }), el("td", { text: `${data.retrieval[m].ms_per_query} ms` }));
       }))));
 
+    // A table comparing the retrievers for each question style or each document category.
     const breakdown = (title, sub, key, label) => {
       const values = Object.keys(data.retrieval[methods[0]][key]);
       const short = { bm25: "BM25", dense: "Dense", hybrid: "Hybrid", rerank: "Reranked" };
@@ -547,6 +587,7 @@
       breakdown("By document category", "Right passage in the top 3, by where that passage lives.", "by_category", "Category")));
 
     const ab = data.abstention;
+    // One row of the abstention table (dev or test half of the questions).
     const abRow = (name, r) => el("tr", {}, el("th", { scope: "row", text: name }),
       el("td", { text: `${r.n_answerable} + ${r.n_unanswerable}` }), el("td", {}, bar(r.answered_when_answerable)),
       el("td", {}, bar(r.declined_when_unanswerable)), el("td", { text: pct(r.balanced_accuracy) }));
@@ -590,6 +631,7 @@
       `${new Date(data.generated_at).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}.`;
   }
 
+  // Ask the backend to run the evaluation again (POST /api/eval/run) and show the new results.
   async function runEval() {
     const button = $("#eval-run");
     button.disabled = true; button.textContent = "Running...";
@@ -675,6 +717,8 @@
     return events.find((event) => event.type === "done") || null;
   }
 
+  // Fill the home page with live data: a real example answer, the documents by category and the
+  // measured scores from the last evaluation.
   async function renderHome() {
     if (state.homeReady) return;
     state.homeReady = true;
@@ -686,6 +730,7 @@
       el("button", { type: "button", text: s.q, onclick: () => goAsk(s.q) })));
 
     // a running strip of questions; each one can be asked with a click
+    // One row of the scrolling question strip (drawn twice so the scrolling loops without a gap).
     const tickerTrack = (copy) => el("div", { class: "ticker-track", "aria-hidden": copy ? "true" : null },
       TICKER.map((item) => el("button", { type: "button", "data-cat": item.cat, tabindex: copy ? "-1" : null,
         text: item.q, onclick: () => goAsk(item.q) })));
@@ -759,6 +804,7 @@
       const methods = Object.keys(data.retrieval);
       const best = methods.reduce((a, b) => (data.retrieval[b].passage.mrr > data.retrieval[a].passage.mrr ? b : a));
       const summary = data.answers[Object.keys(data.answers)[0]].summary;
+      // One score tile on the home page: label, value and a small meter.
       const score = (label, detail, value, text) => el("div", {},
         el("dt", {}, label, el("small", { text: detail })), el("dd", { text: text || pct(value) }),
         value == null ? null : el("div", { class: "meter" }, el("i", { style: `--v:${(value * 100).toFixed(1)}%` })));
@@ -781,6 +827,7 @@
   }
 
   /* ---------- shell ---------- */
+  // Fetch the system status (GET /api/health) and show the university name and corpus size.
   async function refreshHealth() {
     state.health = await api("/api/health");
     const h = state.health;
@@ -791,6 +838,8 @@
     document.title = `Student Help Desk, ${h.university}`;
   }
 
+  // Fill the dropdowns (category filter, answer generator) from the status the server reported.
+  // Generators that are not set up are shown but disabled.
   function fillSelects() {
     const h = state.health;
     for (const id of ["category", "upload-category"]) {
@@ -805,6 +854,7 @@
     generator.addEventListener("change", () => localStorage.setItem("shd.generator", generator.value));
   }
 
+  // A tiny router: read the page name from the URL hash (#/ask, #/library ...) and show that view.
   function route() {
     const view = (location.hash.replace(/^#\/?/, "") || "home").split("/")[0];
     const name = ["home", "ask", "library", "evaluation"].includes(view) ? view : "home";
@@ -822,6 +872,8 @@
     if (name === "evaluation") loadEval();
   }
 
+  // Runs once when the page loads: fetch the status, draw the first screen and connect every
+  // button and form to its function.
   async function start() {
     splitHeadline();
     try { await refreshHealth(); }

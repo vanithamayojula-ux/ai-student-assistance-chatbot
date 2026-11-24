@@ -47,6 +47,11 @@ def labelled_examples(engine: Engine, split: str) -> list[dict]:
 
 @torch.no_grad()
 def answer_all(model, tokenizer, texts: list[str], batch_size: int = 8, beams: int = 1) -> list[str]:
+    """Let the model answer many inputs, a few at a time (a "batch").
+
+    Inputs are sorted by length first, so each batch holds texts of similar size and
+    runs faster; the answers are put back in the original order at the end.
+    """
     model.eval()
     answers: list[str] = []
     order = sorted(range(len(texts)), key=lambda i: len(texts[i]))
@@ -63,6 +68,10 @@ def answer_all(model, tokenizer, texts: list[str], batch_size: int = 8, beams: i
 
 
 def dev_report(model, tokenizer, dev: list[dict]) -> dict:
+    """Test the model on the DEV questions after an epoch and return its accuracy.
+
+    This is how we decide which epoch's model is the best one to keep.
+    """
     answers = answer_all(model, tokenizer, [d["input"] for d in dev])
     correct = [score_answer(d, a) for d, a in zip(dev, answers)]
     answerable = [c for d, c in zip(dev, correct) if d["type"] == "answerable"]
@@ -81,6 +90,16 @@ def batches(lengths: list[int], batch_size: int, rng: random.Random) -> list[lis
 
 
 def main() -> None:
+    """Fine-tune the model: the whole training run.
+
+    FINE-TUNING means starting from a model that already knows language (FLAN-T5) and
+    teaching it our specific task with our own examples. The loop, for each epoch
+    (one full pass over the training examples):
+      1. take a batch of examples and let the model predict the answers
+      2. measure how wrong it was (the "loss")
+      3. adjust the model's weights slightly to reduce that loss (backpropagation)
+      4. after the epoch, test on the dev questions and keep the best model so far
+    """
     parser = argparse.ArgumentParser(description="Fine-tune the local answer model.")
     parser.add_argument("--base", default="google/flan-t5-small", help="pretrained model to start from")
     parser.add_argument("--out", default=str(config.LOCAL_MODEL_DIR))
@@ -142,6 +161,7 @@ def main() -> None:
         schedule.load_state_dict(state["schedule"])
 
     def collate(ids: list[int]) -> dict:
+        """Pack several examples into one batch, padding the shorter ones to equal length."""
         batch = tokenizer.pad({"input_ids": [inputs["input_ids"][i] for i in ids],
                                "attention_mask": [inputs["attention_mask"][i] for i in ids]}, return_tensors="pt")
         labels = tokenizer.pad({"input_ids": [targets["input_ids"][i] for i in ids]}, return_tensors="pt")["input_ids"]

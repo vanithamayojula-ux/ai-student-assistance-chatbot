@@ -32,6 +32,7 @@ from .textutil import tokenize
 
 @dataclass
 class Hit:
+    """One search result: a passage (chunk) together with the scores it received."""
     chunk: Chunk
     score: float            # fused score used for ranking
     bm25: float = 0.0
@@ -40,9 +41,23 @@ class Hit:
 
 
 class BM25:
-    """Okapi BM25 over a small corpus, in plain Python + numpy."""
+    """Okapi BM25 over a small corpus, in plain Python + numpy.
+
+    BM25 is the classic KEYWORD search formula (search engines used it for decades).
+    A passage scores high when it contains the question's words, and it scores higher
+    still when those words are rare in the collection ("re-evaluation" tells us more
+    than "student").
+    """
 
     def __init__(self, texts: list[str], k1: float = 1.5, b: float = 0.75):
+        """Build the keyword index once, when the documents are loaded.
+
+        postings - for each word, the list of passages it appears in and how often
+                   (this is called an inverted index, like the index at the back of a book)
+        idf      - for each word, how rare it is: rare words get a bigger weight
+        k1, b    - standard BM25 settings: k1 limits the benefit of repeating a word,
+                   b corrects for long passages having more words
+        """
         self.k1, self.b = k1, b
         docs = [tokenize(t) for t in texts]
         self.n = len(docs)
@@ -58,6 +73,11 @@ class BM25:
         }
 
     def scores(self, query: str) -> np.ndarray:
+        """Give every passage a keyword score for this question (higher = better match).
+
+        For each word of the question we look up the passages that contain it and add
+        (rarity of the word) x (how often it occurs, adjusted for passage length).
+        """
         out = np.zeros(self.n, dtype=np.float32)
         for term in set(tokenize(query)):
             post = self.postings.get(term)
@@ -76,9 +96,16 @@ class BM25:
 
 class DenseEncoder:
     """Sentence embeddings through fastembed (ONNX, CPU). Optional: if the model
-    cannot be loaded the app keeps working on BM25 alone and says so."""
+    cannot be loaded the app keeps working on BM25 alone and says so.
+
+    An EMBEDDING is a list of numbers (a vector; 384 numbers for this model) that
+    represents the MEANING of a text. Texts with similar meaning get similar vectors,
+    so "recheck my paper" lands close to "re-evaluation" even with no shared words.
+    This is the "dense" (meaning-based) search.
+    """
 
     def __init__(self) -> None:
+        """Try to load the embedding model; remember the error instead of crashing."""
         self.model = None
         self.error = ""
         try:
@@ -92,28 +119,43 @@ class DenseEncoder:
 
     @property
     def ready(self) -> bool:
+        """True when the embedding model loaded and meaning-based search can be used."""
         return self.model is not None
 
     @staticmethod
     def _normalise(matrix: np.ndarray) -> np.ndarray:
+        """Scale every vector to length 1.
+
+        After this, multiplying two vectors (a dot product) directly gives their
+        cosine similarity: close to 1 = same meaning, close to 0 = unrelated.
+        """
         norms = np.linalg.norm(matrix, axis=1, keepdims=True)
         return matrix / np.clip(norms, 1e-9, None)
 
     def passages(self, texts: list[str]) -> np.ndarray:
+        """Turn each passage into its vector. Done once per document set, then cached."""
         return self._normalise(np.array(list(self.model.embed(texts, batch_size=32)), dtype=np.float32))
 
     def query(self, text: str) -> np.ndarray:
+        """Turn the student's question into a vector, to compare with the passage vectors."""
         return self._normalise(np.array(list(self.model.query_embed([text])), dtype=np.float32))[0]
 
     def sentences(self, texts: list[str]) -> np.ndarray:
+        """Vectors for single sentences (used when picking the best sentences to quote)."""
         return self.passages(texts)
 
 
 class Reranker:
     """Cross-encoder scores for (question, passage) pairs, through fastembed (ONNX, CPU).
-    Optional: if it cannot be loaded, retrieval stays with plain hybrid fusion."""
+    Optional: if it cannot be loaded, retrieval stays with plain hybrid fusion.
+
+    A cross-encoder reads the question and one passage TOGETHER and says how well the
+    passage answers the question. It is more accurate than comparing two separate
+    vectors but much slower, so it only re-orders the few best candidates ("reranking").
+    """
 
     def __init__(self) -> None:
+        """Nothing is loaded here; the model is loaded the first time it is needed."""
         self.model = None
         self.error = ""
         self._tried = False
@@ -135,11 +177,13 @@ class Reranker:
 
     @property
     def ready(self) -> bool:
+        """True when the reranker model can be used (loads it on the first call)."""
         if not self._tried:
             self._load()
         return self.model is not None
 
     def scores(self, query: str, texts: list[str]) -> list[float]:
+        """One relevance score per text: how well does each one answer the question?"""
         return [float(s) for s in self.model.rerank(query, texts)]
 
 
@@ -148,6 +192,7 @@ _RERANKER: Reranker | None = None
 
 
 def get_reranker() -> Reranker:
+    """Return the one shared Reranker (created on first use, then reused)."""
     global _RERANKER
     if _RERANKER is None:
         _RERANKER = Reranker()
@@ -155,6 +200,7 @@ def get_reranker() -> Reranker:
 
 
 def get_encoder() -> DenseEncoder:
+    """Return the one shared embedding model (loading it is slow, so it is loaded once)."""
     global _ENCODER
     if _ENCODER is None:
         _ENCODER = DenseEncoder()
@@ -162,7 +208,15 @@ def get_encoder() -> DenseEncoder:
 
 
 class Index:
+    """The search index: all passages plus everything needed to search them.
+
+    It holds the keyword index (BM25) and the passage vectors (embeddings). In a big
+    system the vectors would live in a "vector database"; our corpus is small, so a
+    simple numpy array kept in memory does the same job.
+    """
+
     def __init__(self, chunks: list[Chunk]):
+        """Build both indexes: BM25 for keywords, and the vectors for meaning."""
         self.chunks = chunks
         texts = [c.index_text for c in chunks]
         self.bm25 = BM25(texts)
@@ -173,6 +227,12 @@ class Index:
             self.vectors = self._load_or_embed(texts)
 
     def _load_or_embed(self, texts: list[str]) -> np.ndarray | None:
+        """Get the vector of every passage, from the cache when possible.
+
+        Computing embeddings takes time, so the result is saved to disk under a
+        fingerprint (hash) of the passages. If the documents have not changed since
+        last time, the saved file is loaded instead of computing everything again.
+        """
         digest = hashlib.sha1((config.EMBED_MODEL + "\x00" + "\x00".join(texts)).encode("utf-8")).hexdigest()[:16]
         path = config.INDEX_DIR / f"vectors-{digest}.npy"
         if path.exists():
@@ -191,10 +251,12 @@ class Index:
 
     @property
     def has_dense(self) -> bool:
+        """True when passage vectors exist, i.e. meaning-based search is available."""
         return self.vectors is not None
 
     @property
     def can_rerank(self) -> bool:
+        """True when the reranker model is available as well."""
         return self.has_dense and self.reranker.ready
 
     @property
@@ -213,6 +275,15 @@ class Index:
 
     def search(self, query: str, k: int = config.TOP_K, method: str | None = None,
                category: str | None = None, rewrite: bool = True) -> list[Hit]:
+        """RETRIEVAL: return the k passages most likely to contain the answer.
+
+        1. Rewrite a Hindi-English question into rough English.
+        2. Score every passage twice: by keywords (BM25) and by meaning (embeddings).
+        3. Combine the two ranked lists with reciprocal rank fusion (hybrid search).
+        4. Optionally let the reranker re-order the best candidates.
+        `method` picks one retriever ("bm25", "dense", "hybrid", "rerank"); the default
+        is the best one available. `category` limits the search to one document type.
+        """
         if not self.chunks:
             return []
         method = method or self.best_method

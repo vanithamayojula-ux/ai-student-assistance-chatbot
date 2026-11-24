@@ -21,6 +21,7 @@ tok.enable_truncation(max_length=256); tok.enable_padding()
 sess = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
 names = [i.name for i in sess.get_inputs()]
 
+# Ask the QNLI model, for each sentence: "does this sentence answer the question?" (score 0..1).
 def qnli(question, sentences):
     if not sentences: return []
     enc = tok.encode_batch([(question, s) for s in sentences])
@@ -50,6 +51,8 @@ for q in qs:
                  "qnli_top1": max([p for p, u in zip(probs, units) if u["source"] == 0], default=0.0)})
 print("seconds per question", round((time.time() - t0) / len(qs), 2), "| sample logits shape ok")
 
+# Balanced accuracy of a gate: the average of "answerable questions let through" and
+# "unanswerable questions stopped", when the confidence formula `conf` is cut at threshold t.
 def ba(rs, conf, t):
     a = [r for r in rs if r["q"]["type"] == "answerable"]; u = [r for r in rs if r["q"]["type"] != "answerable"]
     ans = sum(conf(r) >= t for r in a) / len(a); dec = sum(conf(r) < t for r in u) / len(u)

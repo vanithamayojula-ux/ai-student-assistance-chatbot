@@ -91,12 +91,18 @@ _WORD = re.compile(r"[A-Za-z0-9%.'-]+|[^A-Za-z0-9\s]")
 
 
 def looks_hinglish(text: str) -> bool:
+    """True when the text contains at least one Hindi-only word such as "kab" or "hai"."""
     words = {w.lower().strip(".'-") for w in _WORD.findall(text)}
     return bool(words & _MARKERS)
 
 
 def to_search_english(text: str) -> str:
-    """Rewrite a Hinglish question for searching; return other text unchanged."""
+    """Rewrite a Hinglish question for searching; return other text unchanged.
+
+    Goes through the question word by word: a known Hindi word is replaced by its
+    English meaning (or dropped when it is only grammar), every other word is kept.
+    Example: "fees ki last date kab hai" -> "fees last date when".
+    """
     if not looks_hinglish(text):
         return text
     out = []

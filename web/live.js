@@ -29,9 +29,12 @@
   const GEN_BADGE = { extractive: "Quoted from documents", gemini: "Written by Gemini", claude: "Written by Claude", none: "Help desk" };
 
   /* ---------- small helpers ---------- */
+  // Shortcuts: $ finds the first element matching a CSS selector, $$ finds all of them.
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+  // Build an HTML element in one call: tag name, attributes/events, then child nodes.
+  // Text is set with textContent, so text coming from the server can never run as code (prevents XSS).
   function el(tag, props, ...children) {
     const node = document.createElement(tag);
     for (const [key, value] of Object.entries(props || {})) {
@@ -47,6 +50,7 @@
     }
     return node;
   }
+  // A Material Symbols icon, by its name.
   const icon = (name, cls = "") => el("span", { class: `material-symbols-outlined ${cls}`, text: name });
 
   // Replace the text node whose trimmed value matches `from` (string or RegExp). Returns its parent element.
@@ -62,20 +66,26 @@
     }
     return null;
   }
+  // Find the first element matching `sel` whose text contains `text`.
   const byText = (sel, text, root = document) => $$(sel, root).find((n) => n.textContent.trim().includes(text));
+  // Hide an element.
   const hide = (node) => node && node.classList.add("hidden");
   // Drop the listeners Stitch's own inline script attached, keeping the element in place.
   function fresh(node) { if (!node) return node; const copy = node.cloneNode(true); node.replaceWith(copy); return copy; }
 
+  // Formatting helpers: pct(0.875) -> "87.5%"; plural(2, "document") -> "2 documents";
+  // stripCites removes the [1] markers and ** from an answer.
   const pct = (x, digits = 1) => (x == null ? "—" : `${(x * 100).toFixed(digits).replace(/\.0$/, "")}%`);
   const plural = (n, word, many = word + "s") => `${n} ${n === 1 ? word : many}`;
   const stripCites = (text) => (text || "").replace(/\s*\[\d+\]/g, "").replace(/\*\*/g, "").trim();
 
+  // Show a date in a readable form, e.g. "5 Dec 2026".
   function fmtDate(iso) {
     if (!iso) return "";
     const d = new Date(iso);
     return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
   }
+  // A friendly time: "Today, 3:10 PM", "Yesterday" or "Dec 5".
   function fmtWhen(ms, withTime = false) {
     const d = new Date(ms), now = new Date();
     const time = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -88,6 +98,7 @@
 
   /* ---------- toast ---------- */
   let toastTimer;
+  // Show a small pop-up message at the bottom of the screen for a few seconds (red when it is an error).
   function toast(message, bad = false) {
     let node = $("#live-toast");
     if (!node) {
@@ -102,6 +113,7 @@
   }
 
   /* ---------- API ---------- */
+  // Call the backend and return its JSON reply; a failed request becomes a readable error message.
   async function api(path, init = {}) {
     let response;
     try { response = await fetch(path, init); }
@@ -115,12 +127,18 @@
     return body;
   }
   let healthCache = null;
+  // The system status (GET /api/health) and the document list (GET /api/documents) are fetched once
+  // and then reused (cached). refreshCorpus() clears both after an upload or a delete.
   const health = () => (healthCache ||= api("/api/health"));
   let docsCache = null;
   const loadDocs = () => (docsCache ||= api("/api/documents").then((r) => r.documents));
   const refreshCorpus = () => { healthCache = null; docsCache = null; };
+  // Display name of a category id, e.g. "faqs" -> "FAQs".
   const catLabel = (h, id) => h?.categories?.find((c) => c.id === id)?.label || (id ? id[0].toUpperCase() + id.slice(1) : "All documents");
 
+  // Send a question to POST /api/chat and read the reply as a STREAM.
+  // The server sends one JSON event per line; onEvent is called for each one as it arrives,
+  // so the answer can appear on screen while it is still being written.
   async function streamChat(body, onEvent) {
     let response;
     try {
@@ -149,6 +167,7 @@
   }
 
   /* ---------- uploads ---------- */
+  // Open the browser's file picker and return the chosen file (or null).
   function chooseFile() {
     return new Promise((resolve) => {
       const input = el("input", { type: "file", accept: ".pdf,.docx,.md,.txt", class: "hidden" });
@@ -157,6 +176,7 @@
       input.click();
     });
   }
+  // Send a file and its category to the backend (POST /api/documents). The server re-indexes at once.
   async function uploadFile(file, category) {
     const form = new FormData();
     form.append("file", file);
@@ -191,6 +211,7 @@
       menu.querySelector("button")?.focus();
     });
   }
+  // The whole upload flow: pick a category, pick a file, upload it.
   async function pickAndUpload(anchor, fixedCategory) {
     try {
       const category = fixedCategory || (await pickCategory(anchor));
@@ -202,11 +223,15 @@
   }
 
   /* ---------- conversations (browser storage) ---------- */
+  // Conversations are kept in the browser's localStorage (on this device, not on the server):
+  // loadConvs reads them, saveConvs writes the 30 most recent.
   function loadConvs() { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } }
   function saveConvs(list) { try { localStorage.setItem(STORE, JSON.stringify(list.slice(0, 30))); } catch { /* storage full */ } }
+  // Small helpers over one conversation: when it was last used, its questions, its finished answers.
   const when = (c) => Number(c.at || c.id) || Date.now();
   const questionsOf = (c) => c.messages.filter((m) => m.role === "user");
   const answersOf = (c) => c.messages.filter((m) => m.role !== "user" && !m.pending);
+  // The documents cited across a conversation, with how many times each was cited.
   function citedDocs(c) {
     const seen = new Map();
     for (const m of answersOf(c)) for (const s of m.sources || []) {
@@ -217,11 +242,13 @@
     }
     return [...seen.values()];
   }
+  // The document category cited most in a conversation (used as its topic label).
   function convCategory(c) {
     const counts = {};
     for (const m of answersOf(c)) for (const s of m.sources || []) if (s.cited) counts[s.category] = (counts[s.category] || 0) + 1;
     return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
   }
+  // The conversation as markdown text (questions, answers and cited sources), for copy and download.
   function transcript(c) {
     const lines = [`# ${c.title}`, ""];
     for (const m of c.messages) {
@@ -235,15 +262,18 @@
     }
     return lines.join("\n");
   }
+  // Make the browser download some text as a file.
   function download(name, text, type = "text/markdown") {
     const url = URL.createObjectURL(new Blob([text], { type }));
     const a = el("a", { href: url, download: name });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
+  // A safe file name made from a conversation title.
   const fileName = (title) => (title || "conversation").replace(/[^\w-]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) + ".md";
 
   /* ---------- rendering passage text ---------- */
+  // Add text to an element, turning **bold** markdown into real bold text.
   function inline(text, parent) {
     text.split(/(\*\*[^*]+\*\*)/g).forEach((part) => {
       if (part.startsWith("**") && part.endsWith("**") && part.length > 4) parent.append(el("strong", { class: "font-semibold", text: part.slice(2, -2) }));
@@ -252,7 +282,10 @@
     return parent;
   }
   const MARK = "bg-primary/15 text-on-surface rounded px-0.5";
+  // Split a markdown table row "| a | b |" into its cells.
   const cells = (row) => row.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+  // Draw a passage (paragraphs, lists, tables). Sentences marked "hit" are the evidence
+  // for the answer, so they are wrapped in <mark> and appear highlighted.
   function renderBlocks(blocks, textClass = "") {
     const root = el("div", { class: `flex flex-col gap-3 ${textClass}` });
     for (const block of blocks) {
@@ -281,6 +314,8 @@
   }
 
   /* ---------- shared chrome: sidebar status, search box ---------- */
+  // Runs on every page: the header search box opens the document explorer, and the sample status
+  // text is replaced by the real number of documents and passages from the server.
   async function decorate() {
     const status = $$("span").filter((s) => /^Spring 2025 . (KB Connected|Active Node)$/.test(s.textContent.trim()));
     const searchBoxes = $$("header div").filter((d) => /^search\s*Search (knowledge base|campus papers)/.test(d.textContent.trim().replace(/\s+/g, " ")));
@@ -289,6 +324,7 @@
       box.setAttribute("role", "link");
       box.setAttribute("tabindex", "0");
       box.title = "Search the documents";
+      // Open the document explorer with its search box focused.
       const go = () => { location.href = "documents.html?focus=search"; };
       box.addEventListener("click", go);
       box.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
@@ -313,6 +349,8 @@
   /* =====================================================================
      Chat
      ===================================================================== */
+  // CHAT PAGE (chat.html). Sets up the conversation list, the message thread, the question box and
+  // all buttons. The functions inside it share one `state` object (conversations, current chat, busy flag).
   function initChat() {
     const aside = $("main aside");
     const [newBtn, searchWrap, listBox, kbCard] = aside.firstElementChild.children;
@@ -329,7 +367,9 @@
     const hint = byText("span", "⌘ + Enter", composer);
 
     const state = { convs: loadConvs(), currentId: null, busy: false, category: null, health: null };
+    // The conversation that is open right now (or null).
     const current = () => state.convs.find((c) => c.id === state.currentId) || null;
+    // The confidence threshold the server uses to decide whether to answer or decline.
     const threshold = () => state.health?.threshold ?? 0.58;
 
     textarea.id = "question";
@@ -347,6 +387,7 @@
     const methodTag = modelPill.children[2];
     genSelect.addEventListener("change", () => { try { localStorage.setItem(GEN_KEY, genSelect.value); } catch { /* ignore */ } });
 
+    // Limit the search to one document category (or all documents) and show the choice.
     function setCategory(id) {
       state.category = id || null;
       const label = catLabel(state.health, state.category);
@@ -355,6 +396,7 @@
     }
 
     /* conversation list */
+    // One row of the conversation list in the sidebar.
     function listItem(c) {
       const active = c.id === state.currentId;
       return el("a", {
@@ -371,6 +413,7 @@
       active ? el("span", { class: "w-2 h-2 rounded-full bg-primary flex-shrink-0" })
         : el("span", { class: "font-label-sm text-label-sm text-outline whitespace-nowrap", text: fmtWhen(when(c)) }));
     }
+    // Redraw the sidebar: saved conversations, filtered by the search box, grouped into Today / Earlier.
     function renderList() {
       const q = search.value.trim().toLowerCase();
       const items = state.convs.filter((c) => !q || c.title.toLowerCase().includes(q) || c.messages.some((m) => m.content.toLowerCase().includes(q)));
@@ -393,6 +436,7 @@
     }
 
     /* messages */
+    // The bubble for a question the student asked.
     function userNode(m) {
       return el("div", { class: "flex items-start gap-space-md max-w-4xl" },
         el("div", { class: "w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5" }, icon("person", "text-2xl")),
@@ -403,6 +447,7 @@
           el("div", { class: "bg-surface-container-lowest p-space-md rounded-2xl rounded-tl-sm shadow-sm text-on-surface font-body-lg text-body-lg whitespace-pre-wrap break-words", text: m.content })));
     }
 
+    // Draw the answer text. Every citation like [1] becomes a button that jumps to that source card.
     function renderAnswer(text, m, key) {
       const frag = document.createDocumentFragment();
       let list = null;
@@ -435,6 +480,7 @@
       }
       return frag;
     }
+    // Scroll to a source card and flash a ring around it.
     function focusSource(key, n) {
       const card = document.getElementById(`src-${key}-${n}`);
       if (!card) return;
@@ -442,6 +488,7 @@
       card.classList.add("ring-2", "ring-primary");
       setTimeout(() => card.classList.remove("ring-2", "ring-primary"), 1600);
     }
+    // A short preview of a source: the highlighted (evidence) sentences. Click to read the whole passage.
     function snippet(s) {
       const units = s.blocks.flatMap((b) => b.units);
       const hits = units.filter((u) => u.hit);
@@ -460,6 +507,8 @@
       });
       return box;
     }
+    // The source cards under an answer: the cited passages, the retrieval confidence
+    // (High / Medium / Low) and a link that opens the document in the explorer.
     function sourcesNode(m, key) {
       const cited = m.sources.filter((s) => s.cited);
       const shown = cited.length ? cited : m.sources;
@@ -490,6 +539,7 @@
               el("span", { class: "font-label-sm text-label-sm text-outline", text: s.updated ? `Updated ${fmtDate(s.updated)}` : (s.origin === "upload" ? "Uploaded" : "") })));
         })));
     }
+    // An information box inside an answer, e.g. "Not covered by the documents".
     function callout(name, heading, body) {
       return el("div", { class: "flex items-start gap-space-sm p-space-md bg-secondary-container/40 rounded-xl text-on-secondary-fixed" },
         icon(name, "text-xl text-primary flex-shrink-0 mt-0.5"),
@@ -497,11 +547,13 @@
           el("span", { class: "font-label-md text-label-md font-bold", text: heading }),
           el("p", { class: "font-body-sm text-body-sm text-on-surface-variant leading-relaxed", text: body })));
     }
+    // A small icon + label button (Copy, Regenerate).
     const toolBtn = (name, label, onclick, extra = "") => el("button", {
       type: "button", onclick,
       class: `flex items-center gap-1 px-2.5 py-1 rounded-lg hover:bg-surface-container hover:text-on-surface font-label-sm text-label-sm transition-colors ${extra}`,
     }, icon(name, "text-base"), el("span", { text: label }));
 
+    // Send a thumbs-up/down to the backend (POST /api/feedback) and remember it.
     async function vote(m, helpful, button) {
       if (m.vote === helpful) return;
       try {
@@ -513,6 +565,8 @@
       } catch (error) { toast(error.message, true); }
     }
 
+    // Build one assistant message: the answer text, notes, source cards and the action row
+    // (copy, regenerate, thumbs up/down, report).
     function botNode(m, c, isLast) {
       const key = c.messages.indexOf(m);
       const card = el("div", { class: "bg-surface-container-lowest p-space-lg rounded-2xl rounded-tl-sm shadow-sm text-on-surface space-y-space-md" });
@@ -536,7 +590,7 @@
         el("div", { class: "flex-1 flex flex-col gap-space-md min-w-0" },
           el("div", { class: "flex items-center justify-between" },
             el("div", { class: "flex items-center gap-space-xs" },
-              el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "P08 Academic Engine" }),
+              el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "STUDY BUDDY" }),
               el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: GEN_BADGE[m.generator] || "Official Policy Corpus" })),
             el("span", { class: "font-label-sm text-label-sm text-outline", text: meta })),
           card));
@@ -567,6 +621,7 @@
       return node;
     }
 
+    // A row of clickable suggested questions.
     function chips(list) {
       return el("div", { class: "flex flex-wrap gap-2" }, list.map((s) => el("button", {
         type: "button", text: `→ ${s.q}`,
@@ -574,6 +629,7 @@
         onclick: () => ask(s.q),
       })));
     }
+    // Suggest up to three questions not asked yet, preferring the topic of this conversation.
     function followUps(c) {
       const asked = new Set(questionsOf(c).map((m) => m.content.toLowerCase()));
       const cat = convCategory(c);
@@ -583,13 +639,14 @@
       return el("div", { class: "flex flex-col gap-2 pt-1" },
         el("span", { class: "font-label-sm text-label-sm text-outline", text: "Other questions students ask:" }), chips(list));
     }
+    // The welcome message and starter questions shown before the first question.
     function emptyState() {
       const uni = state.health?.university || "the university";
       return el("div", { class: "flex items-start gap-space-md max-w-4xl" },
         el("div", { class: "w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5" }, icon("school", "text-2xl")),
         el("div", { class: "flex-1 flex flex-col gap-space-md min-w-0" },
           el("div", { class: "flex items-center gap-space-xs" },
-            el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "P08 Academic Engine" }),
+            el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "STUDY BUDDY" }),
             el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: "Official Policy Corpus" })),
           el("div", { class: "bg-surface-container-lowest p-space-lg rounded-2xl rounded-tl-sm shadow-sm text-on-surface space-y-space-sm" },
             el("p", { class: "font-body-lg text-body-lg leading-relaxed", text: `Ask about attendance, exams, fees, hostel or syllabus. Every answer is taken from ${uni}'s own documents and shows the passage it came from. If the documents don't cover a question, you'll be told so.` })),
@@ -597,6 +654,7 @@
             el("span", { class: "font-label-sm text-label-sm text-outline", text: "Try asking:" }), chips(STARTERS.slice(0, 5)))));
     }
 
+    // Redraw the whole conversation.
     function renderThread() {
       const c = current();
       title.textContent = c ? c.title : "New conversation";
@@ -607,23 +665,32 @@
       c.messages.forEach((m, i) => thread.append(m.role === "user" ? userNode(m) : botNode(m, c, i === last)));
       thread.scrollTop = thread.scrollHeight;
     }
+    // Redraw only the answer that is being written (called for every streamed piece).
     function updateLast(m) {
       const c = current();
       const node = thread.querySelector(`[data-msg="${c.messages.indexOf(m)}"]`);
       if (node) node.replaceWith(botNode(m, c, true));
       thread.scrollTop = thread.scrollHeight;
     }
+    // Open a saved conversation and put its id in the page address.
     function openConv(id) {
       state.currentId = id;
       history.replaceState(null, "", id ? `chat.html?c=${encodeURIComponent(id)}` : "chat.html");
       renderList(); renderThread();
     }
+    // Start a new, empty conversation.
     function newConv() {
       if (state.busy) return;
       openConv(null);
       textarea.focus();
     }
 
+    // MAIN FLOW of the chat page. Adds the question to the conversation, calls the backend through
+    // streamChat and updates the answer as events arrive:
+    //   "meta"  = the passages were found (shown at once, before the answer is written)
+    //   "token" = one more piece of the answer text
+    //   "done"  = the final answer with its sources, confidence and time taken
+    // Any error becomes a visible message. The conversation is saved at the end.
     async function ask(question) {
       question = question.trim();
       if (!question || state.busy) return;
@@ -664,6 +731,7 @@
         textarea.focus({ preventScroll: true });
       }
     }
+    // Ask the last question again (the old answer is dropped first).
     function regenerate() {
       const c = current();
       if (!c || state.busy) return;
@@ -674,6 +742,7 @@
     }
 
     /* composer */
+    // Grow the question box as the student types, up to a maximum height.
     function autosize() {
       textarea.style.height = "auto";
       textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
@@ -746,6 +815,7 @@
       download(fileName(c.title), transcript(c));
     });
 
+    // Fill the knowledge-base card: search method in use, number of documents and passages.
     function renderKb() {
       const h = state.health;
       if (!h) return;
@@ -781,6 +851,8 @@
   /* =====================================================================
      Document explorer
      ===================================================================== */
+  // DOCUMENT EXPLORER PAGE (documents.html): the list of documents with search, filter and sort,
+  // and a reader that shows one document section by section.
   async function initDocuments() {
     const grid = $("#documentGridArea");
     const readerCol = grid.nextElementSibling;
@@ -835,6 +907,7 @@
     Promise.all(state.docs.map((d) => api(`/api/documents/${encodeURIComponent(d.doc_id)}`).then((full) => state.details.set(d.doc_id, full)).catch(() => {})))
       .then(() => render());
 
+    // The documents that match the search box and category, in the chosen sort order.
     function filtered() {
       const q = search.value.trim().toLowerCase();
       const cat = catSelect.value;
@@ -851,6 +924,7 @@
         : String(b.updated || "").localeCompare(String(a.updated || "")));
       return list;
     }
+    // Fill one document card (copied from the page's template) with a document's details.
     function fillCard(d, selected) {
       const node = (selected ? selectedTpl : normalTpl).cloneNode(true);
       const style = CAT_STYLE[d.category] || CAT_STYLE.faqs;
@@ -885,12 +959,14 @@
       node.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(d.doc_id); } });
       return node;
     }
+    // Redraw the document cards and the "Showing X of Y" line.
     function render() {
       const list = filtered();
       grid.replaceChildren(...list.map((d) => fillCard(d, d.doc_id === state.selected)));
       if (!list.length) grid.append(el("div", { class: "bg-surface-container-lowest rounded-xl p-space-lg shadow-sm font-body-md text-body-md text-on-surface-variant", text: "No documents match. Try another search or category." }));
       showing.replaceChildren("Showing ", el("strong", { class: "text-on-surface font-semibold", text: String(list.length) }), ` of ${state.docs.length} documents`);
     }
+    // Select a document, load its text if needed and show it in the reader.
     async function select(docId, sectionName) {
       state.selected = docId;
       render();
@@ -904,6 +980,7 @@
       renderReader();
       history.replaceState(null, "", `documents.html?doc=${encodeURIComponent(docId)}`);
     }
+    // Show the current section of the selected document, its details and suggested questions.
     function renderReader() {
       const full = state.details.get(state.selected);
       if (!full) return;
@@ -943,6 +1020,7 @@
       });
       if (queryBtn) queryBtn.onclick = () => { location.href = `chat.html?cat=${full.category}`; };
     }
+    // Jump to section number i of the open document.
     const go = (i) => { const full = state.details.get(state.selected); if (!full) return; state.section = Math.max(0, Math.min(full.sections.length - 1, i)); renderReader(); };
     firstBtn.addEventListener("click", () => go(0));
     prevBtn.addEventListener("click", () => go(state.section - 1));
@@ -978,6 +1056,8 @@
   /* =====================================================================
      Chat history
      ===================================================================== */
+  // CHAT HISTORY PAGE (history.html): saved conversations with search, filters, star, rename,
+  // export and delete. The conversations live in the browser's localStorage.
   function initHistory() {
     const firstSection = $$("section").find((s) => s.className.includes("flex flex-col gap-space-sm"));
     const column = firstSection.parentElement;
@@ -1005,6 +1085,7 @@
 
     const state = { convs: loadConvs(), time: 0, starred: false, domain: null, h: null, selected: new Set() };
 
+    // The conversations that match the search box, time range, star filter and topic.
     function filtered() {
       const q = search.value.trim().toLowerCase();
       const limit = [Infinity, 30, 7][state.time] * 864e5;
@@ -1015,12 +1096,15 @@
         return !q || c.title.toLowerCase().includes(q) || c.messages.some((m) => m.content.toLowerCase().includes(q));
       }).sort((a, b) => when(b) - when(a));
     }
+    // Write the conversations back to browser storage.
     function save() { saveConvs(state.convs); }
+    // Delete the given conversations.
     function remove(ids) {
       state.convs = state.convs.filter((c) => !ids.has(c.id));
       ids.forEach((id) => state.selected.delete(id));
       save(); render();
     }
+    // Build the card for one conversation: title, topic, citations, last answer and its buttons.
     function articleFor(c) {
       const node = articleTpl.cloneNode(true);
       const last = answersOf(c).at(-1);
@@ -1086,12 +1170,14 @@
       rounds.onclick = () => { location.href = `chat.html?c=${encodeURIComponent(c.id)}`; };
       return node;
     }
+    // The date group a conversation belongs to: Today, Earlier this week, or its month.
     function groupOf(c) {
       const d = new Date(when(c)), now = new Date();
       if (d.toDateString() === now.toDateString()) return "Today";
       if (Date.now() - d < 7 * 864e5) return "Earlier this week";
       return d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
     }
+    // Redraw the history list grouped by date, then the filter chips, counters and statistics.
     function render() {
       const list = filtered();
       const groups = new Map();
@@ -1125,6 +1211,7 @@
       updateCount();
       renderStats();
     }
+    // Draw the topic filter chips, with the number of conversations in each category.
     function renderChips() {
       const counts = {};
       state.convs.forEach((c) => { const k = convCategory(c); if (k) counts[k] = (counts[k] || 0) + 1; });
@@ -1141,9 +1228,11 @@
         chip(null, "All Domains"),
         ...(state.h?.categories || []).filter((c) => counts[c.id]).map((c) => chip(c.id, c.label, counts[c.id])));
     }
+    // Show how many conversations are ticked.
     function updateCount() {
       countText.textContent = String(state.selected.size);
     }
+    // Fill the statistics panel: questions asked, share answered from the documents, most-cited documents.
     function renderStats() {
       if (!right) return;
       const questions = state.convs.reduce((n, c) => n + questionsOf(c).length, 0);
@@ -1193,6 +1282,7 @@
       filtered().forEach((c) => (selectAll.checked ? state.selected.add(c.id) : state.selected.delete(c.id)));
       render();
     });
+    // The conversations that are ticked right now.
     const chosen = () => state.convs.filter((c) => state.selected.has(c.id));
     exportMd?.addEventListener("click", () => {
       const list = chosen();
@@ -1232,6 +1322,8 @@
   /* =====================================================================
      Admin
      ===================================================================== */
+  // ADMIN PAGE (admin.html): corpus statistics, uploading a document, the newest documents,
+  // and the registry table with delete and CSV export.
   async function initAdmin() {
     const sections = $$("main section");
     const stats = sections.find((s) => s.className.includes("xl:grid-cols-4"));
@@ -1266,6 +1358,7 @@
     /* header + stat cards */
     swapText(document.body, /^Latency: .*Sync/, `${METHOD[h.answers_with] || h.answers_with} • ${h.passages} passages`);
     swapText(document.body, "Cluster: US-East-Academic-01", h.university);
+    // Fill the stat cards: documents, evaluation questions, answer accuracy and retrieval Hit@3.
     function renderStats() {
       const uploads = docs.filter((d) => d.origin === "upload").length;
       const answers = evalData?.available ? evalData.answers?.extractive?.summary : null;
@@ -1298,6 +1391,7 @@
     catSelect.replaceChildren(...h.categories.map((c) => el("option", { value: c.id, text: c.label })));
     let draft = null;
     const defaultTitle = dropTitle.textContent;
+    // Remember the file that is waiting to be uploaded and show its name.
     function setDraft(file) {
       draft = file;
       dropTitle.textContent = file ? `${file.name} (${(file.size / 1024).toFixed(0)} KB) ready to add` : defaultTitle;
@@ -1334,6 +1428,7 @@
     const firstJob = monitor && $$("div", monitor).find((d) => d.textContent.includes("100% Vectorized") && d.className.includes("rounded-xl"));
     const jobList = firstJob?.parentElement;
     const jobTpl = firstJob?.cloneNode(true);
+    // Show the three most recently added documents.
     function renderMonitor() {
       if (!jobTpl) return;
       swapText(monitor, "3 Active Jobs", `${docs.length} indexed`);
@@ -1358,7 +1453,9 @@
     const PAGE_SIZE = 5;
     let pageNo = 0;
     registrySelect.replaceChildren(el("option", { value: "", text: "All Categories" }), ...h.categories.map((c) => el("option", { value: c.id, text: c.label })));
+    // The documents shown in the registry table (category filter applied, sorted by title).
     const regList = () => docs.filter((d) => !registrySelect.value || d.category === registrySelect.value).sort((a, b) => a.title.localeCompare(b.title));
+    // Delete an uploaded document (DELETE /api/documents/{id}) after the user confirms.
     async function removeDoc(d) {
       if (!confirm(`Remove “${d.title}” from the library?`)) return;
       try {
@@ -1369,6 +1466,7 @@
         renderAll();
       } catch (error) { toast(error.message, true); }
     }
+    // Build one table row for a document, with read / ask / delete buttons.
     function rowFor(d) {
       const tr = rowTpl.cloneNode(true);
       const style = CAT_STYLE[d.category] || CAT_STYLE.faqs;
@@ -1396,6 +1494,7 @@
           canDelete ? "hover:text-error" : "text-outline opacity-40 cursor-not-allowed"));
       return tr;
     }
+    // Draw the current page of the registry table and its page buttons (5 rows per page).
     function renderRegistry() {
       const list = regList();
       const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
@@ -1426,6 +1525,7 @@
       download("corpus.csv", rows.map((r) => r.map(esc).join(",")).join("\n"), "text/csv");
     });
 
+    // Redraw every part of the admin page.
     function renderAll() { renderStats(); renderMonitor(); renderRegistry(); }
     renderAll();
   }
@@ -1433,10 +1533,13 @@
   /* =====================================================================
      Dashboard
      ===================================================================== */
+  // DASHBOARD PAGE (dashboard.html): a question box, quick prompts, counts of questions and
+  // citations, and the three most recent conversations.
   function initDashboard() {
     // fresh() drops the hash-navigation listeners Stitch's inline script attached.
     const input = fresh($("#dashboardQueryInput"));
     const submit = fresh($("#submitQueryBtn"));
+    // Take the typed question to the chat page.
     const go = () => {
       const q = input.value.trim();
       if (!q) { input.focus(); return; }
@@ -1472,6 +1575,7 @@
     if (recent) {
       const [headRow, list, footer] = recent.children;
       const clear = byText("button", "Clear History", headRow);
+      // Draw the three most recent conversations.
       const render = () => {
         const all = loadConvs();
         const items = all.slice().sort((a, b) => when(b) - when(a)).slice(0, 3);
@@ -1514,6 +1618,7 @@
   /* =====================================================================
      Landing page
      ===================================================================== */
+  // LANDING PAGE (index.html): turn the demo box into a real question box that opens the chat.
   function initIndex() {
     const demo = $("#interactive-preview");
     const input = demo && $("input[readonly]", demo);
@@ -1523,6 +1628,7 @@
       input.placeholder = "Ask anything about attendance, exams, fees, hostel or syllabus…";
       input.classList.remove("cursor-pointer");
       input.setAttribute("aria-label", "Ask a question");
+      // Take the typed question to the chat page.
       const go = () => {
         const q = input.value.trim();
         location.href = q ? `chat.html?q=${encodeURIComponent(q)}` : "chat.html";
@@ -1534,6 +1640,7 @@
   }
 
   /* ---------- start ---------- */
+  // Pick the setup function for the page that is open, and run it once the page has loaded.
   const init = { chat: initChat, documents: initDocuments, history: initHistory, admin: initAdmin, dashboard: initDashboard, index: initIndex }[PAGE];
   const start = () => {
     decorate();

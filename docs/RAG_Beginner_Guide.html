@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG explained simply: AI Student Assistance Chatbot</title>
+<style>
+  :root { --ink:#1c2333; --soft:#55607a; --line:#e3e7f0; --bg:#f6f7fb; --card:#fff; --blue:#2b3990; --blue-bg:#eef0fa;
+          --green:#1b7a55; --green-bg:#e8f6ef; --amber:#8a6d00; --amber-bg:#fff6c2; --red:#b3392f; --red-bg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.65 "Segoe UI", system-ui, Arial, sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+  h1 { font-size:2rem; line-height:1.2; margin:0 0 6px; }
+  h2 { font-size:1.45rem; margin:46px 0 10px; padding-top:14px; border-top:2px solid var(--line); color:var(--blue); }
+  h3 { font-size:1.1rem; margin:26px 0 6px; }
+  p { margin:10px 0; }
+  .lead { color:var(--soft); font-size:1.05rem; }
+  code { background:#eceef6; padding:1px 6px; border-radius:5px; font:0.9em Consolas, "Courier New", monospace; }
+  pre { background:#1c2333; color:#e8ebf5; padding:14px 16px; border-radius:10px; overflow-x:auto; font:14px/1.5 Consolas, "Courier New", monospace; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin:14px 0; }
+  .say { background:var(--green-bg); border-left:5px solid var(--green); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .say b:first-child { color:var(--green); }
+  .note { background:var(--amber-bg); border-left:5px solid var(--amber); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .warn { background:var(--red-bg); border-left:5px solid var(--red); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .file { display:inline-block; background:var(--blue-bg); color:var(--blue); font:600 0.82rem Consolas, monospace; padding:2px 8px; border-radius:20px; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; background:var(--card); font-size:0.95rem; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--blue-bg); color:var(--blue); }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:14px 0; }
+  .flow div { flex:1 1 130px; background:var(--card); border:2px solid var(--blue); border-radius:10px; padding:10px; text-align:center; font-size:0.9rem; }
+  .flow div b { display:block; color:var(--blue); }
+  .flow .r { border-color:#2a78d6; } .flow .a { border-color:#eb6834; } .flow .g { border-color:var(--green); }
+  .toc { columns:2; padding-left:20px; } .toc li { margin:3px 0; }
+  a { color:var(--blue); }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; margin:8px 0; }
+  summary { cursor:pointer; font-weight:600; }
+  img { max-width:100%; border:1px solid var(--line); border-radius:10px; background:#fff; }
+  .small { font-size:0.88rem; color:var(--soft); }
+  @media (max-width:600px) { .toc { columns:1; } body { font-size:16px; } }
+  @media print { body { background:#fff; } details { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<main>
+
+<h1>RAG explained simply</h1>
+<p class="lead">A beginner's guide to how the <b>AI Student Assistance Chatbot</b> works. No earlier knowledge needed.
+Read it top to bottom once (about 25 minutes), then use the last two sections to prepare for questions.</p>
+
+<div class="card">
+<b>Contents</b>
+<ol class="toc">
+  <li><a href="#pitch">The project in 30 seconds</a></li>
+  <li><a href="#problem">The problem RAG solves</a></li>
+  <li><a href="#what">What RAG means</a></li>
+  <li><a href="#bigpicture">The big picture</a></li>
+  <li><a href="#ingest">Part 1: Preparing the documents</a></li>
+  <li><a href="#answer">Part 2: Answering a question</a></li>
+  <li><a href="#example">One question, start to finish</a></li>
+  <li><a href="#files">Which file does what</a></li>
+  <li><a href="#eval">How we know it works</a></li>
+  <li><a href="#tech">Technologies used</a></li>
+  <li><a href="#glossary">Glossary</a></li>
+  <li><a href="#viva">Likely questions and answers</a></li>
+  <li><a href="#demo">How to run and demo it</a></li>
+</ol>
+</div>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="pitch">1. The project in 30 seconds</h2>
+<div class="say"><b>Say this in class:</b> "This is a chatbot that answers students' questions about attendance, exams, fees,
+hostel and syllabus. It does not answer from its own memory. It first <b>searches the university's documents</b>, then
+writes the answer <b>only from the passages it found</b>, and shows the exact passage as proof. If the documents do not
+contain the answer, it says so instead of guessing. This approach is called <b>RAG: Retrieval-Augmented Generation</b>."</div>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="problem">2. The problem RAG solves</h2>
+<p>A language model (an "LLM", like ChatGPT, Gemini or Claude) is a program that has read a huge amount of text and learned
+to write sentences. It is very good at language, but it has three weaknesses for a university help desk:</p>
+<table>
+<tr><th>Weakness</th><th>What goes wrong</th></tr>
+<tr><td><b>It does not know our university</b></td><td>It was never shown our attendance rule or our fee notice, so it cannot know them.</td></tr>
+<tr><td><b>It can "hallucinate"</b></td><td>When it does not know, it may still write a confident, wrong answer ("the fine is Rs. 500") that sounds real.</td></tr>
+<tr><td><b>Its knowledge is frozen</b></td><td>A notice published last week is not in its memory.</td></tr>
+</table>
+<p>A wrong answer about a fee or an exam date can cost a student money or marks. So we need answers that come from the
+<b>official documents</b>, and that can be <b>checked</b>.</p>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="what">3. What RAG means</h2>
+<div class="card">
+<b>The open-book exam idea.</b> A normal chatbot is like a student writing an exam <i>from memory</i>: it may remember
+wrongly. RAG is an <i>open-book exam</i>: before answering, the student opens the textbook, finds the right page, and
+writes the answer from that page. The answer is more reliable, and you can point to the page it came from.
+</div>
+<div class="flow">
+  <div class="r"><b>R = Retrieval</b>Search the documents and pick the few passages most related to the question.</div>
+  <div class="a"><b>A = Augmented</b>Add ("augment") those passages to the question, so the writer has the facts in front of it.</div>
+  <div class="g"><b>G = Generation</b>Write the answer using only those passages, and mention which passage each fact came from.</div>
+</div>
+<p>That is the whole idea. Everything else in this project is detail about doing each of these three steps well.</p>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="bigpicture">4. The big picture</h2>
+<p>The system works in two parts:</p>
+<ul>
+  <li><b>Part 1, preparing the documents ("ingestion").</b> Done once when the server starts, and again whenever a document is
+  uploaded or deleted.</li>
+  <li><b>Part 2, answering.</b> Done for every question a student asks.</li>
+</ul>
+<p><img src="../report/figures/flowchart.png" alt="Flowchart: documents are split into passages and indexed; each question is prepared, searched, checked for confidence, answered and cited."></p>
+<p class="small">Flowchart from the project report. Left side: preparing the documents. Right side: answering a question.
+(The project now also has a fourth way to write the answer, a locally trained model, explained in step 7.)</p>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="ingest">5. Part 1: Preparing the documents</h2>
+
+<h3>Step 1. Load the documents <span class="file">app/ingest.py</span></h3>
+<p>The knowledge base is a folder of files: <code>data/corpus/</code> holds 18 sample documents in five categories
+(<b>syllabus, regulations, notices, FAQs, policies</b>), and <code>data/uploads/</code> holds files added through the
+website. The program can read <code>.md</code>, <code>.txt</code>, <code>.pdf</code> and <code>.docx</code> files.</p>
+<div class="note"><b>Be ready to say:</b> the sample documents are written for a made-up university ("Sutlej Valley University")
+so the project can be shown without real confidential documents. Real documents can be uploaded to replace them.</div>
+
+<h3>Step 2. Chunking: cut documents into passages <span class="file">app/ingest.py</span></h3>
+<p>A whole document is too big to be a useful search result. If we handed a 2,000-word regulation to the writer, the answer
+would be buried in it and the "source" would be vague. So each document is cut into small pieces called
+<b>chunks</b> or <b>passages</b>.</p>
+<ul>
+  <li><b>Our rule:</b> one section (the text under one heading) = one chunk. This keeps each chunk about one topic.</li>
+  <li>If a section is longer than <b>220 words</b>, it is cut into windows of <b>160 words</b> that <b>overlap by 40 words</b>.
+  The overlap makes sure a sentence lying on a boundary is complete in at least one of the two windows.</li>
+  <li>Result: 18 documents become <b>160 passages</b>. Each has an id such as <code>REG-01#3</code> (document id + number).</li>
+</ul>
+
+<h3>Step 3. Indexing: make the passages searchable <span class="file">app/retrieval.py</span></h3>
+<p>An <b>index</b> is a structure prepared in advance so that searching is fast, like the index at the back of a book.
+We build <b>two</b> indexes, because there are two different ways to search.</p>
+
+<div class="card">
+<b>Index A: keywords (BM25).</b> For every word, we store which passages contain it and how often.
+A passage scores high if it contains the question's words, and rare words count more than common ones
+("re-evaluation" tells us much more than "student"). BM25 is the classic formula search engines have used for decades.
+<br><span class="small">Good at: exact words, codes and numbers ("CSE-204"). Weak at: different words with the same meaning.</span>
+</div>
+
+<div class="card">
+<b>Index B: meaning (embeddings).</b> A small AI model (<code>BAAI/bge-small-en-v1.5</code>) turns each passage into a list of
+384 numbers called an <b>embedding</b> or <b>vector</b>. Think of it as coordinates on a map of meaning: texts that mean
+similar things land close together, even when they share no words. "Recheck my paper" lands near "re-evaluation of answer script".
+<br><span class="small">Good at: paraphrases and casual wording. Weak at: exact codes and numbers.</span>
+</div>
+
+<p>To compare two vectors we use <b>cosine similarity</b>: a number near 1 means "same meaning", near 0 means "unrelated".
+The passage vectors are computed once and saved in <code>data/index/</code>, so the server starts quickly next time.</p>
+<div class="note"><b>If asked "which vector database did you use?"</b> None was needed. With only 160 passages, the vectors sit
+in one small table in memory (a NumPy array) and comparing the question with all of them takes milliseconds. A vector database
+(FAISS, Chroma, Pinecone) becomes useful with hundreds of thousands of passages.</div>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="answer">6. Part 2: Answering a question</h2>
+<p>All of this is coordinated by one function: <code>Engine.answer_stream()</code> in <span class="file">app/pipeline.py</span>.
+If you learn one function for the presentation, learn this one.</p>
+
+<div class="flow">
+  <div><b>4. Prepare</b>follow-ups, Hindi-English</div>
+  <div class="r"><b>5. Retrieve</b>hybrid search, top 4</div>
+  <div><b>6. Gate</b>confident enough?</div>
+  <div class="g"><b>7. Generate</b>write from passages</div>
+  <div><b>8. Cite</b>show the proof</div>
+</div>
+
+<h3>Step 4. Prepare the question <span class="file">app/pipeline.py</span> <span class="file">app/hinglish.py</span></h3>
+<ul>
+  <li><b>Greetings.</b> "hi" or "thanks" gets a welcome message; nothing is searched.</li>
+  <li><b>Follow-up questions.</b> "and for the hostel?" means nothing alone. A very short question, or one with words like
+  "it / that / also", is searched together with the previous question (<code>contextualise()</code>).</li>
+  <li><b>Hindi-English ("Hinglish").</b> Students type "fees ki last date kab hai". The documents are in English, so a word list
+  rewrites it into rough English for searching: "fees last date when". It is a dictionary of common words, not a full translator.</li>
+</ul>
+
+<h3>Step 5. Retrieval: find the best passages <span class="file">app/retrieval.py</span></h3>
+<p>This is the <b>R</b> of RAG, done by <code>Index.search()</code>.</p>
+<ol>
+  <li>Score every passage by <b>keywords</b> (BM25).</li>
+  <li>Score every passage by <b>meaning</b> (cosine similarity between the question's vector and each passage's vector).</li>
+  <li><b>Combine the two rankings</b>. This is called <b>hybrid search</b>. The top 20 from each list are merged with
+  <b>Reciprocal Rank Fusion (RRF)</b>.</li>
+  <li>Keep the best <b>4 passages</b> (<code>TOP_K = 4</code>).</li>
+</ol>
+<div class="card">
+<b>RRF in one example.</b> Each passage gets <code>1 / (60 + rank)</code> from each list, and the two are added.
+<table>
+<tr><th>Passage</th><th>Keyword rank</th><th>Meaning rank</th><th>Fused score</th></tr>
+<tr><td>A</td><td>1st</td><td>3rd</td><td>1/61 + 1/63 = 0.0323 &nbsp;(winner)</td></tr>
+<tr><td>B</td><td>2nd</td><td>not in top 20</td><td>1/62 = 0.0161</td></tr>
+<tr><td>C</td><td>9th</td><td>1st</td><td>1/69 + 1/61 = 0.0309</td></tr>
+</table>
+A passage that <i>both</i> methods like rises to the top. RRF uses ranks, not raw scores, so we never have to compare
+BM25's scores with cosine similarities, which are on different scales.
+</div>
+<p><b>Why hybrid?</b> Keyword search and meaning search fail on different questions, so together they cover each other.
+Our tests confirm it (see section 9).</p>
+<p class="small">Optional extra: a <b>reranker</b> (a "cross-encoder" model) can re-read the top 10 candidates together with the
+question and re-order them. It ranks slightly better but adds about 1.6 seconds per question and did not make the final
+answers more correct, so it is switched off by default.</p>
+
+<h3>Step 6. The confidence gate: should we answer at all? <span class="file">app/retrieval.py</span></h3>
+<p>Search always returns <i>something</i>, even for "Who won the cricket world cup?". So before answering we compute a
+<b>confidence score from 0 to 1</b> (<code>Index.confidence()</code>), the average of two signals:</p>
+<ul>
+  <li><b>Coverage:</b> what share of the question's important words actually appear in the retrieved passages?</li>
+  <li><b>Similarity:</b> how close in meaning is the best passage to the question?</li>
+</ul>
+<p>If the score is below the <b>threshold (0.58)</b>, the chatbot <b>declines</b>: "I could not find this in the university
+documents I have, so I will not guess." Declining is called <b>abstaining</b>. The threshold was not guessed: it was chosen
+by testing many values on labelled questions (section 9).</p>
+<div class="say"><b>Say this in class:</b> "A help desk that says 'I don't know' is safer than one that invents a fee or a date."</div>
+
+<h3>Step 7. Generation: write the answer <span class="file">app/generate.py</span></h3>
+<p>This is the <b>G</b> of RAG. The project has <b>four interchangeable "generators"</b>. All of them receive the same
+input (question + the retrieved passages) and must return an answer with citations like <code>[1]</code>.</p>
+<table>
+<tr><th>Generator</th><th>How it writes</th><th>Good and bad</th></tr>
+<tr><td><b>Quote the documents</b><br>("extractive")</td><td>No AI writing. It scores every sentence of the passages against the
+question and quotes the best one to three sentences.</td><td>Cannot invent anything, works offline, fast. Answers are less smooth.</td></tr>
+<tr><td><b>Local model</b></td><td>A small model (FLAN-T5) that we <b>fine-tune</b> on about 1,000 question/passage/answer
+examples made from our own documents. Runs on the laptop's CPU.</td><td>No internet or API key, data stays on the computer.
+Must be trained first (<code>train_local_model.bat</code>).</td></tr>
+<tr><td><b>Gemini</b></td><td>Google's model, called over the internet.</td><td rowspan="2">Fluent, natural answers. Needs an API key and internet.</td></tr>
+<tr><td><b>Claude</b></td><td>Anthropic's model, called over the internet.</td></tr>
+</table>
+<div class="note"><b>On this laptop right now</b> only "Quote the documents" is set up. Gemini and Claude appear as
+"not set up" until an API key is added, and the local model until it has been trained. The chatbot works fully without them.</div>
+<p><b>The prompt</b> is the instruction text sent to the language model. Ours (<code>SYSTEM_PROMPT</code> and
+<code>build_messages()</code>) looks like this in short:</p>
+<pre>You are the student help desk assistant. Use ONLY the passages below.
+Cite the passage after each claim as [1], [2].
+Quote numbers, dates and amounts exactly.
+If the passages do not contain the answer, reply exactly NO_ANSWER.
+
+Passages:
+[1] Attendance Regulations > Minimum attendance requirement
+    ...text of the passage...
+[2] ...
+
+Student's question: What is the minimum attendance required?</pre>
+<p>The passages placed inside the prompt are the <b>"augmented"</b> part of RAG. Three safety nets follow:</p>
+<ul>
+  <li>If the model replies <code>NO_ANSWER</code>, the student sees the polite decline message.</li>
+  <li>If the model fails (no internet, bad key), the chatbot automatically <b>falls back</b> to quoting the documents.</li>
+  <li>The local model's answer is rejected if it contains a number that is not in the passages (a made-up fee or date).</li>
+</ul>
+
+<h3>Step 8. Citations and highlighting <span class="file">app/pipeline.py</span> <span class="file">app/generate.py</span></h3>
+<p>The answer is returned with its <b>sources</b>: document title, section and text of each passage. The exact sentences that
+support the answer are marked, and the website <b>highlights</b> them. So the student can verify every answer in seconds.</p>
+
+<h3>How the answer reaches the screen <span class="file">app/main.py</span> <span class="file">web/live.js</span></h3>
+<p>The browser sends the question to the server address <code>POST /api/chat</code>. The server replies as a <b>stream</b>:
+small JSON messages, one per line, sent as soon as each is ready:</p>
+<pre>{"type": "meta",  ...the passages that were found...}
+{"type": "token", "text": "You need at least 75% "}
+{"type": "token", "text": "attendance in each course. [1]"}
+{"type": "done",  ...final answer, sources, confidence, time taken...}</pre>
+<p>That is why the passages appear first and the answer then "types itself" on screen, instead of a long blank wait.</p>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="example">7. One question, start to finish</h2>
+<table>
+<tr><th style="width:26%">Stage</th><th>What happens for "What is the minimum attendance required?"</th></tr>
+<tr><td>Browser</td><td><code>ask()</code> in <code>web/live.js</code> sends the question to <code>POST /api/chat</code>.</td></tr>
+<tr><td>API</td><td><code>chat()</code> in <code>app/main.py</code> checks the rate limit and calls the engine.</td></tr>
+<tr><td>Prepare</td><td>Not a greeting, not a follow-up, not Hinglish. The question is used as it is.</td></tr>
+<tr><td>Retrieve</td><td>BM25 finds passages containing "minimum", "attendance", "required". Embeddings find passages about attendance
+rules. Fusion puts the section "Minimum attendance requirement" of document <b>REG-01</b> (Attendance Regulations) first.</td></tr>
+<tr><td>Gate</td><td>The question's words are well covered and the meaning is close, so confidence is above 0.58. Go ahead.</td></tr>
+<tr><td>Generate</td><td>The sentence stating the 75% rule is picked (or written by the model) and tagged with <code>[1]</code>.</td></tr>
+<tr><td>Cite</td><td>Source 1 = Attendance Regulations; the 75% sentence is highlighted.</td></tr>
+<tr><td>Browser</td><td>The answer appears with a clickable <b>[1]</b> that shows the passage.</td></tr>
+</table>
+<p>And for "Who won the cricket world cup?": retrieval returns unrelated passages, the confidence is low, the gate stops it,
+and the student is told the documents do not cover this.</p>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="files">8. Which file does what</h2>
+<p>Every function in the code now has a comment explaining it. This table tells you where to look.</p>
+<table>
+<tr><th>File</th><th>Its job</th><th>Functions worth knowing</th></tr>
+<tr><td><code>app/main.py</code></td><td>The web server (FastAPI). Receives requests from the browser.</td><td><code>chat</code>, <code>upload</code>, <code>documents</code>, <code>health</code></td></tr>
+<tr><td><code>app/pipeline.py</code></td><td>The RAG pipeline, start to finish. <b>The heart of the project.</b></td><td><code>Engine.answer_stream</code>, <code>contextualise</code>, <code>retrieve</code></td></tr>
+<tr><td><code>app/ingest.py</code></td><td>Reads files and cuts them into chunks.</td><td><code>load_all_documents</code>, <code>chunk_document</code>, <code>_windows</code></td></tr>
+<tr><td><code>app/retrieval.py</code></td><td>Searching: BM25, embeddings, fusion, confidence.</td><td><code>BM25.scores</code>, <code>Index.search</code>, <code>Index.confidence</code></td></tr>
+<tr><td><code>app/generate.py</code></td><td>Writing the answer: quoting, Gemini, Claude; the prompt.</td><td><code>extractive_answer</code>, <code>build_messages</code>, <code>SYSTEM_PROMPT</code></td></tr>
+<tr><td><code>app/local_model.py</code></td><td>Runs the locally trained model.</td><td><code>local_stream</code>, <code>unsupported_numbers</code></td></tr>
+<tr><td><code>app/hinglish.py</code></td><td>Rewrites Hindi-English questions for searching.</td><td><code>to_search_english</code></td></tr>
+<tr><td><code>app/textutil.py</code></td><td>Text helpers: splitting into words and sentences.</td><td><code>tokenize</code>, <code>split_blocks</code></td></tr>
+<tr><td><code>app/security.py</code></td><td>Rate limiting and security headers.</td><td><code>RateLimiter.check</code></td></tr>
+<tr><td><code>app/evaluate.py</code></td><td>Measures accuracy on labelled questions.</td><td><code>evaluate_retrieval</code>, <code>tune_threshold</code>, <code>evaluate_answers</code></td></tr>
+<tr><td><code>app/config.py</code></td><td>All settings in one place (chunk size, top-k, threshold, model names).</td><td></td></tr>
+<tr><td><code>training/</code></td><td>Builds training data, fine-tunes and tests the local model.</td><td><code>data.build</code>, <code>train.main</code></td></tr>
+<tr><td><code>web/</code></td><td>The website: HTML pages, and <code>live.js</code> which connects them to the server.</td><td><code>ask</code>, <code>streamChat</code>, <code>botNode</code></td></tr>
+<tr><td><code>tests/</code></td><td>Automatic checks that the pipeline still works.</td><td></td></tr>
+<tr><td><code>data/</code></td><td>The documents, the saved vectors, the test questions and results.</td><td></td></tr>
+</table>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="eval">9. How we know it works (evaluation)</h2>
+<p>We wrote <b>130 test questions</b> with known correct answers: <b>98 answerable</b> from the documents and <b>32 "out of scope"</b>
+questions the chatbot should refuse. They are written in four styles: direct, reworded (paraphrase), casual, and Hindi-English.
+The command <code>python -m app.evaluate</code> runs them all and saves the scores.</p>
+
+<h3>Measuring the search</h3>
+<ul>
+  <li><b>Hit@3</b>: in what share of questions is the correct passage among the top 3 results?</li>
+  <li><b>MRR</b> (mean reciprocal rank): rewards putting the correct passage higher (1st = 1, 2nd = 0.5, 3rd = 0.33 ...).</li>
+</ul>
+<table>
+<tr><th>Search method</th><th>Hit@1</th><th>Hit@3</th><th>MRR</th><th>Time per question</th></tr>
+<tr><td>BM25 (keywords only)</td><td>72.4%</td><td>91.8%</td><td>0.823</td><td>6 ms</td></tr>
+<tr><td>Dense (meaning only)</td><td>75.5%</td><td>90.8%</td><td>0.839</td><td>6 ms</td></tr>
+<tr><td><b>Hybrid (used by the chatbot)</b></td><td><b>78.6%</b></td><td><b>95.9%</b></td><td><b>0.874</b></td><td>20 ms</td></tr>
+<tr><td>Hybrid + reranker (optional)</td><td>85.7%</td><td>96.9%</td><td>0.918</td><td>1,627 ms</td></tr>
+</table>
+<p>This table is the evidence for the design: <b>hybrid beats either method alone</b>, and the reranker's small gain costs
+about 80 times more time.</p>
+
+<h3>Measuring the answers (quoting the documents)</h3>
+<table>
+<tr><th>Measure</th><th>Result</th></tr>
+<tr><td>Answerable questions answered with every key fact</td><td>71.4%</td></tr>
+<tr><td>Key facts present in the answers that were given</td><td>91.4%</td></tr>
+<tr><td>Answers that cite the correct document</td><td>94.9%</td></tr>
+<tr><td>Out-of-scope questions correctly declined</td><td>43.8%</td></tr>
+<tr><td>Correct overall (all 130 questions)</td><td>64.6%</td></tr>
+<tr><td>Typical time per answer</td><td>about 1 second</td></tr>
+</table>
+<p>By question style: direct 95.5%, reworded 80.8%, casual 70.0%, Hindi-English 35.0%.</p>
+<p class="small">Numbers from the last saved run (16 Nov 2026) in <code>data/eval/results.json</code>. They change if the
+evaluation is run again; the live figures are on the website's admin page.</p>
+
+<h3>Choosing the threshold fairly</h3>
+<p>The questions are split into two halves. The threshold is chosen on the <b>dev</b> half and then scored on the <b>test</b>
+half, which played no part in choosing it. This avoids fooling ourselves, the same reason a teacher does not set the exam
+from the exact practice paper.</p>
+
+<div class="warn"><b>Honest limitations (say these before you are asked):</b>
+<ul>
+  <li>Hindi-English questions are the weakest (35%). The rewrite is only a word list.</li>
+  <li>Fewer than half of the out-of-scope questions are declined; the confidence gate is the part most in need of improvement.</li>
+  <li>The gate also makes mistakes the other way. Example: "How much do I pay to get my paper rechecked?" is declined
+  (confidence 0.50, just under 0.58), although the re-evaluation fee is in the documents. The wording is too far from the document's.</li>
+  <li>The documents are sample data for a fictional university, and 130 questions is a small test set.</li>
+  <li>The marking is strict: an answer missing one key fact counts as wrong.</li>
+</ul></div>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="tech">10. Technologies used</h2>
+<table>
+<tr><th>Technology</th><th>Used for</th></tr>
+<tr><td>Python</td><td>The whole backend.</td></tr>
+<tr><td>FastAPI + Uvicorn</td><td>The web server and its API (<code>/api/chat</code>, <code>/api/documents</code> ...).</td></tr>
+<tr><td>Pydantic</td><td>Checking that incoming requests have the right shape and size.</td></tr>
+<tr><td>NumPy</td><td>Fast maths on the vectors (similarity = one matrix multiplication).</td></tr>
+<tr><td>FastEmbed (ONNX)</td><td>Running the embedding model and the reranker on a normal CPU.</td></tr>
+<tr><td>BM25</td><td>Keyword search, written by hand in <code>retrieval.py</code> (about 30 lines).</td></tr>
+<tr><td>pypdf, python-docx</td><td>Reading PDF and Word files.</td></tr>
+<tr><td>PyTorch + Transformers</td><td>Training and running the local FLAN-T5 model (optional).</td></tr>
+<tr><td>Gemini API, Claude API</td><td>Optional cloud language models for writing the answer.</td></tr>
+<tr><td>HTML, Tailwind CSS, plain JavaScript</td><td>The website. No framework and no build step.</td></tr>
+<tr><td>pytest</td><td>Automatic tests.</td></tr>
+<tr><td>Vercel + Render</td><td>Hosting: the website on Vercel, which forwards <code>/api</code> requests to the Python backend on Render.</td></tr>
+</table>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="glossary">11. Glossary</h2>
+<table>
+<tr><th style="width:26%">Word</th><th>Meaning in plain English</th></tr>
+<tr><td>LLM</td><td>Large Language Model: an AI program that writes text (Gemini, Claude, ChatGPT).</td></tr>
+<tr><td>RAG</td><td>Retrieval-Augmented Generation: search first, then write the answer from what was found.</td></tr>
+<tr><td>Corpus / knowledge base</td><td>The collection of documents the chatbot may answer from.</td></tr>
+<tr><td>Ingestion</td><td>Reading the documents and preparing them for search.</td></tr>
+<tr><td>Chunk / passage</td><td>A small piece of a document (here: one section).</td></tr>
+<tr><td>Token</td><td>A word or word-piece. Models read and write text as tokens.</td></tr>
+<tr><td>Stopwords</td><td>Very common words ("the", "is") that are ignored when searching.</td></tr>
+<tr><td>Embedding / vector</td><td>A list of numbers that represents the meaning of a text.</td></tr>
+<tr><td>Cosine similarity</td><td>A score for how alike two vectors are (1 = same meaning).</td></tr>
+<tr><td>BM25</td><td>The classic keyword-matching formula; rare words count more.</td></tr>
+<tr><td>IDF</td><td>"Inverse document frequency": the rarer a word, the higher its weight.</td></tr>
+<tr><td>Dense retrieval</td><td>Searching by meaning using embeddings.</td></tr>
+<tr><td>Hybrid search</td><td>Using keyword search and meaning search together.</td></tr>
+<tr><td>RRF</td><td>Reciprocal Rank Fusion: a simple way to merge two ranked lists.</td></tr>
+<tr><td>Top-k</td><td>How many passages are kept (k = 4 here).</td></tr>
+<tr><td>Reranker / cross-encoder</td><td>A slower, more accurate model that re-orders the top results.</td></tr>
+<tr><td>Prompt / system prompt</td><td>The instructions and text given to the language model.</td></tr>
+<tr><td>Grounding</td><td>Making the answer rest on given documents, not on the model's memory.</td></tr>
+<tr><td>Hallucination</td><td>A confident answer that the model simply made up.</td></tr>
+<tr><td>Abstain / decline</td><td>Refusing to answer when the documents do not cover the question.</td></tr>
+<tr><td>Threshold</td><td>The minimum confidence needed to answer (0.58).</td></tr>
+<tr><td>Extractive vs generative</td><td>Extractive copies sentences from the documents; generative writes new sentences.</td></tr>
+<tr><td>Fine-tuning</td><td>Teaching an existing model a specific task with your own examples.</td></tr>
+<tr><td>Citation</td><td>The [1] marker that points to the source passage.</td></tr>
+<tr><td>Streaming</td><td>Sending the answer piece by piece as it is produced.</td></tr>
+<tr><td>API / endpoint</td><td>An address on the server that the browser calls, e.g. <code>/api/chat</code>.</td></tr>
+<tr><td>Rate limiting</td><td>Allowing each visitor only a certain number of requests per minute.</td></tr>
+<tr><td>Hit@k, MRR</td><td>Scores for search quality (see section 9).</td></tr>
+<tr><td>Dev / test split</td><td>Tune on one half of the questions, report on the other half.</td></tr>
+</table>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="viva">12. Likely questions and answers</h2>
+<p class="small">Click a question to see a short answer you can give in your own words.</p>
+
+<details><summary>What is RAG, in one sentence?</summary><p>Retrieval-Augmented Generation: the system first retrieves relevant
+passages from a document collection, then generates the answer using only those passages, so the answer is grounded and can be cited.</p></details>
+
+<details><summary>Why not just use ChatGPT or Gemini directly?</summary><p>It does not know our university's rules, it can
+hallucinate fees and dates, and its knowledge is not updated when a new notice comes. RAG gives it the official text at
+question time and makes every answer checkable.</p></details>
+
+<details><summary>Why not train (fine-tune) a model on the documents instead of RAG?</summary><p>Training is slow and costly and has
+to be repeated whenever a document changes, and the model still cannot show its source. With RAG, updating knowledge is just
+uploading a file: the index is rebuilt in seconds.</p></details>
+
+<details><summary>What is chunking and how do you chunk?</summary><p>Cutting documents into small passages so that search returns a
+focused piece. We cut at section headings; a section over 220 words is cut into 160-word windows with a 40-word overlap so no
+sentence is lost at a boundary. Code: <code>chunk_document()</code> in <code>app/ingest.py</code>.</p></details>
+
+<details><summary>What is an embedding?</summary><p>A list of numbers (384 here) that represents the meaning of a text. Similar
+meanings give similar numbers, so we can find passages that mean the same as the question even when the words differ.
+We use the open model <code>bge-small-en-v1.5</code>, which runs on a normal CPU.</p></details>
+
+<details><summary>What is BM25?</summary><p>A keyword-ranking formula. A passage scores higher when it contains the question's words,
+more so for rare words, with a correction so long passages do not win unfairly. Code: class <code>BM25</code> in <code>app/retrieval.py</code>.</p></details>
+
+<details><summary>Why hybrid search? Why not only embeddings?</summary><p>Keywords are best for exact terms, codes and numbers;
+embeddings are best for reworded and casual questions. Each fails where the other succeeds. In our test, the correct passage
+was in the top 3 for 95.9% of questions with hybrid, against 91.8% (keywords only) and 90.8% (embeddings only).</p></details>
+
+<details><summary>How are the two results combined?</summary><p>With Reciprocal Rank Fusion: each passage gets 1/(60 + rank) from
+each list and the values are added. It only uses ranks, so the two different score scales never need to be compared.</p></details>
+
+<details><summary>Which vector database do you use?</summary><p>None. There are only 160 passages, so the vectors are kept in a NumPy
+array in memory and saved to a file. Comparing a question with all of them is one matrix multiplication. A vector database
+would be the next step for a much larger corpus.</p></details>
+
+<details><summary>How do you stop hallucination?</summary><p>Four ways: (1) the prompt tells the model to use only the passages and
+reply NO_ANSWER otherwise; (2) a confidence gate declines before generating when the passages do not cover the question;
+(3) the default "quote the documents" mode copies sentences and cannot invent; (4) every answer shows its source passage with
+the supporting sentence highlighted.</p></details>
+
+<details><summary>How does it know when not to answer?</summary><p>It computes a confidence score from two signals: how many of the
+question's important words appear in the retrieved passages, and how similar the best passage is in meaning. Below the
+threshold of 0.58 it declines. The threshold was chosen on the dev half of the labelled questions.</p></details>
+
+<details><summary>What is the "extractive" generator?</summary><p>It does not use a language model. It splits the retrieved passages
+into sentences, scores each against the question (25% keyword overlap, 75% meaning similarity, plus a small bonus for
+higher-ranked passages) and quotes the best one to three. Code: <code>extractive_answer()</code>.</p></details>
+
+<details><summary>What is the local model?</summary><p>FLAN-T5, a small open model from Google, fine-tuned on about 1,000 examples
+built from our own documents, including examples where the right reply is NO_ANSWER. It runs on the laptop with no internet.
+It has to be trained once with <code>train_local_model.bat</code> before it appears as available.</p></details>
+
+<details><summary>How are follow-up questions handled?</summary><p>If a question is very short or uses words like "it", "that",
+"also", it is searched together with the previous question. Code: <code>Engine.contextualise()</code>.</p></details>
+
+<details><summary>How do you handle Hindi-English questions?</summary><p>A word list replaces common Hindi words with English
+("kab" to "when", "chutti" to "leave") and drops grammar words before searching. It helps, but this style is still our weakest (35%).</p></details>
+
+<details><summary>How did you test the system?</summary><p>With 130 labelled questions (98 answerable, 32 out of scope) in four
+wording styles. We measure search with Hit@k and MRR, and answers by whether every key fact is present, or whether
+out-of-scope questions are declined. There are also automatic tests in <code>tests/test_pipeline.py</code>.</p></details>
+
+<details><summary>What is the accuracy?</summary><p>Search: the right passage is in the top 3 for 95.9% of answerable questions.
+Answers in quote mode: 71.4% of answerable questions contain every key fact, and 64.6% of all 130 questions are handled
+correctly. Direct questions reach 95.5%; Hindi-English ones only 35%.</p></details>
+
+<details><summary>What are the limitations and future work?</summary><p>Hindi-English understanding, a stronger "should I answer?"
+check, scanned PDFs (they need OCR), a larger real corpus with a vector database, user login, and remembering more of the
+conversation.</p></details>
+
+<details><summary>What happens when a new document is uploaded?</summary><p>The file is validated (type, size under 10 MB), saved in
+<code>data/uploads/</code>, and <code>engine.rebuild()</code> re-reads all documents, re-chunks them and rebuilds both indexes.
+The chatbot can answer from the new file immediately.</p></details>
+
+<details><summary>What is the architecture / flow of a request?</summary><p>Browser (HTML + JavaScript) → FastAPI server
+(<code>app/main.py</code>) → RAG engine (<code>app/pipeline.py</code>) → retrieval (<code>retrieval.py</code>) → generation
+(<code>generate.py</code>) → the answer is streamed back to the browser with its sources.</p></details>
+
+<details><summary>What security measures are there?</summary><p>Rate limits per visitor (20 chat requests per minute), input size
+limits, upload checks on file type and size, safe file names, security headers for the browser, and server text is always
+inserted as plain text so it cannot run as code. There is no login in this version.</p></details>
+
+<details><summary>Where is chat history stored?</summary><p>In the browser's own storage (localStorage) on the student's device.
+The server keeps no conversations; it only saves the thumbs-up/down feedback.</p></details>
+
+<!-- ------------------------------------------------------------------ -->
+<h2 id="demo">13. How to run and demo it</h2>
+<ol>
+  <li>Double-click <code>run.bat</code> in the project folder. The first run installs what it needs; then the site opens at
+  <code>http://127.0.0.1:8000</code>.</li>
+  <li>Open the chat page and ask: <b>"What is the minimum attendance required?"</b> Point at the answer, the <b>[1]</b>
+  citation and the highlighted sentence.</li>
+  <li>Ask a reworded question: <b>"Till when can I pay the semester fee without a fine?"</b> The notice says "last date ...
+  without any late fee", so this shows search by meaning, not only by matching words.</li>
+  <li>Ask a follow-up: first <b>"What is the fee for re-evaluation of an answer script?"</b>, then just <b>"and the deadline?"</b></li>
+  <li>Ask a Hindi-English question: <b>"hostel ka gate raat ko kitne baje band hota hai"</b>.</li>
+  <li>Ask something out of scope: <b>"Who won the cricket world cup?"</b> (shows it declining).</li>
+  <li>Open the documents page and upload a small text file, then ask a question about it (shows the knowledge base updating).</li>
+  <li>Show the evaluation numbers (answer accuracy, retrieval Hit@3) on the admin page.</li>
+</ol>
+<p>All seven were checked on this project and behave as described, using the "Quote the documents" mode.</p>
+<div class="note"><b>Tip:</b> try each demo question once before class, so you know what the answer looks like on your laptop.</div>
+<p>Useful commands (run in the project folder):</p>
+<pre>.venv\Scripts\python -m uvicorn app.main:app --port 8000    start the server
+.venv\Scripts\python -m pytest -q                            run the automatic tests
+.venv\Scripts\python -m app.evaluate                         run the evaluation again</pre>
+
+<p class="small" style="margin-top:40px">Guide for the AI Student Assistance Chatbot project. Figures and settings were taken from the code and
+<code>data/eval/results.json</code> at the time of writing.</p>
+
+</main>
+</body>
+</html>

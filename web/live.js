@@ -26,7 +26,7 @@
     policies: { icon: "policy", tag: "POL", color: "bg-emerald-50 text-emerald-800" },
   };
   const METHOD = { bm25: "BM25 keywords", dense: "Dense embeddings", hybrid: "Hybrid retrieval", rerank: "Hybrid + reranker" };
-  const GEN_BADGE = { extractive: "Quoted from documents", gemini: "Written by Gemini", claude: "Written by Claude", none: "Help desk" };
+  const GEN_BADGE = { extractive: "Quoted from documents", gemini: "Written by Gemini", claude: "Written by Claude", none: "Uni Help" };
 
   /* ---------- small helpers ---------- */
   // Shortcuts: $ finds the first element matching a CSS selector, $$ finds all of them.
@@ -70,6 +70,10 @@
   const byText = (sel, text, root = document) => $$(sel, root).find((n) => n.textContent.trim().includes(text));
   // Hide an element.
   const hide = (node) => node && node.classList.add("hidden");
+  // Fill the element marked data-slot="name". The pages ship these as empty placeholders ("…"),
+  // so no invented number is ever shown while the real one is being loaded.
+  const setSlot = (name, value, root = document) => { const n = $(`[data-slot="${name}"]`, root); if (n) n.textContent = value; return n; };
+  const setById = (id, text) => { const n = document.getElementById(id); if (n) n.textContent = text; };
   // Drop the listeners Stitch's own inline script attached, keeping the element in place.
   function fresh(node) { if (!node) return node; const copy = node.cloneNode(true); node.replaceWith(copy); return copy; }
 
@@ -317,7 +321,7 @@
   // Runs on every page: the header search box opens the document explorer, and the sample status
   // text is replaced by the real number of documents and passages from the server.
   async function decorate() {
-    const status = $$("span").filter((s) => /^Spring 2025 . (KB Connected|Active Node)$/.test(s.textContent.trim()));
+    const status = $$('[data-slot="kb-status"]');
     const searchBoxes = $$("header div").filter((d) => /^search\s*Search (knowledge base|campus papers)/.test(d.textContent.trim().replace(/\s+/g, " ")));
     for (const box of searchBoxes) {
       box.style.cursor = "pointer";
@@ -337,7 +341,7 @@
     try {
       const h = await health();
       status.forEach((s) => { s.textContent = `${plural(h.documents, "document")} • ${h.passages} passages`; });
-      $$("span").filter((s) => s.textContent.trim() === "Campus Research Engine").forEach((s) => { s.textContent = h.university; s.title = h.university; });
+      $$('[data-slot="uni-sub"]').forEach((s) => { s.textContent = h.university; s.title = h.university; });
     } catch {
       status.forEach((s) => {
         s.textContent = "Server offline";
@@ -536,7 +540,7 @@
             el("div", { class: "mt-2.5 pt-2 flex items-center justify-between" },
               el("a", { href: inspect, class: "text-primary hover:underline font-label-sm text-label-sm flex items-center gap-1 font-semibold" },
                 el("span", { text: "Inspect in Explorer" }), icon("arrow_outward", "text-xs")),
-              el("span", { class: "font-label-sm text-label-sm text-outline", text: s.updated ? `Updated ${fmtDate(s.updated)}` : (s.origin === "upload" ? "Uploaded" : "") })));
+              el("span", { class: "font-label-sm text-label-sm text-outline", text: s.updated ? `Updated ${fmtDate(s.updated)}` : (s.origin === "upload" ? "Uploaded" : s.origin === "official" ? "Official source" : "") })));
         })));
     }
     // An information box inside an answer, e.g. "Not covered by the documents".
@@ -590,8 +594,8 @@
         el("div", { class: "flex-1 flex flex-col gap-space-md min-w-0" },
           el("div", { class: "flex items-center justify-between" },
             el("div", { class: "flex items-center gap-space-xs" },
-              el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "STUDY BUDDY" }),
-              el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: GEN_BADGE[m.generator] || "Official Policy Corpus" })),
+              el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "Uni Help" }),
+              el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: GEN_BADGE[m.generator] || "Library documents" })),
             el("span", { class: "font-label-sm text-label-sm text-outline", text: meta })),
           card));
       const column = node.lastElementChild;
@@ -646,8 +650,8 @@
         el("div", { class: "w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center flex-shrink-0 shadow-sm mt-0.5" }, icon("school", "text-2xl")),
         el("div", { class: "flex-1 flex flex-col gap-space-md min-w-0" },
           el("div", { class: "flex items-center gap-space-xs" },
-            el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "STUDY BUDDY" }),
-            el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: "Official Policy Corpus" })),
+            el("span", { class: "font-label-md text-label-md text-primary font-bold", text: "Uni Help" }),
+            el("span", { class: "px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm font-semibold", text: "Library documents" })),
           el("div", { class: "bg-surface-container-lowest p-space-lg rounded-2xl rounded-tl-sm shadow-sm text-on-surface space-y-space-sm" },
             el("p", { class: "font-body-lg text-body-lg leading-relaxed", text: `Ask about attendance, exams, fees, hostel or syllabus. Every answer is taken from ${uni}'s own documents and shows the passage it came from. If the documents don't cover a question, you'll be told so.` })),
           el("div", { class: "flex flex-col gap-2 pt-1" },
@@ -658,7 +662,7 @@
     function renderThread() {
       const c = current();
       title.textContent = c ? c.title : "New conversation";
-      document.title = c ? `${c.title} · AI Chatbot` : "AI Chatbot";
+      document.title = c ? `${c.title} · Uni Help` : "Uni Help";
       thread.replaceChildren();
       if (!c || !c.messages.length) { thread.append(emptyState()); return; }
       const last = c.messages.length - 1;
@@ -874,9 +878,9 @@
     $$("button", rHead).forEach(hide);
     const navButtons = $$("button", rNav);
     const [firstBtn, prevBtn, nextBtn, lastBtn, zoomOut, zoomIn, findBtn] = navButtons;
-    const pageLabel = byText("span", "Page 38", rNav);
-    const ofLabel = byText("span", "of 124", rNav);
-    const zoomLabel = byText("span", "115%", rNav);
+    const pageLabel = byText("span", "Section 1", rNav);
+    const ofLabel = byText("span", "of 1", rNav);
+    const zoomLabel = byText("span", "100%", rNav);
     hide(findBtn); hide(findBtn.previousElementSibling);
     const page = rPageWrap.firstElementChild;
     const metaValues = $$(".grid > div > span:last-child", rMeta);
@@ -895,9 +899,9 @@
       return;
     }
     const h = state.h;
-    swapText(document.body, "1,420 Certified Documents Indexed", `${plural(h.documents, "document")} indexed`);
-    swapText(document.body, "v4.8.2 Vector Store", METHOD[h.answers_with] || h.answers_with);
-    swapText(document.body, "pgvector · cosine-0.89", h.embedding_model || "BM25 keyword index");
+    setSlot("indexed", `${plural(h.documents, "document")} indexed`);
+    setSlot("retrieval", METHOD[h.answers_with] || h.answers_with);
+    setSlot("embedding", h.embedding_model || "BM25 keyword index");
     catSelect.replaceChildren(el("option", { value: "", text: "All Categories" }), ...h.categories.map((c) => el("option", { value: c.id, text: c.label })));
     sortSelect.replaceChildren(...[["updated", "Sort: Recently Updated"], ["title", "Sort: Title A–Z"], ["passages", "Sort: Most Passages"], ["category", "Sort: Category"]]
       .map(([v, t]) => el("option", { value: v, text: t })));
@@ -927,6 +931,7 @@
     // Fill one document card (copied from the page's template) with a document's details.
     function fillCard(d, selected) {
       const node = (selected ? selectedTpl : normalTpl).cloneNode(true);
+      node.classList.remove("hidden");              // the templates ship hidden
       const style = CAT_STYLE[d.category] || CAT_STYLE.faqs;
       const box = $(".w-12.h-12", node);
       box.className = box.className.split(/\s+/).filter((c) => !/^(bg|text)-(red|emerald|blue|amber|purple)-/.test(c)).join(" ") + " " + style.color;
@@ -934,7 +939,7 @@
       box.children[1].textContent = style.tag;
       const tags = $(".mb-1", node).children;
       tags[0].textContent = catLabel(h, d.category);
-      tags[1].textContent = d.updated ? `Updated ${fmtDate(d.updated)}` : (d.origin === "upload" ? "Uploaded" : "Sample");
+      tags[1].textContent = d.updated ? `Updated ${fmtDate(d.updated)}` : (d.origin === "upload" ? "Uploaded" : d.origin === "official" ? "Official source" : "Sample");
       tags[2].textContent = d.file;
       $("h2", node).textContent = d.title;
       const headings = state.details.get(d.doc_id)?.sections.map((s) => s.heading).filter(Boolean) || [];
@@ -1004,9 +1009,9 @@
         el("div", { class: "flex items-center justify-between pt-4 text-[9px] text-outline uppercase" },
           el("span", { text: h.university }), el("span", { text: `Section ${state.section + 1} of ${total}` })));
       const meta = [full.updated ? fmtDate(full.updated) : "Not dated", `Indexed (${state.docs.find((d) => d.doc_id === full.doc_id)?.passages ?? "?"} passages)`,
-        full.origin === "upload" ? "Uploaded through the library" : "Sample corpus", catLabel(h, full.category)];
+        full.origin === "upload" ? "Uploaded through the library" : full.origin === "official" ? "Official public source" : "Sample corpus", catLabel(h, full.category)];
       metaValues.slice(0, 4).forEach((span, i) => { span.textContent = meta[i]; span.title = meta[i]; });
-      ["Corpus ingestion", "Index status", "Source", "Category"].forEach((label, i) => {
+      ["Updated", "Index status", "Source", "Category"].forEach((label, i) => {
         const span = metaValues[i]?.previousElementSibling;
         if (span) span.textContent = label.toUpperCase();
       });
@@ -1065,22 +1070,21 @@
     const articleTpl = $("article", firstSection).cloneNode(true);
     const pager = [...column.children].find((c) => c.tagName === "DIV" && c.textContent.includes("Showing"));
     const right = column.nextElementSibling;
-    const search = $('input[placeholder^="Search queries"]');
-    const indexedBadge = byText("span", "Indexed", search.parentElement);
+    const search = $('input[placeholder^="Search your questions"]');
+    const indexedBadge = byText("span", "Saved", search.parentElement);
     const starBtn = fresh($("#starredFilterBtn"));
     const selectAll = fresh($("#selectAllCheckbox"));
     const toolbar = $("#bulkActionsToolbar");
     const countText = $("#selectedCountText");
     const selectAllLabel = selectAll.parentElement;
     const [exportPdf, exportMd, deleteSel] = ["Export PDF", "Export Markdown", "Delete Selected"].map((t) => byText("button", t, toolbar));
-    const timeBtns = ["All Time", "This Semester", "Past 7 Days"].map((t) => $$("button").find((b) => b.textContent.trim() === t));
+    const timeBtns = ["All Time", "Past 30 Days", "Past 7 Days"].map((t) => $$("button").find((b) => b.textContent.trim() === t));
     const allDomains = $$("button").find((b) => b.textContent.trim().startsWith("All Domains"));
     const chipBox = allDomains.parentElement;
     const activeChipClass = allDomains.className;
     const idleChipClass = allDomains.nextElementSibling?.className || allDomains.className;
     const idleChipCount = allDomains.nextElementSibling?.querySelector("span")?.className || "font-label-sm text-label-sm opacity-70";
     const activeTime = timeBtns[0].className, idleTime = timeBtns[1].className;
-    swapText(document.body, "This Semester", "Past 30 Days");
     $("#toggleSelectionModeBtn")?.addEventListener("click", () => toolbar.classList.toggle("hidden"));
 
     const state = { convs: loadConvs(), time: 0, starred: false, domain: null, h: null, selected: new Set() };
@@ -1234,45 +1238,28 @@
     }
     // Fill the statistics panel: questions asked, share answered from the documents, most-cited documents.
     function renderStats() {
-      if (!right) return;
       const questions = state.convs.reduce((n, c) => n + questionsOf(c).length, 0);
       const answers = state.convs.flatMap(answersOf);
       const answered = answers.filter((m) => !m.abstained).length;
-      const card = byText("span", "Total Queries Logged", right)?.parentElement || byText("span", "TOTAL QUERIES LOGGED", right)?.parentElement;
-      if (card) {
-        swapText(card, "47", String(questions));
-        swapText(card, /compared to Fall 2024/, `in ${plural(state.convs.length, "conversation")}`);
-      }
-      swapText(right, "Spring 2025", "This browser");
-      swapText(right, "Avg Consultation", "Questions per chat");
-      swapText(right, "6.4 min", state.convs.length ? (questions / state.convs.length).toFixed(1) : "0");
-      const focused = swapText(right, "Focused", "average");
-      if (focused) focused.querySelector(".material-symbols-outlined")?.remove();
-      swapText(right, "Source Accuracy", "Answered from docs");
-      swapText(right, "99.1%", answers.length ? pct(answered / answers.length, 0) : "—");
-      swapText(right, "Verified", `${answered} of ${answers.length}`);
+      setSlot("h-queries", String(questions));
+      setSlot("h-queries-sub", `in ${plural(state.convs.length, "conversation")}`);
+      setSlot("h-avg", state.convs.length ? (questions / state.convs.length).toFixed(1) : "0");
+      setSlot("h-answered", answers.length ? pct(answered / answers.length, 0) : "—");
+      setSlot("h-answered-sub", `${answered} of ${answers.length}`);
 
+      // the document cited most often across all conversations
       const tally = new Map();
       state.convs.forEach((c) => citedDocs(c).forEach((s) => {
-        const t = tally.get(s.doc_id) || { ...s, count: 0 };
-        t.count += s.count; tally.set(s.doc_id, t);
+        const e = tally.get(s.doc_id) || { ...s, count: 0 };
+        e.count += s.count; tally.set(s.doc_id, e);
       }));
       const top = [...tally.values()].sort((a, b) => b.count - a.count);
       const total = top.reduce((n, s) => n + s.count, 0);
-      const topTitle = swapText(right, "Registrar Academic Calendar 2024-25", top[0]?.title || "Nothing cited yet");
-      swapText(right, /^Office of the University Registrar/, top[0] ? `${catLabel(state.h, top[0].category)} • ${top[0].section || ""}` : "Ask a question to see which documents answer it");
-      swapText(right, "19 Citations in Sessions", top[0] ? `${plural(top[0].count, "Citation")} in Sessions` : "");
-      swapText(right, "40.4% share", top[0] ? `${pct(top[0].count / total, 0)} share` : "");
-      const inspect = byText("a", "Inspect in Document Explorer", right) || byText("button", "Inspect in Document Explorer", right);
-      if (inspect) inspect.onclick = (e) => { e.preventDefault(); location.href = top[0] ? `documents.html?doc=${encodeURIComponent(top[0].doc_id)}` : "documents.html"; };
-      [["Undergraduate Academic Code Ch. 8", "12 refs"], ["FAFSA Priority Filing Statutes 2025", "8 refs"], ["Math Placement & Prerequisite Rules", "6 refs"]]
-        .forEach(([name, refs], i) => {
-          const s = top[i + 1];
-          const nameEl = swapText(right, name, s ? s.title : "");
-          swapText(right, refs, s ? plural(s.count, "ref") : "");
-          if (!s && nameEl) hide(nameEl.closest("li, a, div"));
-        });
-      if (topTitle && !top[0]) topTitle.classList.add("text-outline");
+      setSlot("h-top-title", top[0]?.title || "Nothing cited yet");
+      setSlot("h-top-sub", top[0] ? `${catLabel(state.h, top[0].category)} • ${top[0].section || ""}` : "Ask a question to see which documents answer it");
+      setSlot("h-top-count", top[0] ? `${plural(top[0].count, "citation")} (${pct(top[0].count / total, 0)} of all citations)` : "");
+      const link = $("#h-top-link");
+      if (link) link.href = top[0] ? `documents.html?doc=${encodeURIComponent(top[0].doc_id)}` : "documents.html";
     }
 
     search.addEventListener("input", render);
@@ -1329,11 +1316,7 @@
     const stats = sections.find((s) => s.className.includes("xl:grid-cols-4"));
     const dropZone = $("#dropZone");
     const uploadCard = dropZone.parentElement;
-    const [catSelect, audienceSelect, registrySelect] = $$("select");
-    hide(audienceSelect.closest(".flex.flex-col"));
-    swapText(dropZone, "Max 150MB", "Max 10 MB");
-    swapText(dropZone, "CAMPUS API / URL", "TXT");
-    swapText(dropZone, /^Automatic optical character recognition/, "PDF, Word, Markdown or plain text. The document is split into passages and added to the search index straight away.");
+    const [catSelect, registrySelect] = $$("select");
     const dropTitle = $("p", dropZone);
     const commitBtn = byText("button", "Commit & Ingest", uploadCard);
     const discardBtn = byText("button", "Discard Draft", uploadCard);
@@ -1351,41 +1334,47 @@
       evalData = await api("/api/eval/results").catch(() => null);
     } catch (error) {
       toast(error.message, true);
-      swapText(document.body, "RAG Pipeline: Healthy", "RAG Pipeline: Offline");
+      setSlot("pipeline", "RAG Pipeline: Offline");
+      setSlot("pipeline-sub", "The server is not reachable");
       return;
     }
 
     /* header + stat cards */
-    swapText(document.body, /^Latency: .*Sync/, `${METHOD[h.answers_with] || h.answers_with} • ${h.passages} passages`);
-    swapText(document.body, "Cluster: US-East-Academic-01", h.university);
+    setSlot("pipeline", "RAG Pipeline: Running");
+    setSlot("pipeline-sub", `${METHOD[h.answers_with] || h.answers_with} • ${h.passages} passages`);
+    setSlot("uni", h.university);
     // Fill the stat cards: documents, evaluation questions, answer accuracy and retrieval Hit@3.
     function renderStats() {
       const uploads = docs.filter((d) => d.origin === "upload").length;
       const answers = evalData?.available ? evalData.answers?.extractive?.summary : null;
       const best = evalData?.available ? evalData.retrieval?.[h.answers_with] || Object.values(evalData.retrieval || {})[0] : null;
       const q = evalData?.questions;
-      const set = (from, to) => swapText(stats, from, to);
-      set("1,420", String(docs.length));
-      set("+12 this wk", `${uploads} uploaded`);
-      set("Syllabi, Catalogues, Addenda", `${h.categories.length} categories`);
-      set("98.2% indexed", `${h.passages} passages`);
-      set("Active Student Users", "Evaluation Questions");
-      set("8,940", q ? String(q.total) : "—");
-      set("+14% MoM", "labelled");
-      set("Undergrad, Grad, Faculty", q ? `${q.answerable} answerable` : "Run python -m app.evaluate");
-      set("68% daily MAU", q ? `${q.unanswerable} unanswerable` : "");
-      set("Total AI Queries Resolved", "Answer Accuracy");
-      set("42,650", answers ? pct(answers.accuracy) : "—");
-      set("99.4% CSAT", answers ? `${pct(answers.cited_gold_document, 0)} cited` : "");
-      set(/^Avg token count/, "Median latency:");
-      set(/^<0\.4s/, answers ? `${answers.latency_ms.median} ms` : "—");
-      set("Citation Verification Rate", "Retrieval Hit@3");
-      set("99.8%", best ? pct(best.passage["hit@3"]) : "—");
-      set("0 Flags", best ? `MRR ${best.passage.mrr.toFixed(2)}` : "");
-      set(/^Zero hallucination/, METHOD[h.answers_with] || h.answers_with);
-      set("Institutional Grade", evalData?.generated_at ? `Run ${fmtDate(evalData.generated_at)}` : "");
+      const none = "Run python -m app.evaluate";
+      const card = (i, value, chip, a, b) => { setSlot(`s${i}-value`, value); setSlot(`s${i}-chip`, chip); setSlot(`s${i}-a`, a); setSlot(`s${i}-b`, b); };
+      card(0, String(docs.length), `${uploads} uploaded`, `${h.categories.length} categories`, `${h.passages} passages`);
+      card(1, q ? String(q.total) : "—", q ? "labelled" : "", q ? `${q.answerable} answerable` : none, q ? `${q.unanswerable} unanswerable` : "");
+      card(2, answers ? pct(answers.accuracy) : "—", answers ? `${pct(answers.cited_gold_document, 0)} cited` : "", "Median latency:", answers ? `${answers.latency_ms.median} ms` : "—");
+      card(3, best ? pct(best.passage["hit@3"]) : "—", best ? `MRR ${best.passage.mrr.toFixed(2)}` : "", METHOD[h.answers_with] || h.answers_with, evalData?.generated_at ? `Run ${fmtDate(evalData.generated_at)}` : "");
     }
     renderStats();
+
+    // The evaluation tables: every retriever's Hit@k and MRR, and the scores of each answer mode.
+    function renderEvalTable() {
+      const body = $("#evalBody");
+      if (!body) return;
+      if (!evalData?.available) { setById("evalSub", "No results yet. Run python -m app.evaluate to score the assistant on the labelled questions."); return; }
+      setById("evalSub", `${evalData.questions.total} labelled questions (${evalData.questions.answerable} answerable, ${evalData.questions.unanswerable} out of scope) on ${evalData.corpus.documents} documents and ${evalData.corpus.passages} passages. Last run ${fmtDate(evalData.generated_at)}.`);
+      const th = (t) => el("th", { class: "py-1.5 px-2 text-left font-semibold", scope: "col", text: t });
+      const td = (t) => el("td", { class: "py-1.5 px-2 align-top", text: t });
+      const retrieval = Object.entries(evalData.retrieval).map(([m, r]) => el("tr", {}, td(METHOD[m] || m), td(pct(r.passage["hit@1"])), td(pct(r.passage["hit@3"])), td(pct(r.passage["hit@5"])), td(r.passage.mrr.toFixed(3)), td(`${r.ms_per_query} ms`)));
+      const answers = Object.entries(evalData.answers || {}).map(([g, r]) => el("tr", {}, td(GEN_BADGE[g] || g), td(pct(r.summary.accuracy)), td(pct(r.summary.answerable_correct)), td(pct(r.summary.unanswerable_declined)), td(pct(r.summary.cited_gold_document)), td(`${r.summary.latency_ms.median} ms`)));
+      body.replaceChildren(
+        el("p", { class: "font-label-md text-label-md text-on-surface font-semibold mb-1", text: "Finding the right passage" }),
+        el("table", { class: "w-full text-left border-collapse mb-space-md" }, el("thead", { class: "bg-surface-container-low" }, el("tr", {}, ["Retriever", "Hit@1", "Hit@3", "Hit@5", "MRR", "Time per question"].map(th))), el("tbody", {}, retrieval)),
+        el("p", { class: "font-label-md text-label-md text-on-surface font-semibold mb-1", text: "Answer quality" }),
+        el("table", { class: "w-full text-left border-collapse" }, el("thead", { class: "bg-surface-container-low" }, el("tr", {}, ["Answer mode", "Correct overall", "Answerable correct", "Out of scope declined", "Cited the right document", "Median time"].map(th))), el("tbody", {}, answers)));
+    }
+    renderEvalTable();
 
     /* upload */
     catSelect.replaceChildren(...h.categories.map((c) => el("option", { value: c.id, text: c.label })));
@@ -1423,30 +1412,25 @@
     });
 
     /* ingestion monitor: newest documents */
-    const monitorHead = byText("h2", "Ingestion Pipeline Monitor") || byText("h3", "Ingestion Pipeline Monitor");
-    const monitor = monitorHead?.closest(".rounded-2xl");
-    const firstJob = monitor && $$("div", monitor).find((d) => d.textContent.includes("100% Vectorized") && d.className.includes("rounded-xl"));
+    const firstJob = $('[data-slot="job-title"]')?.closest("div.rounded-xl");
     const jobList = firstJob?.parentElement;
     const jobTpl = firstJob?.cloneNode(true);
     // Show the three most recently added documents.
     function renderMonitor() {
       if (!jobTpl) return;
-      swapText(monitor, "3 Active Jobs", `${docs.length} indexed`);
-      if (h.embedding_model) swapText(monitor, "text-embedding-3-large", h.embedding_model);
+      setSlot("monitor-count", `${docs.length} indexed`);
+      if (h.embedding_model) swapText(document.body, "BAAI/bge-small-en-v1.5", h.embedding_model);
       const recent = [...docs].sort((a, b) => (b.origin === "upload") - (a.origin === "upload") || String(b.updated || "").localeCompare(String(a.updated || ""))).slice(0, 3);
       const jobs = recent.map((d) => {
         const node = jobTpl.cloneNode(true);
-        const titleEl = $$("span, p, h3, h4", node).find((n) => n.textContent.trim().startsWith("Spring 2025 Final Exa"));
-        if (titleEl) { titleEl.textContent = d.title; titleEl.title = d.title; }
-        swapText(node, /^Registrar/, `${catLabel(h, d.category)} • ${plural(d.sections, "section")} • ${d.passages} passages`);
-        swapText(node, /\d+ pages/, "");
-        swapText(node, /vectors$/, "");
-        swapText(node, "100% Vectorized", d.origin === "upload" ? "Uploaded" : "Indexed");
+        const title = setSlot("job-title", d.title, node);
+        if (title) title.title = d.title;
+        setSlot("job-sub", `${catLabel(h, d.category)} • ${plural(d.sections, "section")} • ${d.passages} passages`, node);
+        setSlot("job-badge", d.origin === "upload" ? "Uploaded" : d.origin === "official" ? "Official" : "Indexed", node);
         return node;
       });
       [...jobList.children].filter((c) => c.className.includes("rounded-xl")).forEach((c) => c.remove());
-      const anchor = [...jobList.children].find((c) => !c.className.includes("rounded-xl"));
-      jobs.forEach((j) => jobList.insertBefore(j, anchor || null));
+      jobs.forEach((j) => jobList.append(j));
     }
 
     /* registry table */
@@ -1478,7 +1462,7 @@
       $("span", tds[1]).textContent = catLabel(h, d.category);
       const [date, officer] = $(".flex.flex-col", tds[2]).children;
       date.textContent = d.updated ? fmtDate(d.updated) : "Not dated";
-      officer.textContent = d.origin === "upload" ? "Uploaded" : "Sample corpus";
+      officer.textContent = d.origin === "upload" ? "Uploaded" : d.origin === "official" ? "Official source" : "Sample corpus";
       $$("span", tds[3])[1].textContent = "Indexed";
       const [hits, note] = $$("span", tds[4]);
       hits.textContent = String(d.passages);
@@ -1490,7 +1474,7 @@
       actions.replaceChildren(
         btn("visibility", "Read in the explorer", () => { location.href = `documents.html?doc=${encodeURIComponent(d.doc_id)}`; }),
         btn("chat_bubble", "Ask about this category", () => { location.href = `chat.html?cat=${d.category}`; }, "text-primary"),
-        btn("delete", canDelete ? "Remove" : "Sample documents are removed from data/corpus by hand", () => canDelete && removeDoc(d),
+        btn("delete", canDelete ? "Remove" : "Shipped documents are removed from data/corpus by hand", () => canDelete && removeDoc(d),
           canDelete ? "hover:text-error" : "text-outline opacity-40 cursor-not-allowed"));
       return tr;
     }
@@ -1563,12 +1547,39 @@
     const cites = convs.flatMap(citedDocs);
     const byCat = {};
     cites.forEach((s) => { byCat[s.category] = (byCat[s.category] || 0) + 1; });
-    const queriesCard = byText("span", "AI Queries Solved")?.closest(".rounded-xl, .rounded-2xl");
-    swapText(queriesCard, "47", String(questions));
-    swapText(queriesCard, "+8 this week", `${week} this week`);
-    const citesCard = byText("span", "Saved Citations")?.closest(".rounded-xl, .rounded-2xl");
-    swapText(citesCard, "12", String(cites.length));
-    swapText(citesCard, "3 syllabus, 9 handbooks", Object.entries(byCat).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${n} ${k}`).join(", ") || "from your answers");
+    // These two cards count what this browser has asked; the other two show the size of the library.
+    setSlot("d-queries", String(questions));
+    setSlot("d-queries-sub", `${week} this week`);
+    setSlot("d-citations", String(cites.length));
+    setSlot("d-citations-sub", Object.entries(byCat).sort((a, b) => b[1] - a[1]).slice(0, 2).map(([k, n]) => `${n} ${k}`).join(", ") || "from your answers");
+
+    // Documents, passages, the knowledge-base cards and the latest notices all come from the server.
+    Promise.all([health(), loadDocs()]).then(([h, docs]) => {
+      setSlot("d-docs", String(docs.length));
+      setSlot("d-docs-sub", `${docs.filter((d) => d.origin === "official").length} official, ${docs.filter((d) => d.origin === "sample").length} sample`);
+      setSlot("d-passages", String(h.passages));
+      setSlot("d-passages-sub", "searchable");
+      const grid = $("#kbGrid");
+      if (grid) {
+        grid.replaceChildren(...h.categories.map((c) => {
+          const inCat = docs.filter((d) => d.category === c.id);
+          const titles = inCat.slice(0, 3).map((d) => d.title).join(", ") + (inCat.length > 3 ? ` and ${inCat.length - 3} more` : "");
+          return el("a", { href: `documents.html?cat=${encodeURIComponent(c.id)}`, class: "group bg-surface-container-lowest hover:bg-surface-container rounded-xl p-space-md shadow-sm transition-colors flex flex-col gap-space-xs" },
+            el("span", { class: "font-headline-sm text-headline-sm text-on-surface", text: c.label }),
+            el("span", { class: "font-label-sm text-label-sm text-primary", text: plural(inCat.length, "document") }),
+            el("span", { class: "font-body-sm text-body-sm text-on-surface-variant line-clamp-2", text: titles || "No documents yet." }));
+        }));
+      }
+      const notices = $("#noticeList");
+      if (notices) {
+        const latest = docs.filter((d) => d.category === "notices").sort((a, b) => String(b.updated || "").localeCompare(String(a.updated || ""))).slice(0, 3);
+        notices.replaceChildren(...(latest.length ? latest.map((d) => el("a", { href: `documents.html?doc=${encodeURIComponent(d.doc_id)}`, class: "block bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md transition-shadow" },
+          el("span", { class: "font-label-sm text-label-sm text-outline block", text: d.updated ? `Updated ${fmtDate(d.updated)}` : "Notice" }),
+          el("span", { class: "font-headline-sm text-headline-sm text-on-surface block", text: d.title }),
+          el("span", { class: "font-body-sm text-body-sm text-on-surface-variant block", text: `${plural(d.sections, "section")}, ${d.origin === "official" ? "official source" : "sample document"}` })))
+          : [el("p", { class: "font-body-md text-body-md text-on-surface-variant", text: "No notices in the library yet." })]));
+      }
+    }).catch((error) => toast(error.message, true));
 
     const recentHead = byText("h2", "Recent AI Consultations");
     const recent = recentHead?.closest(".lg\\:col-span-7");
@@ -1603,7 +1614,8 @@
         }
         const more = footer && ($("a", footer) || $("button", footer));
         if (more) {
-          more.firstChild.nodeValue = all.length ? `View all ${plural(all.length, "conversation")} ` : "Open chat history ";
+          const label = $("span", more);
+          if (label) label.textContent = all.length ? `View all ${plural(all.length, "conversation")} ` : "Open chat history ";
           more.onclick = (e) => { e.preventDefault(); location.href = "history.html"; };
         }
       };

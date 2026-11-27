@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uni Help: Database Guide</title>
+<style>
+  :root { --ink:#1c2333; --soft:#55607a; --line:#e3e7f0; --bg:#f6f7fb; --card:#fff; --blue:#2b3990; --blue-bg:#eef0fa;
+          --green:#1b7a55; --green-bg:#e8f6ef; --amber:#8a6d00; --amber-bg:#fff6c2; --red:#b3392f; --red-bg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.65 "Segoe UI", system-ui, Arial, sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+  h1 { font-size:2rem; line-height:1.2; margin:0 0 6px; }
+  h2 { font-size:1.45rem; margin:46px 0 10px; padding-top:14px; border-top:2px solid var(--line); color:var(--blue); }
+  h3 { font-size:1.1rem; margin:26px 0 6px; }
+  p { margin:10px 0; }
+  .lead { color:var(--soft); font-size:1.05rem; }
+  code { background:#eceef6; padding:1px 6px; border-radius:5px; font:0.9em Consolas, "Courier New", monospace; }
+  pre { background:#1c2333; color:#e8ebf5; padding:14px 16px; border-radius:10px; overflow-x:auto; font:14px/1.5 Consolas, "Courier New", monospace; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin:14px 0; }
+  .say { background:var(--green-bg); border-left:5px solid var(--green); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .say b:first-child { color:var(--green); }
+  .note { background:var(--amber-bg); border-left:5px solid var(--amber); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .warn { background:var(--red-bg); border-left:5px solid var(--red); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .file { display:inline-block; background:var(--blue-bg); color:var(--blue); font:600 0.82rem Consolas, monospace; padding:2px 8px; border-radius:20px; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; background:var(--card); font-size:0.95rem; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--blue-bg); color:var(--blue); }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:14px 0; }
+  .flow div { flex:1 1 130px; background:var(--card); border:2px solid var(--blue); border-radius:10px; padding:10px; text-align:center; font-size:0.9rem; }
+  .flow div b { display:block; color:var(--blue); }
+  .flow .r { border-color:#2a78d6; } .flow .a { border-color:#eb6834; } .flow .g { border-color:var(--green); }
+  .toc { columns:2; padding-left:20px; } .toc li { margin:3px 0; }
+  a { color:var(--blue); }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; margin:8px 0; }
+  summary { cursor:pointer; font-weight:600; }
+  img { max-width:100%; border:1px solid var(--line); border-radius:10px; background:#fff; }
+  .small { font-size:0.88rem; color:var(--soft); }
+  @media (max-width:600px) { .toc { columns:1; } body { font-size:16px; } }
+  @media print { body { background:#fff; } details { break-inside:avoid; } }
+
+  .good { color:var(--green); font-weight:600; } .bad { color:var(--red); font-weight:600; } .mid { color:var(--amber); font-weight:600; }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  table.tight td, table.tight th { padding:5px 8px; font-size:0.86rem; }
+  .cover { background:var(--blue); color:#fff; border-radius:14px; padding:26px 28px; margin-bottom:22px; }
+  .cover h1 { color:#fff; margin:0 0 6px; } .cover p { color:#dfe3f7; margin:4px 0; }
+  .kpis { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+  .kpis div { flex:1 1 150px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; }
+  .kpis b { display:block; font-size:1.5rem; color:var(--blue); line-height:1.2; } .kpis span { font-size:0.82rem; color:var(--soft); }
+  svg text { font-family:"Segoe UI", Arial, sans-serif; }
+</style>
+</head><body><main>
+<div class="cover"><h1>Uni Help: Database Guide</h1><p>Where the data lives, what it contains, and how it is used. 36 documents, 313 passages. Written 27 November 2026.</p></div>
+<div class="card"><b>Contents</b><ol class="toc"><li><a href="#short">The short answer</a></li><li><a href="#stores">Everything that stores data</a></li><li><a href="#kb">The knowledge base</a></li><li><a href="#dict">Data dictionary</a></li><li><a href="#flow">How data moves</a></li><li><a href="#change">Adding and changing data</a></li><li><a href="#size">Why the numbers are what they are</a></li><li><a href="#future">If asked about a real database</a></li></ol></div>
+
+<h2 id="short">1. The short answer</h2>
+<div class="say"><b>Say this in class:</b> "Uni Help does not use a SQL database such as MySQL. Its knowledge base is a folder of
+<b>36 document files</b>. At start-up the program reads them, cuts them into <b>313 passages</b> and builds two search
+indexes in memory: a keyword index and a vector (meaning) index. The vectors are cached in one NumPy file. For a collection this size,
+that is faster and simpler than running a database server."</div>
+<div class="kpis"><div><b>36</b><span>documents</span></div><div><b>313</b><span>searchable passages</span></div><div><b>27,867</b><span>words of text</span></div><div><b>5</b><span>categories</span></div><div><b>384</b><span>numbers per passage vector</span></div></div>
+<p>If asked <b>"why no database?"</b>: the data is small (about 170 KB of text), it is read-only while the chatbot runs, and keeping it as
+plain files means anyone can open, edit and review a document in a text editor, and every answer can be traced to a file. The design
+is a <i>file-based knowledge base</i>. A real database would be the next step if the corpus grew to hundreds of thousands of passages
+(see section 8).</p>
+
+<h2 id="stores">2. Everything that stores data</h2>
+<p>Besides the knowledge base, the project keeps test questions, training data, the trained model and a few small logs.
+Here is the complete list.</p>
+<table class="tight"><tr><th class="">Where</th><th class="">Format</th><th class="">What it holds</th><th class="">Size now</th><th class="">In git?</th></tr><tr><td class=""><code>data/corpus/</code></td><td class="">Markdown (.md), one file per document</td><td class="">The knowledge base: 36 documents in 5 category folders. <b>This is the main &quot;database&quot;.</b></td><td class="">170 KB</td><td class="">Yes</td></tr><tr><td class=""><code>data/uploads/</code></td><td class="">.md .txt .pdf .docx</td><td class="">Documents added through the website</td><td class="">empty now</td><td class="">No (ignored)</td></tr><tr><td class=""><code>data/index/vectors-&lt;hash&gt;.npy</code></td><td class="">NumPy array, float32</td><td class="">The search index for meaning: one 384-number vector per passage (313 x 384). Rebuilt automatically when documents change.</td><td class="">0.47 MB</td><td class="">No (rebuilt)</td></tr><tr><td class=""><code>data/index/models/</code></td><td class="">ONNX model files</td><td class="">The downloaded embedding model and reranker</td><td class="">downloaded on first run</td><td class="">No</td></tr><tr><td class=""><code>data/eval/questions.jsonl</code></td><td class="">JSON Lines</td><td class="">130 labelled test questions with the right answer and key facts</td><td class="">47 KB</td><td class="">Yes</td></tr><tr><td class=""><code>data/eval/lpu_smoke_questions.jsonl</code></td><td class="">JSON Lines</td><td class="">32 labelled questions about the LPU and AICTE documents</td><td class="">small</td><td class="">Yes</td></tr><tr><td class=""><code>data/eval/results.json</code>, <code>threshold.json</code></td><td class="">JSON</td><td class="">Saved evaluation scores and the chosen decline threshold (0.45)</td><td class="">120 KB</td><td class="">Yes</td></tr><tr><td class=""><code>data/eval/local_model_test.json</code></td><td class="">JSON</td><td class="">Detailed test results of the trained local model</td><td class="">165 KB</td><td class="">Yes</td></tr><tr><td class=""><code>data/train/raw/*.jsonl</code></td><td class="">JSON Lines</td><td class="">990 hand-written training questions with answers (810 answerable, 180 not)</td><td class="">small</td><td class="">Yes</td></tr><tr><td class=""><code>data/train/train.jsonl</code></td><td class="">JSON Lines</td><td class="">1,027 finished training examples (input text + target answer)</td><td class="">2.5 MB</td><td class="">Yes</td></tr><tr><td class=""><code>models/svu-flan-t5/</code></td><td class="">safetensors + JSON</td><td class="">The trained local model (77 million numbers = 308 MB) and its training log</td><td class="">about 1.2 GB with the resume copy</td><td class="">No (too big)</td></tr><tr><td class=""><code>data/feedback.jsonl</code></td><td class="">JSON Lines</td><td class="">One line per thumbs-up or thumbs-down. Created when the first feedback arrives.</td><td class="">not created yet</td><td class="">No (ignored)</td></tr><tr><td class="">Browser <code>localStorage</code></td><td class="">JSON in the browser</td><td class="">A visitor's own conversations and chosen answer mode (keys <code>shd.conversations.v1</code>, <code>shd.generator</code>). Never sent to the server.</td><td class="">per browser</td><td class="">n/a</td></tr><tr><td class="">Memory of the running server</td><td class="">Python objects</td><td class="">The loaded documents, passages, keyword index and vectors (class <code>Engine</code> and <code>Index</code>)</td><td class="">a few MB</td><td class="">n/a</td></tr></table>
+
+<h2 id="kb">3. The knowledge base: 36 documents</h2>
+<h3>3.1 Two groups</h3>
+<ul>
+  <li><b>18 official documents</b> (header says <code>origin: official</code>), written from public pages. 11 are about
+  <b>Lovely Professional University (LPU)</b>, from lpu.in and LPU's Prospectus 2026. 7 are
+  <b>CSE subject syllabi</b> from AICTE's official model curriculum (LPU does not publish its own syllabi). Each one ends with the exact web
+  page it came from, and the header has a <code>source:</code> line.</li>
+  <li><b>18 sample documents</b> for a made-up university, <b>Sutlej Valley University (SVU)</b>. They were written for this project so it could be built and
+  tested without confidential papers. The 130 test questions and the 1,027 training examples are about these.</li>
+</ul>
+<p>The website shows the group as a label: "Official source" or "Sample". When a question names a university ("at LPU", "at SVU"), only that
+university's documents are searched.</p>
+
+<h3>3.2 What a document file looks like</h3>
+<p>A document is a markdown text file with a small header between <code>---</code> lines (called front matter), then headings and text.
+The program (<code>app/ingest.py</code>) reads the header for the id, title and category, and cuts the text at the headings.</p>
+<pre>---
+title: Attendance Regulations
+category: regulations
+doc_id: REG-01
+updated: 2026-07-01
+---
+# Attendance Regulations
+
+## 1. Minimum attendance requirement
+
+Every B.Tech student at SVU must have at least 75% attendance in each course ...
+
+## 2. Condonation of shortage
+
+If attendance in a course is 65% or more but below 75%, the student can apply ...</pre>
+<p>Official documents have two extra header lines:</p>
+<pre>---
+title: LPU Attendance, Examination and Grading Rules
+category: regulations
+doc_id: LPU-REG-01
+origin: official
+source: https://www.lpu.in/lpu-assets/download/prospectus/guidelines-and-application-forms-part-c.pdf
+---</pre>
+
+<h3>3.3 The 36 documents (the catalogue)</h3>
+<p>The same table is saved as a spreadsheet: <code>docs/Uni_Help_Document_Catalogue.csv</code> (opens in Excel). It also has the file
+path, the update date and the source link of every document.</p>
+<table class="tight"><tr><th class="">Id</th><th class="">Title</th><th class="">Category</th><th class="">Group</th><th class="num">Sections</th><th class="num">Passages</th><th class="num">Words</th></tr><tr><td class=""><code>LPU-FAQ-01</code></td><td class="">About Lovely Professional University (LPU)</td><td class="">FAQs</td><td class="">Official</td><td class="num">5</td><td class="num">5</td><td class="num">395</td></tr><tr><td class=""><code>LPU-FAQ-02</code></td><td class="">LPU CSE Placements and Career Services FAQ</td><td class="">FAQs</td><td class="">Official</td><td class="num">5</td><td class="num">7</td><td class="num">741</td></tr><tr><td class=""><code>LPU-FAQ-03</code></td><td class="">LPU CSE Labs, Clubs and Technical Events FAQ</td><td class="">FAQs</td><td class="">Official</td><td class="num">5</td><td class="num">5</td><td class="num">486</td></tr><tr><td class=""><code>LPU-FAQ-04</code></td><td class="">LPU B.Tech CSE Admissions and LPUNEST FAQ</td><td class="">FAQs</td><td class="">Official</td><td class="num">5</td><td class="num">5</td><td class="num">454</td></tr><tr><td class=""><code>LPU-FAQ-05</code></td><td class="">LPU Hostel, Mess and Campus Services FAQ</td><td class="">FAQs</td><td class="">Official</td><td class="num">7</td><td class="num">8</td><td class="num">892</td></tr><tr><td class=""><code>LPU-NOT-01</code></td><td class="">LPU Academic Calendar 2026-27 (Regular Programmes)</td><td class="">Notices</td><td class="">Official</td><td class="num">3</td><td class="num">3</td><td class="num">254</td></tr><tr><td class=""><code>LPU-NOT-02</code></td><td class="">LPU Placement Results Notice, Classes of 2025 and 2026</td><td class="">Notices</td><td class="">Official</td><td class="num">5</td><td class="num">5</td><td class="num">277</td></tr><tr><td class=""><code>LPU-POL-01</code></td><td class="">LPU B.Tech Fees, Scholarships and Refund Policy</td><td class="">Policies</td><td class="">Official</td><td class="num">5</td><td class="num">8</td><td class="num">884</td></tr><tr><td class=""><code>LPU-REG-01</code></td><td class="">LPU Attendance, Examination and Grading Rules</td><td class="">Regulations</td><td class="">Official</td><td class="num">7</td><td class="num">9</td><td class="num">1,006</td></tr><tr><td class=""><code>LPU-REG-02</code></td><td class="">LPU Student Conduct, Discipline and Anti-Ragging Rules</td><td class="">Regulations</td><td class="">Official</td><td class="num">4</td><td class="num">4</td><td class="num">361</td></tr><tr><td class=""><code>AICTE-CD</code></td><td class="">Compiler Design Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">15</td><td class="num">15</td><td class="num">663</td></tr><tr><td class=""><code>AICTE-CN</code></td><td class="">Computer Networks Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">15</td><td class="num">15</td><td class="num">759</td></tr><tr><td class=""><code>AICTE-COA</code></td><td class="">Computer Organization and Architecture Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">12</td><td class="num">12</td><td class="num">611</td></tr><tr><td class=""><code>AICTE-DAA</code></td><td class="">Design and Analysis of Algorithms Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">12</td><td class="num">12</td><td class="num">644</td></tr><tr><td class=""><code>AICTE-OS</code></td><td class="">Operating Systems Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">14</td><td class="num">14</td><td class="num">824</td></tr><tr><td class=""><code>AICTE-SE</code></td><td class="">Software Engineering Course Outline (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">8</td><td class="num">8</td><td class="num">452</td></tr><tr><td class=""><code>AICTE-TOC</code></td><td class="">Theory of Computation Syllabus (AICTE Model Curriculum, B.Tech CSE)</td><td class="">Syllabus</td><td class="">Official</td><td class="num">8</td><td class="num">8</td><td class="num">538</td></tr><tr><td class=""><code>LPU-CSE-01</code></td><td class="">LPU B.Tech CSE Programme Structure and Specialisations</td><td class="">Syllabus</td><td class="">Official</td><td class="num">9</td><td class="num">10</td><td class="num">926</td></tr><tr><td class=""><code>FAQ-01</code></td><td class="">Admissions and Registration FAQ</td><td class="">FAQs</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">960</td></tr><tr><td class=""><code>FAQ-02</code></td><td class="">Hostel, Library, Transport and Campus Services FAQ</td><td class="">FAQs</td><td class="">Sample</td><td class="num">8</td><td class="num">8</td><td class="num">866</td></tr><tr><td class=""><code>FAQ-03</code></td><td class="">IT Portal, ID Card, Certificates and Transcripts FAQ</td><td class="">FAQs</td><td class="">Sample</td><td class="num">8</td><td class="num">8</td><td class="num">781</td></tr><tr><td class=""><code>NOT-01</code></td><td class="">Academic Calendar 2026-27</td><td class="">Notices</td><td class="">Sample</td><td class="num">8</td><td class="num">8</td><td class="num">869</td></tr><tr><td class=""><code>NOT-02</code></td><td class="">End-Term Examination December 2026 Notice</td><td class="">Notices</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">945</td></tr><tr><td class=""><code>NOT-03</code></td><td class="">Fee Payment Notice for Even Semester 2026-27</td><td class="">Notices</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">897</td></tr><tr><td class=""><code>NOT-04</code></td><td class="">Scholarship Applications and CodeSprint 2027 Hackathon Notice</td><td class="">Notices</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">864</td></tr><tr><td class=""><code>POL-01</code></td><td class="">Scholarship and Fee Refund Policy</td><td class="">Policies</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">975</td></tr><tr><td class=""><code>POL-02</code></td><td class="">Plagiarism and Academic Integrity Policy</td><td class="">Policies</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">914</td></tr><tr><td class=""><code>POL-03</code></td><td class="">Leave, Medical Leave and Grievance Redressal Policy</td><td class="">Policies</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">905</td></tr><tr><td class=""><code>REG-01</code></td><td class="">Attendance Regulations</td><td class="">Regulations</td><td class="">Sample</td><td class="num">8</td><td class="num">8</td><td class="num">834</td></tr><tr><td class=""><code>REG-02</code></td><td class="">Examination and Grading Regulations</td><td class="">Regulations</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">994</td></tr><tr><td class=""><code>REG-03</code></td><td class="">Academic Progression and Degree Requirements</td><td class="">Regulations</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">969</td></tr><tr><td class=""><code>REG-04</code></td><td class="">Student Conduct and Unfair Means Regulations</td><td class="">Regulations</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">940</td></tr><tr><td class=""><code>SYL-01</code></td><td class="">B.Tech CSE Course Structure 2026-27</td><td class="">Syllabus</td><td class="">Sample</td><td class="num">11</td><td class="num">11</td><td class="num">1,270</td></tr><tr><td class=""><code>SYL-02</code></td><td class="">Data Structures (CS201) Syllabus</td><td class="">Syllabus</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">945</td></tr><tr><td class=""><code>SYL-03</code></td><td class="">Database Management Systems (CS211) Syllabus</td><td class="">Syllabus</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">888</td></tr><tr><td class=""><code>SYL-04</code></td><td class="">Machine Learning (CS301) Syllabus</td><td class="">Syllabus</td><td class="">Sample</td><td class="num">9</td><td class="num">9</td><td class="num">884</td></tr></table>
+
+<h2 id="dict">4. Data dictionary: what each record contains</h2>
+<h3>4.1 A passage (class <code>Chunk</code>, in <code>app/ingest.py</code>)</h3>
+<table class="tight"><tr><th class="">Field</th><th class="">Meaning</th><th class="">Example</th></tr><tr><td class=""><code>chunk_id</code></td><td class="">document id + running number</td><td class=""><code>LPU-REG-01#2</code></td></tr><tr><td class=""><code>doc_id</code></td><td class="">which document it belongs to</td><td class=""><code>LPU-REG-01</code></td></tr><tr><td class=""><code>title</code></td><td class="">document title</td><td class="">LPU Attendance, Examination and Grading Rules</td></tr><tr><td class=""><code>category</code></td><td class="">one of the five categories</td><td class=""><code>regulations</code></td></tr><tr><td class=""><code>section</code></td><td class="">the heading it came from</td><td class="">1. Minimum attendance at LPU</td></tr><tr><td class=""><code>text</code></td><td class="">the passage text (about 82 words on average, longest 209)</td><td class="">...</td></tr><tr><td class=""><code>updated</code></td><td class="">date from the header</td><td class="">2026-07-01</td></tr><tr><td class=""><code>origin</code></td><td class=""><code>sample</code>, <code>official</code> or <code>upload</code></td><td class=""><code>official</code></td></tr></table>
+<h3>4.2 A test question (<code>data/eval/questions.jsonl</code>)</h3>
+<pre>{
+ "id": "Q001",
+ "question": "what happens if my attendance is below 75?",
+ "type": "answerable",
+ "style": "colloquial",
+ "category": "regulations",
+ "gold_doc_ids": [
+  "REG-01"
+ ],
+ "gold_section": "2. Condonation of shortage",
+ "reference_answer": "If attendance in a course is 65% or more but below 75%, ...",
+ "key_facts": [
+  "65%",
+  "medical certificate"
+ ]
+}</pre>
+<p><code>type</code> is <code>answerable</code> or <code>unanswerable</code> (the chatbot should decline). <code>style</code> is direct, paraphrase, colloquial or hinglish.
+<code>gold_doc_ids</code> and <code>gold_section</code> name the right passage; <code>key_facts</code> are the strings a correct answer must contain.
+Counts: 130 questions = 98 answerable (22 direct, 26 paraphrase, 30 colloquial, 20 Hindi-English) + 32 out of scope.</p>
+<h3>4.3 A raw training question (<code>data/train/raw/batch_*.jsonl</code>)</h3>
+<pre>{
+ "doc_id": "FAQ-01",
+ "section": "1. Eligibility for B.Tech admission",
+ "question": "What is the minimum qualification to join B.Tech at SVU?",
+ "answer": "A candidate must have passed Class 12 with Physics and Mathematics ... at least 60% aggregate marks ...",
+ "style": "direct"
+}</pre>
+<h3>4.4 A finished training example (<code>data/train/train.jsonl</code>)</h3>
+<pre>{
+ "input": "question: What does the DBMS mid-term cover? context: [1] Database Management Systems (CS211) Syllabus - 4. Units I to III ...",
+ "target": "The mid-term examination covers Units I and II of the course; ... [1]",
+ "kind": "answer",
+ "doc_id": "SYL-03",
+ "style": "direct",
+ "question": "What does the DBMS mid-term cover?"
+}</pre>
+<p><code>kind</code> is <code>answer</code>, <code>shuffled</code>, <code>removed</code> or <code>outside</code> (explained in the model guide).</p>
+<h3>4.5 A feedback line (<code>data/feedback.jsonl</code>)</h3>
+<pre>{"at": "2026-11-27T12:00:00", "question": "...", "answer": "...", "helpful": true, "generator": "extractive"}</pre>
+
+<h2 id="flow">5. How data moves through the system</h2>
+<div class="flow">
+  <div><b>Files</b>data/corpus + uploads</div>
+  <div class="r"><b>Read</b><code>load_all_documents()</code></div>
+  <div><b>Cut</b><code>chunk_document()</code><br>313 passages</div>
+  <div class="r"><b>Index</b>BM25 (words) +<br>vectors (meaning)</div>
+  <div class="g"><b>Search</b><code>Index.search()</code><br>top 4 passages</div>
+</div>
+<p>All of this happens in memory when the server starts and again after every upload or delete (<code>Engine.rebuild()</code>).
+The only thing saved to disk in between is the vector file, so the slow step (computing vectors) is skipped when the documents have not changed.
+The file name contains a fingerprint (hash) of the passage texts and the embedding model name; if either changes, a new file is made and the old one deleted.</p>
+
+<h2 id="change">6. Adding, changing and removing data</h2>
+<table class="tight"><tr><th class="">I want to ...</th><th class="">Do this</th><th class="">What happens</th></tr><tr><td class="">Add a document</td><td class="">Upload it on the Documents page, or put a <code>.md</code> file in <code>data/corpus/&lt;category&gt;/</code> and restart</td><td class="">It is validated, cut into passages and indexed. The chatbot can answer from it at once. Uploads are saved in <code>data/uploads/</code>.</td></tr><tr><td class="">Change a document</td><td class="">Edit the file (or upload one with the same name) and restart</td><td class="">The passages and the vector file are rebuilt. Computing the vectors takes from tens of seconds to a couple of minutes on this laptop's CPU.</td></tr><tr><td class="">Remove a document</td><td class="">Delete an uploaded one on the website, or delete the file from <code>data/corpus/</code></td><td class="">Shipped documents cannot be deleted from the website, only by hand.</td></tr><tr><td class="">Mark a document as official</td><td class="">Add <code>origin: official</code> and <code>source: &lt;url&gt;</code> to its header</td><td class="">The website labels it &quot;Official source&quot;.</td></tr></table>
+
+<h2 id="size">7. Why the numbers are what they are</h2>
+<ul>
+  <li><b>313 passages from 36 documents:</b> most sections stay whole (one section = one passage). Only sections over 220 words are cut into 160-word windows; none of the new LPU or AICTE documents needed it.</li>
+  <li><b>384 numbers per vector:</b> the size of the output of the embedding model <code>BAAI/bge-small-en-v1.5</code>. 313 x 384 numbers x 4 bytes is about 0.48 MB, which is why a plain NumPy file is enough.</li>
+  <li><b>308 MB model file:</b> 76,961,152 numbers (the model's parameters) x 4 bytes each.</li>
+</ul>
+
+<h2 id="future">8. If the examiner asks about a real database</h2>
+<details open><summary>Would you use SQL, MongoDB or a vector database?</summary>
+<p>For this size, no. If the project grew, the natural design would be: <b>PostgreSQL with the pgvector extension</b> (one database for the documents, their metadata
+and the vectors, with a table such as <code>passages(chunk_id, doc_id, category, section, text, origin, embedding vector(384))</code>) or a dedicated vector store
+such as FAISS or Chroma. The code that would change is only <code>Index</code> in <code>app/retrieval.py</code>; the rest of the pipeline would stay the same.</p></details>
+<details><summary>How is user data protected?</summary>
+<p>Conversations stay in the visitor's browser. The server stores only the thumbs-up/down feedback (question, answer, helpful or not, which answer mode). Uploads and feedback are
+excluded from git. There is no login in this version.</p></details>
+<details><summary>What if a document changes while the server runs?</summary>
+<p>Uploads and deletes through the website rebuild the index at once, guarded by a lock so two rebuilds never run together. Edits made directly to files in <code>data/corpus/</code> need a restart.</p></details>
+<details><summary>Where is the data backed up?</summary>
+<p>The documents, questions and training data are committed to git (GitHub). The model weights and the vector cache are not: the vectors are rebuilt automatically, and the model is recreated with <code>train_local_model.bat</code> (about 75 minutes).</p></details>
+
+<p class="small" style="margin-top:40px">Counts come from the running corpus (<code>build_chunks()</code>) on 27 November 2026. The full list with source links is in <code>docs/Uni_Help_Document_Catalogue.csv</code>.</p>
+</main></body></html>

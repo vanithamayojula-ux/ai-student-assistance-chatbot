@@ -36,7 +36,7 @@ async def lifespan(_: FastAPI):
     yield
 
 
-app = FastAPI(title="AI Student Assistance Chatbot", docs_url="/api/docs" if config.API_DOCS else None,
+app = FastAPI(title="Uni Help", docs_url="/api/docs" if config.API_DOCS else None,
               redoc_url=None, openapi_url="/api/openapi.json" if config.API_DOCS else None, lifespan=lifespan)
 
 
@@ -241,7 +241,7 @@ def delete_document(doc_id: str, http: Request) -> dict:
     for d in engine.documents:
         if d.doc_id == doc_id:
             if d.origin != "upload":
-                raise HTTPException(403, "Sample documents are part of the project. Remove them from data/corpus by hand.")
+                raise HTTPException(403, "Shipped documents are part of the project. Remove them from data/corpus by hand.")
             if config.UPLOAD_DIR.resolve() not in d.path.resolve().parents:
                 raise HTTPException(403, "That file is outside the uploads folder.")
             d.path.unlink(missing_ok=True)

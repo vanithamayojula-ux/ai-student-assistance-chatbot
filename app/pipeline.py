@@ -18,6 +18,14 @@ GREETING = ("Hi! Ask me about the syllabus, exam and attendance regulations, not
             "university's documents and show you the passage each answer comes from.")
 ABSTAIN = ("I could not find this in the university documents I have, so I will not guess. "
            "Try rephrasing, or check with the concerned office.")
+# Which documents belong to which institution. When a question names one institution,
+# only that institution's documents are searched, so "PhD stipend at SVU" is never answered
+# from an LPU page. "official" also holds the AICTE model syllabi, the reference syllabi
+# for LPU students (LPU does not publish its own).
+_INSTITUTIONS = {
+    "official": re.compile(r"\b(lpu|lovely professional)\b", re.I),
+    "sample": re.compile(r"\b(svu|sutlej valley)\b", re.I),
+}
 _FOLLOW_UP = re.compile(r"\b(it|its|that|this|those|these|they|them|same|above|also|then)\b|^(and|what about|how about|aur)\b", re.I)
 
 
@@ -84,8 +92,19 @@ class Engine:
         Returns the top passages (hits) and a confidence score from 0 to 1 that says
         how well those passages seem to cover the question.
         """
-        hits = self.index.search(query, k or config.TOP_K, method, category)
+        hits = self.index.search(query, k or config.TOP_K, method, category,
+                                 origins=self.institution_filter(query))
         return hits, self.index.confidence(query, hits)
+
+    @staticmethod
+    def institution_filter(query: str) -> set[str] | None:
+        """The document origins to search when the question names exactly one institution.
+
+        "attendance at LPU" -> {"official"}; "fee at SVU" -> {"sample"}; a question naming
+        neither (or both) institutions searches everything.
+        """
+        named = {origin for origin, pattern in _INSTITUTIONS.items() if pattern.search(query)}
+        return named if len(named) == 1 else None
 
     @staticmethod
     def _sources(hits: list[Hit], highlights: dict[int, set[tuple[int, int]]] | None = None) -> list[dict]:

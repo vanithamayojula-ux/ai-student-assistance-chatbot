@@ -136,10 +136,15 @@ def extractive_answer(index: Index, query: str, hits: list[Hit]) -> tuple[str, d
     if scores[best] <= 0:
         return "", {}
     chosen = [best]
+    # The corpus holds documents from more than one institution (the sample university and LPU).
+    # A quoted answer must not mix them, so extra sentences must come from a document of the
+    # same origin as the best sentence.
+    origin = hits[units[best]["source"]].chunk.origin
     for i in np.argsort(-scores)[1:]:
         if len(chosen) >= config.SENTENCE_MAX or scores[i] < config.SENTENCE_KEEP_RATIO * scores[best]:
             break
-        if units[i]["source"] <= units[best]["source"] + 1:    # stay with the top passages
+        if units[i]["source"] <= units[best]["source"] + 1 \
+                and hits[units[i]["source"]].chunk.origin == origin:   # top passages, same institution
             chosen.append(int(i))
     chosen.sort(key=lambda i: (units[i]["source"], units[i]["position"]))
 
@@ -194,7 +199,7 @@ def support_highlights(index: Index, answer: str, question: str, hits: list[Hit]
 # The system prompt is the standing instruction given to the language model with every
 # question. It is what makes this RAG and not a free chatbot: use ONLY the passages,
 # cite them, and say NO_ANSWER when the passages do not contain the answer.
-SYSTEM_PROMPT = """You are the student help desk assistant for {university}. Students ask you about \
+SYSTEM_PROMPT = """You are Uni Help, the student help desk assistant for {university}. Students ask you about \
 syllabus, regulations, notices, FAQs and academic policies.
 
 You are given numbered passages retrieved from the university's official documents. They are the \
@@ -207,6 +212,8 @@ a student would need. Keep it under 120 words. Plain sentences; a short list onl
 several parallel items.
 - After each claim, cite the passage it came from as [1], [2]. Cite only passages you used.
 - Quote numbers, dates, amounts and names exactly as written in the passage.
+- The passages can come from more than one institution (each passage title names it). Say which \
+institution a rule belongs to, and never combine rules from different institutions into one answer.
 - If the passages do not contain the answer, reply with exactly {no_answer} and nothing else. \
 A passage on a nearby topic is not an answer.
 - Students may write casually or mix Hindi and English. Understand them, and reply in simple English."""

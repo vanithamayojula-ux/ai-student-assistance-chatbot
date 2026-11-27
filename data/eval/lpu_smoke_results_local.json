@@ -1,0 +1,720 @@
+{
+ "summary": {
+  "n": 32,
+  "n_answerable": 27,
+  "n_unanswerable": 5,
+  "answerable_correct": 0.7037037037037037,
+  "answerable_declined": 0.18518518518518517,
+  "right_first_document": 0.7407407407407407,
+  "unanswerable_declined": 1.0,
+  "overall": 0.75,
+  "by_style": {
+   "direct": 0.7894736842105263,
+   "paraphrase": 0.6666666666666666,
+   "hinglish": 0.0
+  },
+  "generator": "local",
+  "threshold": 0.45,
+  "documents": 36,
+  "passages": 313
+ },
+ "rows": [
+  {
+   "id": "L01",
+   "question": "What is the minimum attendance required at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-01"
+   ],
+   "key_facts": [
+    "80%",
+    "75%"
+   ],
+   "abstained": false,
+   "confidence": 0.9993,
+   "cited": [
+    "LPU-REG-01"
+   ],
+   "facts_found": 2,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "A student should attend 80% or more in aggregate of delivered classes, and a relaxation of 5% is granted for medical reasons and other genuine exigencies, so a minimum of 75% attendance in aggregate is mandatory at LPU. [2]"
+  },
+  {
+   "id": "L02",
+   "question": "How many marks does attendance carry at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-01"
+   ],
+   "key_facts": [
+    "5 marks"
+   ],
+   "abstained": false,
+   "confidence": 0.8387,
+   "cited": [
+    "LPU-REG-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "Attendance carries 5 marks: more than 90% gets 5 marks, 85-90% [3]"
+  },
+  {
+   "id": "L03",
+   "question": "Does LPU give attendance relaxation for medical reasons?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-01"
+   ],
+   "key_facts": [
+    "5%"
+   ],
+   "abstained": false,
+   "confidence": 0.8388,
+   "cited": [
+    "LPU-REG-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "Yes, a relaxation of 5% is granted for medical reasons and other genuine exigencies, so a minimum of 75% attendance in aggregate is mandatory at LPU. [1]"
+  },
+  {
+   "id": "L04",
+   "question": "What is the LPU B.Tech CSE programme fee per semester?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "policies",
+   "gold_doc_ids": [
+    "LPU-POL-01"
+   ],
+   "key_facts": [
+    "160000"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "LPU-POL-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU's B.Tech CSE page gives the programme fee as Rs. 160000 per semester for 2026 admission, before any scholarship. [1]"
+  },
+  {
+   "id": "L05",
+   "question": "What is the LPUNEST application fee?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-04"
+   ],
+   "key_facts": [
+    "1000"
+   ],
+   "abstained": false,
+   "confidence": 0.901,
+   "cited": [
+    "LPU-FAQ-04"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "The LPUNEST application fee is Rs. 1000. It is non-refundable in all cases. [1]"
+  },
+  {
+   "id": "L06",
+   "question": "What is the eligibility for B.Tech CSE at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-04"
+   ],
+   "key_facts": [
+    "60%"
+   ],
+   "abstained": false,
+   "confidence": 0.9861,
+   "cited": [
+    "LPU-FAQ-04"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU requires a pass with 60% aggregate marks in 10+2 (with Physics, Mathematics and English) or equivalent, and admission is subject to qualifying through LPUNEST, JEE Main or CUET. [1]"
+  },
+  {
+   "id": "L07",
+   "question": "What is LPUNEST?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-04"
+   ],
+   "key_facts": [
+    "National Entrance and Scholarship Test"
+   ],
+   "abstained": false,
+   "confidence": 0.8434,
+   "cited": [
+    "LPU-FAQ-04"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU is LPU's National Entrance and Scholarship Test. It acts as both an entrance test and a scholarship test, and LPU awards scholarships based on LPUNEST scores. [1]"
+  },
+  {
+   "id": "L08",
+   "question": "What is LPU's NAAC grade?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-01"
+   ],
+   "key_facts": [
+    "A++"
+   ],
+   "abstained": false,
+   "confidence": 0.8936,
+   "cited": [
+    "LPU-FAQ-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU states that it is accredited by NAAC with an A++ grade and a score of 3.68 on a 4-point scale (2023). [1]"
+  },
+  {
+   "id": "L09",
+   "question": "When are the LPU end term exams in December 2026?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "notices",
+   "gold_doc_ids": [
+    "LPU-NOT-01"
+   ],
+   "key_facts": [
+    "14 to 30 December 2026"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "LPU-NOT-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU's End Term Examination (ETE) for the Autumn term 2026-27 is scheduled from 14 to 30 December 2026. The dates are tentative and may vary. [1]"
+  },
+  {
+   "id": "L10",
+   "question": "What is the hostel charge for a 2 seater AC room at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-05"
+   ],
+   "key_facts": [
+    "143000"
+   ],
+   "abstained": true,
+   "confidence": 0.8792,
+   "cited": [],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L11",
+   "question": "What is the mess charge for three meals at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-05"
+   ],
+   "key_facts": [
+    "44000"
+   ],
+   "abstained": true,
+   "confidence": 0.8414,
+   "cited": [],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L12",
+   "question": "Till what time is the LPU library open?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "faqs",
+   "gold_doc_ids": [
+    "LPU-FAQ-05"
+   ],
+   "key_facts": [
+    "midnight"
+   ],
+   "abstained": false,
+   "confidence": 0.9455,
+   "cited": [
+    "LPU-FAQ-05"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU's prospectus says the library is open till late hours, presently from 8.00 am till midnight. [1]"
+  },
+  {
+   "id": "L13",
+   "question": "Is ragging allowed at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-02"
+   ],
+   "key_facts": [
+    "totally prohibited"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "LPU-REG-02"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "Yes. LPU's prospectus states that ragging is totally prohibited in the University. Anyone found guilty of ragging or of abetting it is liable to be punished under the UGC Regulations on Curbing the Menace of Ragging in Higher Educational Institutions, 2009, and under any penal law in force. [1]"
+  },
+  {
+   "id": "L14",
+   "question": "What is the helpline number to report ragging at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-02"
+   ],
+   "key_facts": [
+    "1800-180-5522"
+   ],
+   "abstained": false,
+   "confidence": 0.8051,
+   "cited": [
+    "LPU-REG-02"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU has the national anti-ragging helpline 1800-180-5522 (24x7, toll free) and the email helpline@antiragging.in. [1]"
+  },
+  {
+   "id": "L15",
+   "question": "What is the LPU refund deduction if I withdraw between 1 and 15 August?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "policies",
+   "gold_doc_ids": [
+    "LPU-POL-01"
+   ],
+   "key_facts": [
+    "10%"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "LPU-POL-01"
+   ],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "For hostel, food, laundry and gym refunds requested up to 31 July 2026, the deduction is halved. [1]"
+  },
+  {
+   "id": "L16",
+   "question": "How long is the B.Tech CSE programme at LPU?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "LPU-CSE-01"
+   ],
+   "key_facts": [
+    "4 years"
+   ],
+   "abstained": false,
+   "confidence": 0.9994,
+   "cited": [
+    "LPU-CSE-01"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU's B.Tech CSE is 4 years, divided into 8 semesters (terms). [1]"
+  },
+  {
+   "id": "L17",
+   "question": "Which company is the partner for the Cloud Computing and Gen AI specialisation at LPU?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "LPU-CSE-01"
+   ],
+   "key_facts": [
+    "Google Cloud"
+   ],
+   "abstained": false,
+   "confidence": 0.8563,
+   "cited": [
+    "LPU-CSE-01"
+   ],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "LPU offers B.Tech CSE with Hons. specialisations in Data Science and Data Engineering, Cyber Security and Blockchain, and Full Stack Software Development, and with industry-collaborative specialisations such as IoT and AI Analytics with Intel. [1]"
+  },
+  {
+   "id": "L18",
+   "question": "What is the highest package LPU reported for the Classes of 2025 and 2026?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "notices",
+   "gold_doc_ids": [
+    "LPU-NOT-02"
+   ],
+   "key_facts": [
+    "2.5 crore"
+   ],
+   "abstained": false,
+   "confidence": 0.9599,
+   "cited": [
+    "LPU-FAQ-02"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "LPU's Placement Day release (12 January 2026) reports the highest package of the Classes of 2025 and 2026 as Rs 2.5 crore, received by a B.Tech (Robotics) student of the Class of 2025. [2]"
+  },
+  {
+   "id": "L19",
+   "question": "How many offers did Accenture make to LPU students?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "notices",
+   "gold_doc_ids": [
+    "LPU-NOT-02"
+   ],
+   "key_facts": [
+    "805"
+   ],
+   "abstained": false,
+   "confidence": 0.7,
+   "cited": [
+    "LPU-FAQ-02"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "Accenture made 805 offers, Capgemini India 578 and Cognizant 263. [2]"
+  },
+  {
+   "id": "L20",
+   "question": "lpu me attendance kitni chahiye",
+   "type": "answerable",
+   "style": "hinglish",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-01"
+   ],
+   "key_facts": [
+    "75%"
+   ],
+   "abstained": true,
+   "confidence": 0.7776,
+   "cited": [],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L21",
+   "question": "lpu me ragging allowed hai kya",
+   "type": "answerable",
+   "style": "hinglish",
+   "category": "regulations",
+   "gold_doc_ids": [
+    "LPU-REG-02"
+   ],
+   "key_facts": [
+    "prohibited"
+   ],
+   "abstained": true,
+   "confidence": 0.9952,
+   "cited": [],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L22",
+   "question": "Which textbook is used for Computer Organization and Architecture?",
+   "type": "answerable",
+   "style": "paraphrase",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-COA"
+   ],
+   "key_facts": [
+    "Patterson and Hennessy"
+   ],
+   "abstained": false,
+   "confidence": 0.8408,
+   "cited": [
+    "AICTE-COA"
+   ],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "Computer Organization and Architecture (Mano) is a computer organization and architecture syllabus from the AICTE Model Curriculum for the UG degree in Computer Science and Engineering (revised 2022), published by AICTE, the All India Council for Technical Education. [3]"
+  },
+  {
+   "id": "L23",
+   "question": "What topics are covered in the Computer Networks syllabus?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-CN"
+   ],
+   "key_facts": [
+    "transport layer"
+   ],
+   "abstained": true,
+   "confidence": 1.0,
+   "cited": [],
+   "facts_found": 0,
+   "correct": false,
+   "generator_used": "local",
+   "right_document": false,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L24",
+   "question": "What does the Theory of Computation syllabus cover?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-TOC"
+   ],
+   "key_facts": [
+    "Turing machines"
+   ],
+   "abstained": false,
+   "confidence": 0.9889,
+   "cited": [
+    "AICTE-TOC"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "The AICTE Theory of Computation syllabus covers three modules: finite automata and regular languages (DFA, NFA, regular expressions, pumping lemma), context-free grammars and pushdown automata, and Turing machines, decidability and complexity (P, NP and EXP). [1]"
+  },
+  {
+   "id": "L25",
+   "question": "What are the modules in the Design and Analysis of Algorithms syllabus?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-DAA"
+   ],
+   "key_facts": [
+    "dynamic programming"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "AICTE-DAA"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "The AICTE Design and Analysis of Algorithms syllabus covers six modules: applications of graph search (BFS and DFS), greedy algorithms, divide and conquer, dynamic programming and shortest paths, network flows, and intractability (P, NP and NP-completeness). [1]"
+  },
+  {
+   "id": "L26",
+   "question": "What topics are in the Compiler Design syllabus?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-CD"
+   ],
+   "key_facts": [
+    "lexical analysis"
+   ],
+   "abstained": false,
+   "confidence": 1.0,
+   "cited": [
+    "AICTE-CD"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "The AICTE Compiler Design syllabus covers eight modules: an introduction to compilers, lexical analysis (LEX and Flex), syntax analysis and parsing (LR or LL), semantic analysis, syntax-directed translation to three-address code, run-time support (activation records and calls), an introduction to code optimization, and code generation. [1]"
+  },
+  {
+   "id": "L27",
+   "question": "What is the Software Engineering course outline about?",
+   "type": "answerable",
+   "style": "direct",
+   "category": "syllabus",
+   "gold_doc_ids": [
+    "AICTE-SE"
+   ],
+   "key_facts": [
+    "iterative software development"
+   ],
+   "abstained": false,
+   "confidence": 0.9902,
+   "cited": [
+    "AICTE-SE"
+   ],
+   "facts_found": 1,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": true,
+   "answer": "The AICTE Software Engineering course covers the iterative software development process, project planning, requirements including the user interface, architecture and design, coding with modern IDEs, testing, and integration and deployment, applied in a team software project. [1]"
+  },
+  {
+   "id": "L28",
+   "question": "Who is the Vice Chancellor of LPU?",
+   "type": "unanswerable",
+   "style": "direct",
+   "category": "out_of_scope",
+   "gold_doc_ids": [],
+   "key_facts": [],
+   "abstained": true,
+   "confidence": 0.3346,
+   "cited": [],
+   "facts_found": 0,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": null,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L29",
+   "question": "What is the fee for the MBA programme at LPU?",
+   "type": "unanswerable",
+   "style": "direct",
+   "category": "out_of_scope",
+   "gold_doc_ids": [],
+   "key_facts": [],
+   "abstained": true,
+   "confidence": 0.7091,
+   "cited": [],
+   "facts_found": 0,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": null,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L30",
+   "question": "What is the PhD stipend at LPU?",
+   "type": "unanswerable",
+   "style": "direct",
+   "category": "out_of_scope",
+   "gold_doc_ids": [],
+   "key_facts": [],
+   "abstained": true,
+   "confidence": 0.606,
+   "cited": [],
+   "facts_found": 0,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": null,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L31",
+   "question": "What is the capital of France?",
+   "type": "unanswerable",
+   "style": "direct",
+   "category": "out_of_scope",
+   "gold_doc_ids": [],
+   "key_facts": [],
+   "abstained": true,
+   "confidence": 0.0,
+   "cited": [],
+   "facts_found": 0,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": null,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  },
+  {
+   "id": "L32",
+   "question": "Which movies are showing in the LPU cinema this week?",
+   "type": "unanswerable",
+   "style": "direct",
+   "category": "out_of_scope",
+   "gold_doc_ids": [],
+   "key_facts": [],
+   "abstained": true,
+   "confidence": 0.2514,
+   "cited": [],
+   "facts_found": 0,
+   "correct": true,
+   "generator_used": "local",
+   "right_document": null,
+   "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office."
+  }
+ ]
+}

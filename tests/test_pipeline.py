@@ -60,7 +60,7 @@ def test_retrieval_finds_the_attendance_regulation(engine):
 
 def test_answer_is_grounded_and_cited(engine):
     """The answer contains the right fact (75%), cites the right document and highlights the sentence."""
-    result = engine.answer("What is the minimum attendance required in each course?")
+    result = engine.answer("What is the minimum attendance required in each course at SVU?")
     assert not result["abstained"]
     assert "75%" in result["answer"]
     cited = [s for s in result["sources"] if s["cited"]]
@@ -68,6 +68,17 @@ def test_answer_is_grounded_and_cited(engine):
     # the highlighted sentence really is in the cited passage
     marked = [u["text"] for s in cited for b in s["blocks"] for u in b["units"] if u["hit"]]
     assert marked and any("75%" in text for text in marked)
+
+
+def test_lpu_question_is_answered_from_lpu_documents_only(engine):
+    """An LPU question is answered from the official LPU documents, never mixed with the sample university's."""
+    result = engine.answer("What is the minimum attendance required?")
+    assert not result["abstained"]
+    cited = [s for s in result["sources"] if s["cited"]]
+    assert cited and cited[0]["doc_id"] == "LPU-REG-01"
+    assert {s["origin"] for s in cited} == {"official"}
+    docs = {d.doc_id: d for d in engine.documents}
+    assert docs["LPU-REG-01"].origin == "official" and docs["REG-01"].origin == "sample"
 
 
 def test_out_of_scope_question_is_declined(engine):

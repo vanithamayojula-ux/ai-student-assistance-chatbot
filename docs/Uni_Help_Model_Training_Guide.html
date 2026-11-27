@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Uni Help: The Answer Model and How It Was Trained</title>
+<style>
+  :root { --ink:#1c2333; --soft:#55607a; --line:#e3e7f0; --bg:#f6f7fb; --card:#fff; --blue:#2b3990; --blue-bg:#eef0fa;
+          --green:#1b7a55; --green-bg:#e8f6ef; --amber:#8a6d00; --amber-bg:#fff6c2; --red:#b3392f; --red-bg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:17px/1.65 "Segoe UI", system-ui, Arial, sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:32px 20px 80px; }
+  h1 { font-size:2rem; line-height:1.2; margin:0 0 6px; }
+  h2 { font-size:1.45rem; margin:46px 0 10px; padding-top:14px; border-top:2px solid var(--line); color:var(--blue); }
+  h3 { font-size:1.1rem; margin:26px 0 6px; }
+  p { margin:10px 0; }
+  .lead { color:var(--soft); font-size:1.05rem; }
+  code { background:#eceef6; padding:1px 6px; border-radius:5px; font:0.9em Consolas, "Courier New", monospace; }
+  pre { background:#1c2333; color:#e8ebf5; padding:14px 16px; border-radius:10px; overflow-x:auto; font:14px/1.5 Consolas, "Courier New", monospace; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin:14px 0; }
+  .say { background:var(--green-bg); border-left:5px solid var(--green); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .say b:first-child { color:var(--green); }
+  .note { background:var(--amber-bg); border-left:5px solid var(--amber); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .warn { background:var(--red-bg); border-left:5px solid var(--red); border-radius:8px; padding:12px 16px; margin:14px 0; }
+  .file { display:inline-block; background:var(--blue-bg); color:var(--blue); font:600 0.82rem Consolas, monospace; padding:2px 8px; border-radius:20px; }
+  table { width:100%; border-collapse:collapse; margin:12px 0; background:var(--card); font-size:0.95rem; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:var(--blue-bg); color:var(--blue); }
+  .flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:14px 0; }
+  .flow div { flex:1 1 130px; background:var(--card); border:2px solid var(--blue); border-radius:10px; padding:10px; text-align:center; font-size:0.9rem; }
+  .flow div b { display:block; color:var(--blue); }
+  .flow .r { border-color:#2a78d6; } .flow .a { border-color:#eb6834; } .flow .g { border-color:var(--green); }
+  .toc { columns:2; padding-left:20px; } .toc li { margin:3px 0; }
+  a { color:var(--blue); }
+  details { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 16px; margin:8px 0; }
+  summary { cursor:pointer; font-weight:600; }
+  img { max-width:100%; border:1px solid var(--line); border-radius:10px; background:#fff; }
+  .small { font-size:0.88rem; color:var(--soft); }
+  @media (max-width:600px) { .toc { columns:1; } body { font-size:16px; } }
+  @media print { body { background:#fff; } details { break-inside:avoid; } }
+
+  .good { color:var(--green); font-weight:600; } .bad { color:var(--red); font-weight:600; } .mid { color:var(--amber); font-weight:600; }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  table.tight td, table.tight th { padding:5px 8px; font-size:0.86rem; }
+  .cover { background:var(--blue); color:#fff; border-radius:14px; padding:26px 28px; margin-bottom:22px; }
+  .cover h1 { color:#fff; margin:0 0 6px; } .cover p { color:#dfe3f7; margin:4px 0; }
+  .kpis { display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }
+  .kpis div { flex:1 1 150px; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; }
+  .kpis b { display:block; font-size:1.5rem; color:var(--blue); line-height:1.2; } .kpis span { font-size:0.82rem; color:var(--soft); }
+  svg text { font-family:"Segoe UI", Arial, sans-serif; }
+</style>
+</head><body><main>
+<div class="cover"><h1>Uni Help: The Answer Model and How It Was Trained</h1><p>What the local model is, how it was trained, how it answers, and how well it works. Written 27 November 2026.</p></div>
+<div class="card"><b>Contents</b><ol class="toc"><li><a href="#what">What the model is</a></li><li><a href="#ideas">Seven ideas you need</a></li><li><a href="#data">The training data</a></li><li><a href="#train">How the training works</a></li><li><a href="#use">How it answers a question</a></li><li><a href="#results">How well it works</a></li><li><a href="#limits">Limits</a></li><li><a href="#lpu">The LPU documents were not in training</a></li><li><a href="#qa">Likely questions</a></li></ol></div>
+
+<h2 id="what">1. What the model is, in plain words</h2>
+<div class="say"><b>Say this in class:</b> "Uni Help can write its answers in four ways. One of them is our <b>own small language model</b>.
+We started from <b>FLAN-T5-small</b>, an open model from Google that already understands English, and <b>fine-tuned</b> it on
+1,027 examples so that it learned one job: read a student's question and three passages from the documents, write a short answer
+that uses only those passages, add a citation like [1], and say <b>NO_ANSWER</b> when the passages do not contain the answer.
+It runs on this laptop's CPU, with no internet and no API key."</div>
+<div class="kpis"><div><b>77 million</b><span>numbers inside the model (parameters)</span></div><div><b>1,027</b><span>training examples</span></div><div><b>75 min</b><span>training time on a CPU</span></div><div><b>1.5 s</b><span>to write one answer</span></div><div><b>308 MB</b><span>size of the model file</span></div></div>
+
+<h3>1.1 Where the name comes from</h3>
+<ul>
+  <li><b>Transformer</b> is the kind of neural network behind modern language models. <b>T5</b> ("Text-to-Text Transfer Transformer") is a Google model that treats every task as
+  <i>text in, text out</i>: a question and context go in as text, the answer comes out as text.</li>
+  <li><b>FLAN</b> means the model was additionally trained on a large collection of tasks written as instructions, which makes it good at following instructions such as
+  "answer using only the context".</li>
+  <li><b>small</b> is the size: 76,961,152 parameters. For comparison, the models behind ChatGPT, Gemini and Claude are many hundreds of times larger. Small means it runs on a laptop, but it makes more mistakes.</li>
+  <li><b>svu</b> in the folder name <code>models/svu-flan-t5</code> stands for Sutlej Valley University, the made-up university it was trained on.</li>
+</ul>
+
+<h3>1.2 How it fits into Uni Help</h3>
+<p>The model is the <b>G (generation)</b> step of RAG. It does not search anything and does not remember the documents. The retriever finds the passages first
+(<code>Index.search()</code>), then <code>app/local_model.py</code> hands the best 3 to the model. This matters: <b>the model learned a skill, not facts</b>.
+That is why it can also answer from documents it never saw in training, such as the LPU documents (section 8).</p>
+<table class="tight"><tr><th class="">Answer mode</th><th class="">Who writes the answer</th><th class="">Needs</th><th class="">Speed</th></tr><tr><td class="">Quote the documents</td><td class="">No AI writing: picks and copies the best sentences</td><td class="">nothing</td><td class="">about 0.2 to 0.4 s</td></tr><tr><td class=""><b>Local model</b></td><td class="">Our fine-tuned FLAN-T5-small</td><td class="">trained model files + PyTorch</td><td class="">about 1.7 s</td></tr><tr><td class="">Gemini</td><td class="">Google's cloud model</td><td class="">internet + API key</td><td class="">depends on the connection</td></tr><tr><td class="">Claude</td><td class="">Anthropic's cloud model</td><td class="">internet + API key</td><td class="">depends on the connection</td></tr></table>
+
+<h2 id="ideas">2. Seven ideas you need</h2>
+<table class="tight"><tr><th class="">Word</th><th class="">Meaning</th></tr><tr><td class="">Parameters</td><td class="">The numbers inside the model that decide what it writes. FLAN-T5-small has 76,961,152. Training means adjusting them. They are stored in the 308 MB file <code>model.safetensors</code> (76,961,152 x 4 bytes).</td></tr><tr><td class="">Token</td><td class="">A word or piece of a word. The model reads and writes tokens. Our inputs are about 495 tokens long on average (longest 662), because they contain the question and three passages.</td></tr><tr><td class="">Pre-training vs fine-tuning</td><td class="">Pre-training teaches a model language from huge amounts of text (Google did that). Fine-tuning continues training the same model on a small set of examples of <i>our</i> task. We only did fine-tuning.</td></tr><tr><td class="">Loss</td><td class="">A number saying how wrong the model's answers are on the training examples. Lower is better. Ours fell from 1.56 to 0.29.</td></tr><tr><td class="">Epoch</td><td class="">One full pass over all 1,027 training examples. We trained for 4 epochs.</td></tr><tr><td class="">Batch</td><td class="">A small group of examples processed together (8 here). The model's numbers are adjusted once per batch.</td></tr><tr><td class="">Learning rate</td><td class="">How big each adjustment is (0.0005). Too big and training becomes unstable; too small and it learns too slowly.</td></tr></table>
+
+<h2 id="data">3. The training data</h2>
+<h3>3.1 What one example looks like</h3>
+<p>Every example has an <b>input</b> (what the model reads) and a <b>target</b> (the answer we want it to write).</p>
+<pre><b>input:</b>  question: What is the minimum attendance required? context: [1] Attendance Regulations - 1. Minimum attendance requirement: Every B.Tech student at SVU must have at least 75% attendance in each course ... [2] Attendance Regulations - 2. Condonation of shortage: If attendance in a course is 65% or more but below 75% ... [3] ...
+
+<b>target:</b> Every B.Tech student at SVU must have at least 75% attendance in each course in a semester. [1]</pre>
+<p>The format is built by <code>build_input()</code> in <code>app/local_model.py</code>, the same function used when the chatbot answers a real question. So the model is trained on exactly
+what it will see in use.</p>
+
+<h3>3.2 How the 1,027 examples were made (<code>training/data.py</code>)</h3>
+<ol>
+  <li><b>990 questions were written</b> from the 18 sample documents (810 that the documents answer, 180 that they do not), each with the correct answer and the section that holds it.
+  They are in four styles that students really use: direct, reworded, casual and Hindi-English. The questions and answers were written by an AI assistant (Claude) from the documents, not collected from real students.</li>
+  <li><b>Every question is sent through the real retriever</b>, so the passages in the input are what the chatbot would really find: the right passage mixed with related wrong ones, in retrieval order.</li>
+  <li><b>Bad rows are dropped:</b> 61 questions whose answer passage was not retrieved, 17 that shared 70% or more of their words with a test question, and 9 duplicates. 732 answerable and 171 out-of-scope questions were kept (810 - 61 - 17 = 732; 180 - 9 = 171).</li>
+  <li><b>Four kinds of examples</b> are made, so the model also learns <i>when not to answer</i>:</li>
+</ol>
+<table class="tight"><tr><th class="">Kind</th><th class="num">Count</th><th class="">What the passages are</th><th class="">Target the model must write</th></tr><tr><td class="">answer</td><td class="num">344</td><td class="">right passage among the retrieved ones</td><td class="">the answer + [n] pointing at the passage that holds it</td></tr><tr><td class="">shuffled</td><td class="num">388</td><td class="">the same, but in random order</td><td class="">the answer + [n] (so the citation follows the passage, not its position)</td></tr><tr><td class="">removed</td><td class="num">124</td><td class="">the answering passage taken out, only near-misses left</td><td class="">NO_ANSWER</td></tr><tr><td class="">outside</td><td class="num">171</td><td class="">a question the documents do not cover</td><td class="">NO_ANSWER</td></tr></table>
+<p>By wording: direct 468, Hindi-English 184, casual 192, reworded 183.
+Each of the 18 sample documents contributes 41 to 56 examples.</p>
+<div class="note"><b>Important for questions:</b> the training data comes <b>only from the 18 sample documents</b> of the made-up university. The LPU and AICTE documents added later
+were <b>not</b> part of training.</div>
+
+<h3>3.3 Keeping the test fair</h3>
+<ul>
+  <li>The 130 labelled test questions are <b>never used for training</b>. A training question sharing 70% or more of its words with a test question is removed (17 were).</li>
+  <li>The test questions are split into a <b>dev half</b> (used to choose the best epoch) and a <b>test half</b> (only used for the final score). The test half played no part in training or choosing.</li>
+</ul>
+
+<h2 id="train">4. How the training works (<code>training/train.py</code>)</h2>
+<h3>4.1 The loop, in four steps</h3>
+<p>Each pass through the data repeats these steps for every batch of 8 examples:</p>
+<div class="flow">
+  <div class="r"><b>1. Predict</b>the model writes the target one token at a time</div>
+  <div class="a"><b>2. Measure</b>loss = how far each token was from the target</div>
+  <div><b>3. Learn</b>work out which of the 77 million numbers to nudge (backpropagation)</div>
+  <div class="g"><b>4. Update</b>nudge them a little (AdamW optimizer)</div>
+</div>
+<p>In code: <code>loss = model(**batch).loss</code>, <code>loss.backward()</code>, <code>optimizer.step()</code>, <code>schedule.step()</code>, <code>optimizer.zero_grad()</code>.
+After each epoch, the model answers the dev questions and its score is recorded. The version with the best dev score is saved to <code>models/svu-flan-t5/</code>.</p>
+
+<h3>4.2 The settings that were used</h3>
+<table class="tight"><tr><th class="">Setting</th><th class="">Value</th><th class="">Why</th></tr><tr><td class="">Starting model</td><td class=""><code>google/flan-t5-small</code></td><td class="">Small enough to train and run on a laptop CPU</td></tr><tr><td class="">Training examples</td><td class="">1,027</td><td class="">From <code>training/data.py</code></td></tr><tr><td class="">Epochs</td><td class="">4</td><td class="">129 steps per epoch, 516 steps in total</td></tr><tr><td class="">Batch size</td><td class="">8</td><td class="">Batches group examples of similar length, which wastes less time on padding</td></tr><tr><td class="">Learning rate</td><td class="">0.0005 (AdamW, no weight decay)</td><td class="">Rises over the first 30 steps (6%), then falls in a straight line to 0</td></tr><tr><td class="">Gradient clipping</td><td class="">1.0</td><td class="">Stops one bad batch from making a huge jump</td></tr><tr><td class="">Random seed</td><td class="">7</td><td class="">Makes the run repeatable</td></tr><tr><td class="">Hardware</td><td class="">CPU only, 12 threads</td><td class="">No graphics card needed</td></tr><tr><td class="">Longest input allowed</td><td class="">1,024 tokens</td><td class="">The longest real input was 662, so nothing was cut off</td></tr><tr><td class="">Targets</td><td class="">up to 96 tokens</td><td class="">Answers are short on purpose</td></tr></table>
+
+<h3>4.3 What happened during training (the real log)</h3>
+<svg viewBox="0 0 720 300" width="100%" role="img" aria-label="Training loss and dev accuracy per epoch" style="background:#fff;border:1px solid #e3e7f0;border-radius:10px"><line x1="52" x2="668" y1="256.0" y2="256.0" stroke="#e8eaf0"/><text x="44" y="260.0" font-size="11" text-anchor="end" fill="#55607a">0.0</text><line x1="52" x2="668" y1="193.2" y2="193.2" stroke="#e8eaf0"/><text x="44" y="197.2" font-size="11" text-anchor="end" fill="#55607a">0.5</text><line x1="52" x2="668" y1="130.4" y2="130.4" stroke="#e8eaf0"/><text x="44" y="134.4" font-size="11" text-anchor="end" fill="#55607a">1.0</text><line x1="52" x2="668" y1="67.7" y2="67.7" stroke="#e8eaf0"/><text x="44" y="71.7" font-size="11" text-anchor="end" fill="#55607a">1.5</text><text x="676" y="260.0" font-size="11" fill="#eb6f0a">0%</text><text x="676" y="203.5" font-size="11" fill="#eb6f0a">25%</text><text x="676" y="147.0" font-size="11" fill="#eb6f0a">50%</text><text x="676" y="90.5" font-size="11" fill="#eb6f0a">75%</text><text x="676" y="34.0" font-size="11" fill="#eb6f0a">100%</text><line x1="206.0" x2="206.0" y1="30" y2="256" stroke="#eef0f6" stroke-dasharray="3 4"/><text x="206.0" y="274" font-size="12" text-anchor="middle" fill="#55607a">epoch 1</text><line x1="360.0" x2="360.0" y1="30" y2="256" stroke="#eef0f6" stroke-dasharray="3 4"/><text x="360.0" y="274" font-size="12" text-anchor="middle" fill="#55607a">epoch 2</text><line x1="514.0" x2="514.0" y1="30" y2="256" stroke="#eef0f6" stroke-dasharray="3 4"/><text x="514.0" y="274" font-size="12" text-anchor="middle" fill="#55607a">epoch 3</text><line x1="668.0" x2="668.0" y1="30" y2="256" stroke="#eef0f6" stroke-dasharray="3 4"/><text x="668.0" y="274" font-size="12" text-anchor="middle" fill="#55607a">epoch 4</text><polyline points="63.9,60.6 75.9,127.9 87.8,123.6 99.8,137.5 111.7,162.1 123.6,164.1 135.6,157.9 147.5,152.5 159.4,164.2 171.4,174.1 183.3,182.1 195.3,162.3 206.0,166.8 217.9,196.9 229.9,197.2 241.8,199.8 253.8,192.2 265.7,196.8 277.6,197.8 289.6,183.0 301.5,171.9 313.4,198.1 325.4,191.5 337.3,180.1 349.3,186.7 360.0,177.3 371.9,211.7 383.9,220.8 395.8,204.1 407.8,211.7 419.7,202.2 431.6,209.7 443.6,202.8 455.5,199.0 467.4,202.5 479.4,199.5 491.3,213.9 503.3,205.1 514.0,195.7 525.9,223.3 537.9,210.8 549.8,211.1 561.8,221.1 573.7,213.9 585.6,222.3 597.6,201.6 609.5,220.0 621.4,221.2 633.4,217.9 645.3,212.6 657.3,219.3 668.0,219.2" fill="none" stroke="#2a78d6" stroke-width="2"/><polyline points="206.0,148.2 360.0,158.6 514.0,130.8 668.0,120.4" fill="none" stroke="#eb6f0a" stroke-width="2"/><circle cx="206.0" cy="148.2" r="4.5" fill="#eb6f0a"/><text x="206.0" y="139.2" font-size="11.5" text-anchor="middle" fill="#8a4400">48%</text><circle cx="360.0" cy="158.6" r="4.5" fill="#eb6f0a"/><text x="360.0" y="149.6" font-size="11.5" text-anchor="middle" fill="#8a4400">43%</text><circle cx="514.0" cy="130.8" r="4.5" fill="#eb6f0a"/><text x="514.0" y="121.8" font-size="11.5" text-anchor="middle" fill="#8a4400">55%</text><circle cx="668.0" cy="120.4" r="4.5" fill="#eb6f0a"/><text x="668.0" y="111.4" font-size="11.5" text-anchor="middle" fill="#8a4400">60%</text><text x="52" y="18" font-size="12.5" fill="#2a78d6" font-weight="600">Training loss (left axis, lower is better)</text><text x="668" y="18" font-size="12.5" fill="#eb6f0a" font-weight="600" text-anchor="end">Dev accuracy (right axis)</text></svg>
+<table class="tight"><tr><th class="">Epoch</th><th class="num">Training loss</th><th class="num">Time</th><th class="num">Dev accuracy</th><th class="num">Dev answerable correct</th><th class="num">Dev out-of-scope declined</th></tr><tr><td class="">1</td><td class="num">0.853</td><td class="num">24 min</td><td class="num">47.7%</td><td class="num">49.0%</td><td class="num">43.8%</td></tr><tr><td class="">2</td><td class="num">0.526</td><td class="num">17 min</td><td class="num">43.1%</td><td class="num">46.9%</td><td class="num">31.2%</td></tr><tr><td class="">3</td><td class="num">0.398</td><td class="num">17 min</td><td class="num">55.4%</td><td class="num">53.1%</td><td class="num">62.5%</td></tr><tr><td class="">4 (kept)</td><td class="num">0.315</td><td class="num">17 min</td><td class="num">60.0%</td><td class="num">59.2%</td><td class="num">62.5%</td></tr></table>
+<ul>
+  <li><b>Training loss fell every epoch</b> (0.85, 0.53, 0.40, 0.31): the model fitted the training examples better each time.</li>
+  <li><b>Dev accuracy went 47.7%, 43.1%, 55.4%, 60.0%.</b> It dipped in epoch 2, then rose. The dev set has only 65 questions, so one question is worth 1.5 points and small dips are noise.</li>
+  <li><b>Epoch 4 was kept</b> because it had the highest dev accuracy (60.0%).</li>
+  <li>Dev accuracy was still rising at epoch 4, so more epochs might help. That was <b>not tried</b>.</li>
+  <li>Total training time: 75 minutes (24 + 17 + 17 + 17). The first epoch was slower (24 minutes) than the others (about 17).</li>
+</ul>
+
+<h3>4.4 How to train it again</h3>
+<pre>train_local_model.bat                       (double-click: does all four steps below)
+
+.venv\Scripts\python -m training.data       1. build data/train/train.jsonl
+.venv\Scripts\python -m training.train      2. fine-tune (add --resume to continue a stopped run)
+.venv\Scripts\python -m training.test_model 3. test it -> data/eval/local_model_test.json
+.venv\Scripts\python -m training.report     4. write the training and testing report</pre>
+<p>It needs PyTorch and Transformers (<code>requirements-model.txt</code>, about 300 MB). Plug the laptop in: it is 1 to 2 hours of CPU work. The model folder is not stored in git because it is too big.</p>
+
+<h2 id="use">5. How the model answers a question (<code>app/local_model.py</code>)</h2>
+<ol>
+  <li><code>passages_of()</code> keeps the top 3 retrieved passages.</li>
+  <li><code>build_input()</code> turns the question and passages into the input text (tables are flattened to one line because the model cannot read line breaks).</li>
+  <li><code>generate()</code> turns the text into tokens, the model writes up to 96 tokens using <b>beam search</b> (it explores 4 candidate answers side by side and keeps the best), then the tokens become text.</li>
+  <li>If the answer is <code>NO_ANSWER</code>, the student sees the polite decline message.</li>
+  <li><code>unsupported_numbers()</code> checks that <b>every number in the answer also appears in the passages</b>. If not, the answer is thrown away and the chatbot quotes the documents instead. This is a guard against invented fees and dates.</li>
+  <li><code>tidy()</code> removes any citation like [5] that points at a passage that does not exist.</li>
+</ol>
+<p>Before any of this, the confidence gate still applies. For language-model modes it uses a looser threshold (0.34), because the model can decline by itself.</p>
+
+<h2 id="results">6. How well does it work? (summary)</h2>
+<p>Full details are in <code>docs/Uni_Help_Test_Report.html</code>. Tests were run on 24 November 2026, when the corpus still had only the 18 sample documents.</p>
+<table class="tight"><tr><th class="">Test</th><th class="">Result</th><th class="">What it shows</th></tr><tr><td class="">Held-out test questions (65), model before training</td><td class="">15.4%</td><td class="">The untrained FLAN-T5-small cannot do the task</td></tr><tr><td class="">Same questions, model after training</td><td class=""><b>58.5%</b></td><td class="">Fine-tuning raised it from 15% to 58%</td></tr><tr><td class="">Whole chatbot with the local model vs quote-only</td><td class="">58.5% vs 56.9%</td><td class="">About the same overall; the local model writes more naturally</td></tr><tr><td class="">Answers that cite a passage</td><td class="">100.0%</td><td class="">It always cites (the untrained model: 67.3%)</td></tr><tr><td class="">Answers that cite the passage holding the answer</td><td class="">81.8%</td><td class="">Untrained: 8.2%</td></tr><tr><td class="">Out-of-scope questions declined</td><td class="">62.5%</td><td class="">Untrained: 0%. It learned to say NO_ANSWER</td></tr><tr><td class="">Answers with a number not in the passages</td><td class="">0.0%</td><td class="">No invented numbers in the test answers</td></tr><tr><td class="">A document it never saw (24 questions)</td><td class="">70.8%</td><td class="">It generalises to new documents</td></tr><tr><td class="">The 32 LPU/AICTE smoke questions (27 Nov)</td><td class="">75.0% (70.4% of answerable)</td><td class="">Documents it was never trained on</td></tr></table>
+
+<h2 id="limits">7. Limits (say these before you are asked)</h2>
+<ul>
+  <li><b>It is small and not perfect:</b> on the held-out questions about 32.6% of answerable questions got a wrong answer and 10.2% were wrongly declined.</li>
+  <li><b>The number check only catches invented numbers.</b> In the tests it flagged none, while 28 of the 70 answers checked were still wrong (the model copied a real number from the wrong sentence).</li>
+  <li><b>Trained on AI-written examples about one fictional university</b>, not on real student questions. The test measures new questions about the same documents.</li>
+  <li><b>The training set is small</b> (1,027 examples) and the model was trained once (one random seed, 4 epochs). Another run would give somewhat different numbers.</li>
+  <li><b>The test sets are small</b> (65 and 24 questions), so differences of a few points are within the noise.</li>
+  <li><b>No memory of the conversation:</b> follow-ups work only because the chatbot searches them together with the previous question.</li>
+  <li><b>Slower than quoting:</b> about 1.7 s per answer against about 0.2 s.</li>
+</ul>
+
+<h2 id="lpu">8. The LPU documents were not in training</h2>
+<p>After the LPU and AICTE documents were added, the same 32-question smoke test was run with the local model (27 November 2026). It had never seen these documents or this wording.</p>
+<div class="kpis"><div><b>70%</b><span>of 27 answerable questions correct</span></div><div><b>100%</b><span>of 5 out-of-scope questions declined</span></div><div><b>75%</b><span>correct overall (32 questions)</span></div><div><b>0 of 2</b><span>Hindi-English questions correct</span></div></div>
+<p>For comparison, the quote-only mode scored 100% of answerable and 60% of out-of-scope on the same questions. So the local model <b>does generalise</b> to unseen documents, but it
+declines too often on some answerable questions (hostel and mess charges, Hindi-English questions) and sometimes copies the wrong passage. The numbers are from only 32 questions.</p>
+<div class="note"><b>How to improve it (future work):</b> add LPU questions to the training data and retrain (about 75 minutes), train for more epochs, and add real student questions.
+None of this was done.</div>
+
+<h2 id="qa">9. Likely questions and answers</h2>
+<details><summary>What model did you use and why that one?</summary><p>Google's FLAN-T5-small (77 million parameters). It already follows instructions, it is open, and it is small enough to fine-tune and run on a laptop CPU without a graphics card.</p></details>
+<details><summary>Did you train the model from scratch?</summary><p>No. Training a language model from scratch needs huge data and many GPUs. We fine-tuned an existing model for one task, using 1,027 examples. The pre-trained knowledge of English is Google's.</p></details>
+<details><summary>What does the model actually learn from your data?</summary><p>A skill, not facts: read the passages it is given, copy the relevant fact, cite the passage number, and answer NO_ANSWER when the passages do not contain the answer. The facts come from retrieval at question time, which is why new documents work without retraining.</p></details>
+<details><summary>Where did the training data come from?</summary><p>We wrote 990 questions with answers from the 18 sample documents (an AI assistant wrote them, from the documents), ran each through the real retriever to get realistic passages, and built 1,027 examples, including cases where the right reply is NO_ANSWER.</p></details>
+<details><summary>How do you know it is not just memorising?</summary><p>The 130 test questions were never used in training (near-copies were removed). It was tested on the held-out half (58.5%, against 15.4% before training), on a document that was not in the corpus (70.8%), and on the LPU documents (70.4% of answerable questions).</p></details>
+<details><summary>What is an epoch, and why 4?</summary><p>An epoch is one full pass over the training examples. We used 4 because the dev score was still improving and each epoch costs about 17 minutes on a CPU. More epochs were not tried.</p></details>
+<details><summary>What is overfitting?</summary><p>When a model fits its training examples so closely that it does worse on new ones. We watch for it with the dev questions after every epoch and keep the best epoch. Here the dev score kept rising, so no sign of it was seen, but the set is small.</p></details>
+<details><summary>How does it avoid making up numbers?</summary><p>After the model writes an answer, every number in it is looked up in the passages. If one is missing, the answer is discarded and the chatbot quotes the documents instead. It does not catch a real number copied from the wrong place.</p></details>
+<details><summary>Why also offer Gemini and Claude?</summary><p>They write more fluent answers but need the internet and a paid API key, and send the question and passages to a cloud service. The local model keeps everything on the computer. The "quote the documents" mode is the safe default because it cannot invent anything.</p></details>
+<details><summary>Could it run on a phone or a website?</summary><p>Not in the browser. The model file is 308 MB and needs PyTorch, so it runs wherever the Python backend runs. The <code>models/</code> folder is not stored in git, so a deployed copy would need the folder copied to the server (or retrained there).</p></details>
+
+<p class="small" style="margin-top:40px">Numbers are read from <code>models/svu-flan-t5/training_log.json</code>, <code>data/train/summary.json</code>, <code>data/eval/local_model_test.json</code> (24 November 2026) and <code>data/eval/lpu_smoke_results_local.json</code> (27 November 2026).</p>
+</main></body></html>

@@ -1,5 +1,5 @@
 @echo off
-rem Starts the Student Help Desk and opens it in the browser.
+rem Starts Uni Help and opens it in the browser.
 cd /d "%~dp0"
 
 if not exist ".venv\Scripts\python.exe" (
@@ -9,7 +9,7 @@ if not exist ".venv\Scripts\python.exe" (
 )
 
 echo.
-echo Student Help Desk is starting at http://127.0.0.1:8000
+echo Uni Help is starting at http://127.0.0.1:8000
 echo Keep this window open. Press Ctrl+C to stop.
 echo.
 start "" http://127.0.0.1:8000

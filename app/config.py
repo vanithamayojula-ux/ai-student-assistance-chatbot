@@ -40,7 +40,7 @@ CATEGORY_LABELS = {
     "policies": "Academic policies",
 }
 
-UNIVERSITY_NAME = os.getenv("UNIVERSITY_NAME", "Sutlej Valley University")
+UNIVERSITY_NAME = os.getenv("UNIVERSITY_NAME", "LPU and Sutlej Valley University")   # the corpus holds both
 
 # Security for a public deployment (see app/security.py).
 CHAT_PER_MINUTE = int(os.getenv("CHAT_PER_MINUTE", "20"))     # per client; 0 turns the limit off

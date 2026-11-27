@@ -1,4 +1,6 @@
-# AI Student Assistance Chatbot (P08)
+# Uni Help: AI Student Assistance Chatbot
+
+The website is called **Uni Help**; the college project is the *AI Student Assistance Chatbot* (P08).
 
 A RAG (retrieval-augmented generation) chatbot that answers students' academic and
 institutional questions from a university knowledge corpus, and shows the passage
@@ -8,13 +10,16 @@ each answer came from.
 |---|---|
 | Students need reliable answers to academic and institutional queries | Every answer is built only from retrieved passages, cites them, and the assistant declines when the documents do not cover the question |
 | Build a RAG chatbot over a university knowledge corpus | `app/` - ingest, retrieve (BM25 + embeddings, fused), generate, cite |
-| Dataset: syllabus, regulations, notices, FAQs, academic policies | `data/corpus/` - 18 documents in those five categories |
-| A labelled student-question evaluation set | `data/eval/questions.jsonl` - 80 labelled questions, scored by `app/evaluate.py` |
+| Dataset: syllabus, regulations, notices, FAQs, academic policies | `data/corpus/` - 48 documents in those five categories (18 sample, 30 official LPU and AICTE) |
+| A labelled student-question evaluation set | `data/eval/questions.jsonl` - 130 labelled questions, scored by `app/evaluate.py` (plus 32 LPU/AICTE questions in `data/eval/lpu_smoke_questions.jsonl`) |
 
-> **About the data.** The corpus is sample data for a fictional university
-> ("Sutlej Valley University"), written for this project. No real university's rules
-> are in it. To use real documents, add them on the Library page or put files in
-> `data/corpus/<category>/`.
+> **About the data.** The corpus has two groups. 18 documents are sample data for a
+> fictional university ("Sutlej Valley University"), written for this project. 30 are
+> official: 19 about Lovely Professional University (LPU), written from lpu.in and the
+> LPU Prospectus 2026, and 11 CSE syllabi from AICTE's model curriculum (LPU does not
+> publish its own). Official documents say `origin: official` and list their source in
+> the header. A question that names LPU or SVU searches only that university's documents.
+> To add documents, use the Library page or put files in `data/corpus/<category>/`.
 
 ## Run it
 
@@ -156,7 +161,7 @@ git, so a key in it is not committed).
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `UNIVERSITY_NAME` | Sutlej Valley University | Name shown in the interface and given to the language model |
+| `UNIVERSITY_NAME` | LPU and Sutlej Valley University | Name shown in the interface and given to the language model |
 | `GEMINI_API_KEY` | not set | Turns on the Gemini generator |
 | `GEMINI_MODEL` | gemini-3.8-flash | Gemini model |
 | `ANTHROPIC_API_KEY` | not set | Turns on the Claude generator |

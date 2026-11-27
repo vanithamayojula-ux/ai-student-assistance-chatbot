@@ -1,4 +1,4 @@
-/* Student Help Desk: the website's logic (home page, Ask, Library, Evaluation). No framework, no build step.
+/* Uni Help: the website's logic (home page, Ask, Library, Evaluation). No framework, no build step.
    All text from the server is inserted with textContent, never innerHTML. */
 (() => {
   "use strict";
@@ -463,7 +463,7 @@
           el("button", { class: "doc-item", type: "button", "data-doc": d.doc_id, style: `--cat: var(--cat-${d.category})`,
             "aria-current": String(state.openDoc === d.doc_id), onclick: () => openDoc(d.doc_id) },
             el("strong", { text: d.title }),
-            el("span", { text: `${d.doc_id}, ${d.sections} sections, ${d.origin === "sample" ? "Sample" : "Added by you"}` })))))));
+            el("span", { text: `${d.doc_id}, ${d.sections} sections, ${d.origin === "sample" ? "Sample" : d.origin === "official" ? "Official source" : "Added by you"}` })))))));
     }
     if (!state.docs.length) list.append(el("p", { class: "empty", text: "No documents yet. Add one above to start." }));
   }
@@ -835,7 +835,7 @@
     $("#topbar").hidden = !h.sample_corpus;
     $("#corpus-stat").textContent = `${h.university}. ${h.documents} documents, ${h.passages} passages. ` +
       (h.answers_with === "rerank" ? "Keyword and meaning search, reranked." : h.retrievers.includes("hybrid") ? "Keyword and meaning search." : "Keyword search only.");
-    document.title = `Student Help Desk, ${h.university}`;
+    document.title = `Uni Help, ${h.university}`;
   }
 
   // Fill the dropdowns (category filter, answer generator) from the status the server reported.

@@ -1,0 +1,32 @@
+{"id": "L01", "question": "What is the minimum attendance required at LPU?", "type": "answerable", "style": "direct", "category": "regulations", "gold_doc_ids": ["LPU-REG-01"], "key_facts": ["80%", "75%"]}
+{"id": "L02", "question": "How many marks does attendance carry at LPU?", "type": "answerable", "style": "direct", "category": "regulations", "gold_doc_ids": ["LPU-REG-01"], "key_facts": ["5 marks"]}
+{"id": "L03", "question": "Does LPU give attendance relaxation for medical reasons?", "type": "answerable", "style": "paraphrase", "category": "regulations", "gold_doc_ids": ["LPU-REG-01"], "key_facts": ["5%"]}
+{"id": "L04", "question": "What is the LPU B.Tech CSE programme fee per semester?", "type": "answerable", "style": "direct", "category": "policies", "gold_doc_ids": ["LPU-POL-01"], "key_facts": ["160000"]}
+{"id": "L05", "question": "What is the LPUNEST application fee?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-04"], "key_facts": ["1000"]}
+{"id": "L06", "question": "What is the eligibility for B.Tech CSE at LPU?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-04"], "key_facts": ["60%"]}
+{"id": "L07", "question": "What is LPUNEST?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-04"], "key_facts": ["National Entrance and Scholarship Test"]}
+{"id": "L08", "question": "What is LPU's NAAC grade?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-01"], "key_facts": ["A++"]}
+{"id": "L09", "question": "When are the LPU end term exams in December 2026?", "type": "answerable", "style": "paraphrase", "category": "notices", "gold_doc_ids": ["LPU-NOT-01"], "key_facts": ["14 to 30 December 2026"]}
+{"id": "L10", "question": "What is the hostel charge for a 2 seater AC room at LPU?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-05"], "key_facts": ["143000"]}
+{"id": "L11", "question": "What is the mess charge for three meals at LPU?", "type": "answerable", "style": "direct", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-05"], "key_facts": ["44000"]}
+{"id": "L12", "question": "Till what time is the LPU library open?", "type": "answerable", "style": "paraphrase", "category": "faqs", "gold_doc_ids": ["LPU-FAQ-05"], "key_facts": ["midnight"]}
+{"id": "L13", "question": "Is ragging allowed at LPU?", "type": "answerable", "style": "direct", "category": "regulations", "gold_doc_ids": ["LPU-REG-02"], "key_facts": ["totally prohibited"]}
+{"id": "L14", "question": "What is the helpline number to report ragging at LPU?", "type": "answerable", "style": "direct", "category": "regulations", "gold_doc_ids": ["LPU-REG-02"], "key_facts": ["1800-180-5522"]}
+{"id": "L15", "question": "What is the LPU refund deduction if I withdraw between 1 and 15 August?", "type": "answerable", "style": "direct", "category": "policies", "gold_doc_ids": ["LPU-POL-01"], "key_facts": ["10%"]}
+{"id": "L16", "question": "How long is the B.Tech CSE programme at LPU?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["LPU-CSE-01"], "key_facts": ["4 years"]}
+{"id": "L17", "question": "Which company is the partner for the Cloud Computing and Gen AI specialisation at LPU?", "type": "answerable", "style": "paraphrase", "category": "syllabus", "gold_doc_ids": ["LPU-CSE-01"], "key_facts": ["Google Cloud"]}
+{"id": "L18", "question": "What is the highest package LPU reported for the Classes of 2025 and 2026?", "type": "answerable", "style": "paraphrase", "category": "notices", "gold_doc_ids": ["LPU-NOT-02"], "key_facts": ["2.5 crore"]}
+{"id": "L19", "question": "How many offers did Accenture make to LPU students?", "type": "answerable", "style": "direct", "category": "notices", "gold_doc_ids": ["LPU-NOT-02"], "key_facts": ["805"]}
+{"id": "L20", "question": "lpu me attendance kitni chahiye", "type": "answerable", "style": "hinglish", "category": "regulations", "gold_doc_ids": ["LPU-REG-01"], "key_facts": ["75%"]}
+{"id": "L21", "question": "lpu me ragging allowed hai kya", "type": "answerable", "style": "hinglish", "category": "regulations", "gold_doc_ids": ["LPU-REG-02"], "key_facts": ["prohibited"]}
+{"id": "L22", "question": "Which textbook is used for Computer Organization and Architecture?", "type": "answerable", "style": "paraphrase", "category": "syllabus", "gold_doc_ids": ["AICTE-COA"], "key_facts": ["Patterson and Hennessy"]}
+{"id": "L23", "question": "What topics are covered in the Computer Networks syllabus?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["AICTE-CN"], "key_facts": ["transport layer"]}
+{"id": "L24", "question": "What does the Theory of Computation syllabus cover?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["AICTE-TOC"], "key_facts": ["Turing machines"]}
+{"id": "L25", "question": "What are the modules in the Design and Analysis of Algorithms syllabus?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["AICTE-DAA"], "key_facts": ["dynamic programming"]}
+{"id": "L26", "question": "What topics are in the Compiler Design syllabus?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["AICTE-CD"], "key_facts": ["lexical analysis"]}
+{"id": "L27", "question": "What is the Software Engineering course outline about?", "type": "answerable", "style": "direct", "category": "syllabus", "gold_doc_ids": ["AICTE-SE"], "key_facts": ["iterative software development"]}
+{"id": "L28", "question": "Who is the Vice Chancellor of LPU?", "type": "unanswerable", "style": "direct", "category": "out_of_scope", "gold_doc_ids": [], "key_facts": []}
+{"id": "L29", "question": "What is the fee for the MBA programme at LPU?", "type": "unanswerable", "style": "direct", "category": "out_of_scope", "gold_doc_ids": [], "key_facts": []}
+{"id": "L30", "question": "What is the PhD stipend at LPU?", "type": "unanswerable", "style": "direct", "category": "out_of_scope", "gold_doc_ids": [], "key_facts": []}
+{"id": "L31", "question": "What is the capital of France?", "type": "unanswerable", "style": "direct", "category": "out_of_scope", "gold_doc_ids": [], "key_facts": []}
+{"id": "L32", "question": "Which movies are showing in the LPU cinema this week?", "type": "unanswerable", "style": "direct", "category": "out_of_scope", "gold_doc_ids": [], "key_facts": []}

@@ -31,7 +31,7 @@ class Chunk:
     section: str       # heading of the section this chunk came from
     text: str
     updated: str
-    origin: str        # "sample" (shipped corpus) or "upload"
+    origin: str        # "sample" (shipped, fictional), "official" (shipped, from real public pages) or "upload"
 
     def to_dict(self) -> dict:
         """The chunk as a plain dictionary (easy to turn into JSON)."""
@@ -169,7 +169,9 @@ def load_document(path: Path, category: str, origin: str) -> Document | None:
         title=meta.get("title") or title,
         category=meta.get("category") or category,
         updated=meta.get("updated", ""),
-        origin=origin,
+        # A shipped document taken from a real institution's public pages says
+        # "origin: official" in its front matter, so it is not labelled as sample data.
+        origin="official" if origin == "sample" and meta.get("origin") == "official" else origin,
         path=path,
         sections=sections,
     )

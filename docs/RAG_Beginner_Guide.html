@@ -116,11 +116,23 @@ writes the answer from that page. The answer is more reliable, and you can point
 <h2 id="ingest">5. Part 1: Preparing the documents</h2>
 
 <h3>Step 1. Load the documents <span class="file">app/ingest.py</span></h3>
-<p>The knowledge base is a folder of files: <code>data/corpus/</code> holds 18 sample documents in five categories
+<p>The knowledge base is a folder of files: <code>data/corpus/</code> holds 36 documents in five categories
 (<b>syllabus, regulations, notices, FAQs, policies</b>), and <code>data/uploads/</code> holds files added through the
 website. The program can read <code>.md</code>, <code>.txt</code>, <code>.pdf</code> and <code>.docx</code> files.</p>
-<div class="note"><b>Be ready to say:</b> the sample documents are written for a made-up university ("Sutlej Valley University")
-so the project can be shown without real confidential documents. Real documents can be uploaded to replace them.</div>
+<p>The 36 documents come in two groups:</p>
+<ul>
+  <li><b>18 sample documents</b> for a made-up university, "Sutlej Valley University" (SVU). They were written for the project
+  so it could be built and tested without confidential documents. The 130 test questions were written for these.</li>
+  <li><b>18 official documents</b> written from public pages: 11 on <b>LPU</b> (attendance and exams, conduct, academic calendar,
+  B.Tech CSE structure, admissions, fees and scholarships, hostel, placements, labs and events) taken from lpu.in and LPU's
+  Prospectus 2026, and 7 <b>CSE syllabi</b> (Operating Systems, Computer Networks, Computer Organization, Algorithms, Theory of
+  Computation, Compiler Design, Software Engineering) from AICTE's official model curriculum, because LPU does not publish its
+  own syllabi. Each document lists the exact web pages it came from.</li>
+</ul>
+<div class="note"><b>Be ready to say:</b> a document says <code>origin: official</code> in its header, so the website labels it
+"Official source" instead of "Sample". When a question names a university ("attendance at LPU", "fee at SVU"), only that
+university's documents are searched (<code>Engine.institution_filter</code>). A quoted answer never mixes sentences from the two
+universities.</div>
 
 <h3>Step 2. Chunking: cut documents into passages <span class="file">app/ingest.py</span></h3>
 <p>A whole document is too big to be a useful search result. If we handed a 2,000-word regulation to the writer, the answer
@@ -130,7 +142,7 @@ would be buried in it and the "source" would be vague. So each document is cut i
   <li><b>Our rule:</b> one section (the text under one heading) = one chunk. This keeps each chunk about one topic.</li>
   <li>If a section is longer than <b>220 words</b>, it is cut into windows of <b>160 words</b> that <b>overlap by 40 words</b>.
   The overlap makes sure a sentence lying on a boundary is complete in at least one of the two windows.</li>
-  <li>Result: 18 documents become <b>160 passages</b>. Each has an id such as <code>REG-01#3</code> (document id + number).</li>
+  <li>Result: 36 documents become <b>313 passages</b>. Each has an id such as <code>REG-01#3</code> (document id + number).</li>
 </ul>
 
 <h3>Step 3. Indexing: make the passages searchable <span class="file">app/retrieval.py</span></h3>
@@ -153,7 +165,7 @@ similar things land close together, even when they share no words. "Recheck my p
 
 <p>To compare two vectors we use <b>cosine similarity</b>: a number near 1 means "same meaning", near 0 means "unrelated".
 The passage vectors are computed once and saved in <code>data/index/</code>, so the server starts quickly next time.</p>
-<div class="note"><b>If asked "which vector database did you use?"</b> None was needed. With only 160 passages, the vectors sit
+<div class="note"><b>If asked "which vector database did you use?"</b> None was needed. With only 313 passages, the vectors sit
 in one small table in memory (a NumPy array) and comparing the question with all of them takes milliseconds. A vector database
 (FAISS, Chroma, Pinecone) becomes useful with hundreds of thousands of passages.</div>
 
@@ -212,7 +224,7 @@ answers more correct, so it is switched off by default.</p>
   <li><b>Coverage:</b> what share of the question's important words actually appear in the retrieved passages?</li>
   <li><b>Similarity:</b> how close in meaning is the best passage to the question?</li>
 </ul>
-<p>If the score is below the <b>threshold (0.58)</b>, the chatbot <b>declines</b>: "I could not find this in the university
+<p>If the score is below the <b>threshold (0.45)</b>, the chatbot <b>declines</b>: "I could not find this in the university
 documents I have, so I will not guess." Declining is called <b>abstaining</b>. The threshold was not guessed: it was chosen
 by testing many values on labelled questions (section 9).</p>
 <div class="say"><b>Say this in class:</b> "A help desk that says 'I don't know' is safer than one that invents a fee or a date."</div>
@@ -273,13 +285,13 @@ small JSON messages, one per line, sent as soon as each is ready:</p>
 <tr><td>API</td><td><code>chat()</code> in <code>app/main.py</code> checks the rate limit and calls the engine.</td></tr>
 <tr><td>Prepare</td><td>Not a greeting, not a follow-up, not Hinglish. The question is used as it is.</td></tr>
 <tr><td>Retrieve</td><td>BM25 finds passages containing "minimum", "attendance", "required". Embeddings find passages about attendance
-rules. Fusion puts the section "Minimum attendance requirement" of document <b>REG-01</b> (Attendance Regulations) first.</td></tr>
-<tr><td>Gate</td><td>The question's words are well covered and the meaning is close, so confidence is above 0.58. Go ahead.</td></tr>
-<tr><td>Generate</td><td>The sentence stating the 75% rule is picked (or written by the model) and tagged with <code>[1]</code>.</td></tr>
-<tr><td>Cite</td><td>Source 1 = Attendance Regulations; the 75% sentence is highlighted.</td></tr>
+rules. Fusion puts the attendance section of document <b>LPU-REG-01</b> (LPU Attendance, Examination and Grading Rules) first.</td></tr>
+<tr><td>Gate</td><td>The question's words are well covered and the meaning is close, so confidence is above 0.45. Go ahead.</td></tr>
+<tr><td>Generate</td><td>The sentences stating LPU's rule (80%, or 75% after a 5% medical relaxation) are picked (or written by the model) and tagged with <code>[1]</code>.</td></tr>
+<tr><td>Cite</td><td>Source 1 = LPU Attendance, Examination and Grading Rules; the rule is highlighted.</td></tr>
 <tr><td>Browser</td><td>The answer appears with a clickable <b>[1]</b> that shows the passage.</td></tr>
 </table>
-<p>And for "Who won the cricket world cup?": retrieval returns unrelated passages, the confidence is low, the gate stops it,
+<p>And for "What is the capital of France?": retrieval finds nothing related (confidence 0), the gate stops it,
 and the student is told the documents do not cover this.</p>
 
 <!-- ------------------------------------------------------------------ -->
@@ -317,27 +329,34 @@ The command <code>python -m app.evaluate</code> runs them all and saves the scor
 </ul>
 <table>
 <tr><th>Search method</th><th>Hit@1</th><th>Hit@3</th><th>MRR</th><th>Time per question</th></tr>
-<tr><td>BM25 (keywords only)</td><td>72.4%</td><td>91.8%</td><td>0.823</td><td>6 ms</td></tr>
-<tr><td>Dense (meaning only)</td><td>75.5%</td><td>90.8%</td><td>0.839</td><td>6 ms</td></tr>
-<tr><td><b>Hybrid (used by the chatbot)</b></td><td><b>78.6%</b></td><td><b>95.9%</b></td><td><b>0.874</b></td><td>20 ms</td></tr>
-<tr><td>Hybrid + reranker (optional)</td><td>85.7%</td><td>96.9%</td><td>0.918</td><td>1,627 ms</td></tr>
+<tr><td>BM25 (keywords only)</td><td>68.4%</td><td>89.8%</td><td>0.795</td><td>15 ms</td></tr>
+<tr><td>Dense (meaning only)</td><td>75.5%</td><td>89.8%</td><td>0.830</td><td>12 ms</td></tr>
+<tr><td><b>Hybrid (used by the chatbot)</b></td><td><b>77.6%</b></td><td><b>93.9%</b></td><td><b>0.855</b></td><td>12 ms</td></tr>
+<tr><td>Hybrid + reranker (optional)</td><td>84.7%</td><td>95.9%</td><td>0.907</td><td>831 ms</td></tr>
 </table>
 <p>This table is the evidence for the design: <b>hybrid beats either method alone</b>, and the reranker's small gain costs
-about 80 times more time.</p>
+about 70 times more time.</p>
 
 <h3>Measuring the answers (quoting the documents)</h3>
 <table>
 <tr><th>Measure</th><th>Result</th></tr>
-<tr><td>Answerable questions answered with every key fact</td><td>71.4%</td></tr>
-<tr><td>Key facts present in the answers that were given</td><td>91.4%</td></tr>
-<tr><td>Answers that cite the correct document</td><td>94.9%</td></tr>
-<tr><td>Out-of-scope questions correctly declined</td><td>43.8%</td></tr>
-<tr><td>Correct overall (all 130 questions)</td><td>64.6%</td></tr>
-<tr><td>Typical time per answer</td><td>about 1 second</td></tr>
+<tr><td>Answerable questions answered with every key fact</td><td>73.5%</td></tr>
+<tr><td>Key facts present in the answers that were given</td><td>78.1%</td></tr>
+<tr><td>Answers that cite the correct document</td><td>85.1%</td></tr>
+<tr><td>Out-of-scope questions correctly declined</td><td>31.3%</td></tr>
+<tr><td>Correct overall (all 130 questions)</td><td>63.1%</td></tr>
+<tr><td>Typical time per answer</td><td>about 0.4 seconds</td></tr>
 </table>
-<p>By question style: direct 95.5%, reworded 80.8%, casual 70.0%, Hindi-English 35.0%.</p>
-<p class="small">Numbers from the last saved run (16 Nov 2026) in <code>data/eval/results.json</code>. They change if the
-evaluation is run again; the live figures are on the website's admin page.</p>
+<p>By question style: direct 95.5%, reworded 69.2%, casual 70.0%, Hindi-English 60.0%.</p>
+<p class="small">Numbers from the run of 26 Nov 2026 (36 documents, 313 passages) in <code>data/eval/results.json</code>.
+They change if the evaluation is run again; the live figures are on the website's admin page.</p>
+<div class="note"><b>Why the numbers changed when the LPU documents were added.</b> Before, with only the 18 sample documents,
+the chatbot scored 64.6% overall with a threshold of 0.58. The 130 test questions were written for the made-up university, so
+when a general question such as "How do I convert my CGPA into a percentage?" is now answered from LPU's documents, the test
+marks it wrong even though the LPU answer is correct for LPU. Re-choosing the threshold on the dev half gave 0.45: the chatbot
+now declines less often, so it answers more questions (96% of answerable test questions instead of 78%) but stops fewer
+out-of-scope ones. Hindi-English questions improved from 35% to 60%. The test questions measure the sample-university part
+only; there are no labelled LPU questions yet.</div>
 
 <h3>Choosing the threshold fairly</h3>
 <p>The questions are split into two halves. The threshold is chosen on the <b>dev</b> half and then scored on the <b>test</b>
@@ -346,11 +365,14 @@ from the exact practice paper.</p>
 
 <div class="warn"><b>Honest limitations (say these before you are asked):</b>
 <ul>
-  <li>Hindi-English questions are the weakest (35%). The rewrite is only a word list.</li>
-  <li>Fewer than half of the out-of-scope questions are declined; the confidence gate is the part most in need of improvement.</li>
-  <li>The gate also makes mistakes the other way. Example: "How much do I pay to get my paper rechecked?" is declined
-  (confidence 0.50, just under 0.58), although the re-evaluation fee is in the documents. The wording is too far from the document's.</li>
-  <li>The documents are sample data for a fictional university, and 130 questions is a small test set.</li>
+  <li>Only about a third (31%) of out-of-scope questions are declined; the confidence gate is the part most in need of improvement.
+  "Who won the cricket world cup?" is declined, but only just (confidence 0.44 against 0.45).</li>
+  <li>When the gate lets a question through, the answer can be wrong. Example: "How much do I pay to get my paper rechecked?"
+  (confidence 0.49) is answered with the Rs 10,000 admission registration fee instead of the re-evaluation fee.</li>
+  <li>A general question that does not name a university can be answered from either university's documents.</li>
+  <li>The 130 test questions cover only the made-up university; the LPU documents are not measured yet. LPU publishes some
+  rules (grading, marks split) only on its student blog, so those parts of the LPU documents are marked as such.</li>
+  <li>Reworded (69%) and Hindi-English (60%) questions are still the weakest styles. The Hindi-English rewrite is only a word list.</li>
   <li>The marking is strict: an answer missing one key fact counts as wrong.</li>
 </ul></div>
 
@@ -396,7 +418,7 @@ from the exact practice paper.</p>
 <tr><td>Grounding</td><td>Making the answer rest on given documents, not on the model's memory.</td></tr>
 <tr><td>Hallucination</td><td>A confident answer that the model simply made up.</td></tr>
 <tr><td>Abstain / decline</td><td>Refusing to answer when the documents do not cover the question.</td></tr>
-<tr><td>Threshold</td><td>The minimum confidence needed to answer (0.58).</td></tr>
+<tr><td>Threshold</td><td>The minimum confidence needed to answer (0.45).</td></tr>
 <tr><td>Extractive vs generative</td><td>Extractive copies sentences from the documents; generative writes new sentences.</td></tr>
 <tr><td>Fine-tuning</td><td>Teaching an existing model a specific task with your own examples.</td></tr>
 <tr><td>Citation</td><td>The [1] marker that points to the source passage.</td></tr>
@@ -435,12 +457,12 @@ more so for rare words, with a correction so long passages do not win unfairly. 
 
 <details><summary>Why hybrid search? Why not only embeddings?</summary><p>Keywords are best for exact terms, codes and numbers;
 embeddings are best for reworded and casual questions. Each fails where the other succeeds. In our test, the correct passage
-was in the top 3 for 95.9% of questions with hybrid, against 91.8% (keywords only) and 90.8% (embeddings only).</p></details>
+was in the top 3 for 93.9% of questions with hybrid, against 89.8% for keywords only and 89.8% for embeddings only.</p></details>
 
 <details><summary>How are the two results combined?</summary><p>With Reciprocal Rank Fusion: each passage gets 1/(60 + rank) from
 each list and the values are added. It only uses ranks, so the two different score scales never need to be compared.</p></details>
 
-<details><summary>Which vector database do you use?</summary><p>None. There are only 160 passages, so the vectors are kept in a NumPy
+<details><summary>Which vector database do you use?</summary><p>None. There are only 313 passages, so the vectors are kept in a NumPy
 array in memory and saved to a file. Comparing a question with all of them is one matrix multiplication. A vector database
 would be the next step for a much larger corpus.</p></details>
 
@@ -451,7 +473,7 @@ the supporting sentence highlighted.</p></details>
 
 <details><summary>How does it know when not to answer?</summary><p>It computes a confidence score from two signals: how many of the
 question's important words appear in the retrieved passages, and how similar the best passage is in meaning. Below the
-threshold of 0.58 it declines. The threshold was chosen on the dev half of the labelled questions.</p></details>
+threshold of 0.45 it declines. The threshold was chosen on the dev half of the labelled questions.</p></details>
 
 <details><summary>What is the "extractive" generator?</summary><p>It does not use a language model. It splits the retrieved passages
 into sentences, scores each against the question (25% keyword overlap, 75% meaning similarity, plus a small bonus for
@@ -465,15 +487,16 @@ It has to be trained once with <code>train_local_model.bat</code> before it appe
 "also", it is searched together with the previous question. Code: <code>Engine.contextualise()</code>.</p></details>
 
 <details><summary>How do you handle Hindi-English questions?</summary><p>A word list replaces common Hindi words with English
-("kab" to "when", "chutti" to "leave") and drops grammar words before searching. It helps, but this style is still our weakest (35%).</p></details>
+("kab" to "when", "chutti" to "leave") and drops grammar words before searching. It helps: this style now scores 60%, but it is still among the weakest.</p></details>
 
 <details><summary>How did you test the system?</summary><p>With 130 labelled questions (98 answerable, 32 out of scope) in four
 wording styles. We measure search with Hit@k and MRR, and answers by whether every key fact is present, or whether
 out-of-scope questions are declined. There are also automatic tests in <code>tests/test_pipeline.py</code>.</p></details>
 
-<details><summary>What is the accuracy?</summary><p>Search: the right passage is in the top 3 for 95.9% of answerable questions.
-Answers in quote mode: 71.4% of answerable questions contain every key fact, and 64.6% of all 130 questions are handled
-correctly. Direct questions reach 95.5%; Hindi-English ones only 35%.</p></details>
+<details><summary>What is the accuracy?</summary><p>Search: the right passage is in the top 3 for 93.9% of answerable questions.
+Answers in quote mode: 73.5% of answerable questions contain every key fact, and 63.1% of all 130 questions are handled
+correctly. Direct questions reach 95.5%; Hindi-English ones 60%. (Before the LPU documents were added it was 64.6%; the
+test questions were written for the sample university.)</p></details>
 
 <details><summary>What are the limitations and future work?</summary><p>Hindi-English understanding, a stronger "should I answer?"
 check, scanned PDFs (they need OCR), a larger real corpus with a vector database, user login, and remembering more of the
@@ -499,17 +522,20 @@ The server keeps no conversations; it only saves the thumbs-up/down feedback.</p
 <ol>
   <li>Double-click <code>run.bat</code> in the project folder. The first run installs what it needs; then the site opens at
   <code>http://127.0.0.1:8000</code>.</li>
-  <li>Open the chat page and ask: <b>"What is the minimum attendance required?"</b> Point at the answer, the <b>[1]</b>
-  citation and the highlighted sentence.</li>
+  <li>Open the chat page and ask: <b>"What is the minimum attendance required at LPU?"</b> Point at the answer, the <b>[1]</b>
+  citation, the highlighted sentence and the "Official source" label.</li>
+  <li>Ask a CSE question: <b>"What topics are covered in the Operating Systems syllabus?"</b> (answered from the AICTE syllabus).</li>
+  <li>Ask about the made-up university by name: <b>"What is the fee for re-evaluation of an answer script at SVU?"</b>
+  (shows that naming a university searches only its documents).</li>
   <li>Ask a reworded question: <b>"Till when can I pay the semester fee without a fine?"</b> The notice says "last date ...
   without any late fee", so this shows search by meaning, not only by matching words.</li>
   <li>Ask a follow-up: first <b>"What is the fee for re-evaluation of an answer script?"</b>, then just <b>"and the deadline?"</b></li>
   <li>Ask a Hindi-English question: <b>"hostel ka gate raat ko kitne baje band hota hai"</b>.</li>
-  <li>Ask something out of scope: <b>"Who won the cricket world cup?"</b> (shows it declining).</li>
+  <li>Ask something out of scope: <b>"What is the capital of France?"</b> (shows it declining).</li>
   <li>Open the documents page and upload a small text file, then ask a question about it (shows the knowledge base updating).</li>
   <li>Show the evaluation numbers (answer accuracy, retrieval Hit@3) on the admin page.</li>
 </ol>
-<p>All seven were checked on this project and behave as described, using the "Quote the documents" mode.</p>
+<p>All of these were checked on this project and behave as described, using the "Quote the documents" mode.</p>
 <div class="note"><b>Tip:</b> try each demo question once before class, so you know what the answer looks like on your laptop.</div>
 <p>Useful commands (run in the project folder):</p>
 <pre>.venv\Scripts\python -m uvicorn app.main:app --port 8000    start the server

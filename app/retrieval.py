@@ -274,7 +274,8 @@ class Index:
         return "rerank" if config.RERANK_ANSWERS and config.RERANK_MODEL else "hybrid"
 
     def search(self, query: str, k: int = config.TOP_K, method: str | None = None,
-               category: str | None = None, rewrite: bool = True) -> list[Hit]:
+               category: str | None = None, rewrite: bool = True,
+               origins: set[str] | None = None) -> list[Hit]:
         """RETRIEVAL: return the k passages most likely to contain the answer.
 
         1. Rewrite a Hindi-English question into rough English.
@@ -282,7 +283,8 @@ class Index:
         3. Combine the two ranked lists with reciprocal rank fusion (hybrid search).
         4. Optionally let the reranker re-order the best candidates.
         `method` picks one retriever ("bm25", "dense", "hybrid", "rerank"); the default
-        is the best one available. `category` limits the search to one document type.
+        is the best one available. `category` limits the search to one document type,
+        and `origins` to documents of one institution ("sample" or "official").
         """
         if not self.chunks:
             return []
@@ -295,8 +297,9 @@ class Index:
             query = to_search_english(query)
 
         allowed = None
-        if category:
-            allowed = np.array([c.category == category for c in self.chunks])
+        if category or origins:
+            allowed = np.array([(not category or c.category == category) and (not origins or c.origin in origins)
+                                for c in self.chunks])
 
         bm25 = self.bm25.scores(query)
         dense = self.vectors @ self.encoder.query(query) if self.has_dense else np.zeros_like(bm25)

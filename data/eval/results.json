@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-16T14:07:51",
+ "generated_at": "2026-11-26T12:06:41",
  "corpus": {
-  "documents": 18,
-  "passages": 160
+  "documents": 36,
+  "passages": 313
  },
  "questions": {
   "total": 130,
@@ -17,63 +17,63 @@
  "retrieval": {
   "bm25": {
    "passage": {
-    "hit@1": 0.7245,
-    "hit@3": 0.9184,
-    "hit@5": 0.9592,
-    "mrr": 0.8226,
+    "hit@1": 0.6837,
+    "hit@3": 0.898,
+    "hit@5": 0.9388,
+    "mrr": 0.7954,
     "n": 98
    },
    "document": {
-    "hit@1": 0.7959,
-    "hit@3": 0.9388,
-    "hit@5": 0.9796,
-    "mrr": 0.8719,
+    "hit@1": 0.7653,
+    "hit@3": 0.9184,
+    "hit@5": 0.9592,
+    "mrr": 0.8464,
     "n": 98
    },
-   "ms_per_query": 6.2,
+   "ms_per_query": 15.3,
    "by_style": {
     "colloquial": {
-     "hit@1": 0.5667,
-     "hit@3": 0.8667,
-     "hit@5": 0.9333,
-     "mrr": 0.7167,
+     "hit@1": 0.5333,
+     "hit@3": 0.8333,
+     "hit@5": 0.9,
+     "mrr": 0.6889,
      "n": 30
     },
     "direct": {
-     "hit@1": 0.8636,
+     "hit@1": 0.8182,
      "hit@3": 0.9545,
      "hit@5": 0.9545,
-     "mrr": 0.9091,
+     "mrr": 0.8864,
      "n": 22
     },
     "hinglish": {
      "hit@1": 0.7,
-     "hit@3": 0.95,
-     "hit@5": 1.0,
-     "mrr": 0.8183,
+     "hit@3": 0.9,
+     "hit@5": 0.95,
+     "mrr": 0.8017,
      "n": 20
     },
     "paraphrase": {
-     "hit@1": 0.8077,
+     "hit@1": 0.7308,
      "hit@3": 0.9231,
      "hit@5": 0.9615,
-     "mrr": 0.875,
+     "mrr": 0.8365,
      "n": 26
     }
    },
    "by_category": {
     "faqs": {
-     "hit@1": 0.8824,
+     "hit@1": 0.7647,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 0.9314,
+     "mrr": 0.8725,
      "n": 17
     },
     "notices": {
-     "hit@1": 0.7391,
+     "hit@1": 0.6957,
      "hit@3": 0.9565,
      "hit@5": 1.0,
-     "mrr": 0.8565,
+     "mrr": 0.8348,
      "n": 23
     },
     "policies": {
@@ -84,17 +84,17 @@
      "n": 16
     },
     "regulations": {
-     "hit@1": 0.6667,
+     "hit@1": 0.625,
      "hit@3": 0.8333,
      "hit@5": 0.875,
-     "mrr": 0.7535,
+     "mrr": 0.7326,
      "n": 24
     },
     "syllabus": {
      "hit@1": 0.6111,
-     "hit@3": 0.8889,
-     "hit@5": 0.9444,
-     "mrr": 0.7454,
+     "hit@3": 0.7778,
+     "hit@5": 0.8333,
+     "mrr": 0.7083,
      "n": 18
     }
    }
@@ -102,62 +102,62 @@
   "dense": {
    "passage": {
     "hit@1": 0.7551,
-    "hit@3": 0.9082,
-    "hit@5": 0.9694,
-    "mrr": 0.8386,
+    "hit@3": 0.898,
+    "hit@5": 0.9388,
+    "mrr": 0.8301,
     "n": 98
    },
    "document": {
-    "hit@1": 0.7857,
-    "hit@3": 0.949,
-    "hit@5": 0.9898,
-    "mrr": 0.8731,
+    "hit@1": 0.7755,
+    "hit@3": 0.9388,
+    "hit@5": 0.9796,
+    "mrr": 0.8624,
     "n": 98
    },
-   "ms_per_query": 6.4,
+   "ms_per_query": 12.2,
    "by_style": {
     "colloquial": {
      "hit@1": 0.7333,
      "hit@3": 0.8667,
-     "hit@5": 0.9667,
-     "mrr": 0.8217,
+     "hit@5": 0.9,
+     "mrr": 0.8067,
      "n": 30
     },
     "direct": {
      "hit@1": 0.8636,
-     "hit@3": 1.0,
+     "hit@3": 0.9545,
      "hit@5": 1.0,
-     "mrr": 0.9167,
+     "mrr": 0.9106,
      "n": 22
     },
     "hinglish": {
      "hit@1": 0.6,
      "hit@3": 0.8,
      "hit@5": 0.9,
-     "mrr": 0.7167,
+     "mrr": 0.7142,
      "n": 20
     },
     "paraphrase": {
      "hit@1": 0.8077,
      "hit@3": 0.9615,
-     "hit@5": 1.0,
-     "mrr": 0.8859,
+     "hit@5": 0.9615,
+     "mrr": 0.8782,
      "n": 26
     }
    },
    "by_category": {
     "faqs": {
      "hit@1": 0.8824,
-     "hit@3": 1.0,
+     "hit@3": 0.9412,
      "hit@5": 1.0,
-     "mrr": 0.9314,
+     "mrr": 0.9235,
      "n": 17
     },
     "notices": {
      "hit@1": 0.8696,
      "hit@3": 0.913,
      "hit@5": 1.0,
-     "mrr": 0.913,
+     "mrr": 0.9109,
      "n": 23
     },
     "policies": {
@@ -170,41 +170,41 @@
     "regulations": {
      "hit@1": 0.625,
      "hit@3": 0.875,
-     "hit@5": 0.9583,
-     "mrr": 0.7549,
+     "hit@5": 0.9167,
+     "mrr": 0.7444,
      "n": 24
     },
     "syllabus": {
      "hit@1": 0.7222,
      "hit@3": 0.7778,
-     "hit@5": 0.8889,
-     "mrr": 0.7722,
+     "hit@5": 0.7778,
+     "mrr": 0.75,
      "n": 18
     }
    }
   },
   "hybrid": {
    "passage": {
-    "hit@1": 0.7857,
-    "hit@3": 0.9592,
-    "hit@5": 0.9796,
-    "mrr": 0.8736,
+    "hit@1": 0.7755,
+    "hit@3": 0.9388,
+    "hit@5": 0.9592,
+    "mrr": 0.8549,
     "n": 98
    },
    "document": {
-    "hit@1": 0.8265,
-    "hit@3": 0.9796,
+    "hit@1": 0.8163,
+    "hit@3": 0.9592,
     "hit@5": 0.9898,
-    "mrr": 0.9022,
+    "mrr": 0.8864,
     "n": 98
    },
-   "ms_per_query": 19.6,
+   "ms_per_query": 11.5,
    "by_style": {
     "colloquial": {
      "hit@1": 0.6667,
-     "hit@3": 0.9333,
-     "hit@5": 0.9667,
-     "mrr": 0.8011,
+     "hit@3": 0.9,
+     "hit@5": 0.9,
+     "mrr": 0.7722,
      "n": 30
     },
     "direct": {
@@ -218,14 +218,14 @@
      "hit@1": 0.8,
      "hit@3": 0.9,
      "hit@5": 0.95,
-     "mrr": 0.8542,
+     "mrr": 0.8517,
      "n": 20
     },
     "paraphrase": {
-     "hit@1": 0.8077,
-     "hit@3": 1.0,
+     "hit@1": 0.7692,
+     "hit@3": 0.9615,
      "hit@5": 1.0,
-     "mrr": 0.9038,
+     "mrr": 0.8686,
      "n": 26
     }
    },
@@ -238,10 +238,10 @@
      "n": 17
     },
     "notices": {
-     "hit@1": 0.913,
+     "hit@1": 0.8261,
      "hit@3": 1.0,
      "hit@5": 1.0,
-     "mrr": 0.9493,
+     "mrr": 0.9058,
      "n": 23
     },
     "policies": {
@@ -253,42 +253,42 @@
     },
     "regulations": {
      "hit@1": 0.6667,
-     "hit@3": 0.875,
-     "hit@5": 0.9583,
-     "mrr": 0.7826,
+     "hit@3": 0.8333,
+     "hit@5": 0.9167,
+     "mrr": 0.7618,
      "n": 24
     },
     "syllabus": {
-     "hit@1": 0.5556,
-     "hit@3": 0.9444,
-     "hit@5": 0.9444,
-     "mrr": 0.75,
+     "hit@1": 0.6111,
+     "hit@3": 0.8889,
+     "hit@5": 0.8889,
+     "mrr": 0.7315,
      "n": 18
     }
    }
   },
   "rerank": {
    "passage": {
-    "hit@1": 0.8571,
-    "hit@3": 0.9694,
-    "hit@5": 1.0,
-    "mrr": 0.9182,
+    "hit@1": 0.8469,
+    "hit@3": 0.9592,
+    "hit@5": 0.9898,
+    "mrr": 0.9068,
     "n": 98
    },
    "document": {
-    "hit@1": 0.8776,
-    "hit@3": 0.9694,
-    "hit@5": 1.0,
-    "mrr": 0.9289,
+    "hit@1": 0.8571,
+    "hit@3": 0.9592,
+    "hit@5": 0.9898,
+    "mrr": 0.9124,
     "n": 98
    },
-   "ms_per_query": 1626.9,
+   "ms_per_query": 830.8,
    "by_style": {
     "colloquial": {
-     "hit@1": 0.7667,
+     "hit@1": 0.7333,
      "hit@3": 0.9333,
      "hit@5": 1.0,
-     "mrr": 0.8594,
+     "mrr": 0.8389,
      "n": 30
     },
     "direct": {
@@ -300,9 +300,9 @@
     },
     "hinglish": {
      "hit@1": 0.8,
-     "hit@3": 1.0,
-     "hit@5": 1.0,
-     "mrr": 0.9,
+     "hit@3": 0.95,
+     "hit@5": 0.95,
+     "mrr": 0.875,
      "n": 20
     },
     "paraphrase": {
@@ -336,24 +336,24 @@
      "n": 16
     },
     "regulations": {
-     "hit@1": 0.7917,
+     "hit@1": 0.75,
      "hit@3": 0.9167,
      "hit@5": 1.0,
-     "mrr": 0.8639,
+     "mrr": 0.8451,
      "n": 24
     },
     "syllabus": {
      "hit@1": 0.7222,
-     "hit@3": 0.9444,
-     "hit@5": 1.0,
-     "mrr": 0.8472,
+     "hit@3": 0.8889,
+     "hit@5": 0.9444,
+     "mrr": 0.8102,
      "n": 18
     }
    }
   }
  },
  "abstention": {
-  "threshold": 0.58,
+  "threshold": 0.45,
   "loose_threshold": 0.34,
   "loose_dev": {
    "answered_when_answerable": 1.0,
@@ -364,29 +364,29 @@
   },
   "loose_test": {
    "answered_when_answerable": 1.0,
-   "declined_when_unanswerable": 0.1875,
-   "balanced_accuracy": 0.5938,
+   "declined_when_unanswerable": 0.125,
+   "balanced_accuracy": 0.5625,
    "n_answerable": 49,
    "n_unanswerable": 16
   },
   "dev": {
-   "answered_when_answerable": 0.8163,
-   "declined_when_unanswerable": 0.5625,
-   "balanced_accuracy": 0.6894,
+   "answered_when_answerable": 0.9592,
+   "declined_when_unanswerable": 0.375,
+   "balanced_accuracy": 0.6671,
    "n_answerable": 49,
    "n_unanswerable": 16
   },
   "test": {
-   "answered_when_answerable": 0.7755,
-   "declined_when_unanswerable": 0.3125,
-   "balanced_accuracy": 0.544,
+   "answered_when_answerable": 0.9592,
+   "declined_when_unanswerable": 0.25,
+   "balanced_accuracy": 0.6046,
    "n_answerable": 49,
    "n_unanswerable": 16
   },
   "all": {
-   "answered_when_answerable": 0.7959,
-   "declined_when_unanswerable": 0.4375,
-   "balanced_accuracy": 0.6167,
+   "answered_when_answerable": 0.9592,
+   "declined_when_unanswerable": 0.3125,
+   "balanced_accuracy": 0.6358,
    "n_answerable": 98,
    "n_unanswerable": 32
   },
@@ -418,80 +418,80 @@
    {
     "threshold": 0.35,
     "answered_when_answerable": 1.0,
-    "declined_when_unanswerable": 0.1875,
-    "balanced_accuracy": 0.5938,
+    "declined_when_unanswerable": 0.125,
+    "balanced_accuracy": 0.5625,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.4,
-    "answered_when_answerable": 0.9592,
+    "answered_when_answerable": 0.9898,
     "declined_when_unanswerable": 0.2188,
-    "balanced_accuracy": 0.589,
+    "balanced_accuracy": 0.6043,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.45,
-    "answered_when_answerable": 0.9286,
+    "answered_when_answerable": 0.9592,
     "declined_when_unanswerable": 0.3125,
-    "balanced_accuracy": 0.6205,
+    "balanced_accuracy": 0.6358,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.5,
-    "answered_when_answerable": 0.8878,
-    "declined_when_unanswerable": 0.3438,
-    "balanced_accuracy": 0.6158,
+    "answered_when_answerable": 0.9082,
+    "declined_when_unanswerable": 0.3125,
+    "balanced_accuracy": 0.6103,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.55,
-    "answered_when_answerable": 0.8265,
-    "declined_when_unanswerable": 0.4062,
-    "balanced_accuracy": 0.6164,
+    "answered_when_answerable": 0.8367,
+    "declined_when_unanswerable": 0.3438,
+    "balanced_accuracy": 0.5902,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.6,
-    "answered_when_answerable": 0.7449,
-    "declined_when_unanswerable": 0.5312,
-    "balanced_accuracy": 0.6381,
+    "answered_when_answerable": 0.7857,
+    "declined_when_unanswerable": 0.4062,
+    "balanced_accuracy": 0.596,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.65,
-    "answered_when_answerable": 0.7041,
-    "declined_when_unanswerable": 0.5625,
-    "balanced_accuracy": 0.6333,
+    "answered_when_answerable": 0.7449,
+    "declined_when_unanswerable": 0.5,
+    "balanced_accuracy": 0.6224,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.7,
-    "answered_when_answerable": 0.6531,
+    "answered_when_answerable": 0.6837,
     "declined_when_unanswerable": 0.5938,
-    "balanced_accuracy": 0.6234,
+    "balanced_accuracy": 0.6387,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.75,
-    "answered_when_answerable": 0.5306,
+    "answered_when_answerable": 0.5816,
     "declined_when_unanswerable": 0.625,
-    "balanced_accuracy": 0.5778,
+    "balanced_accuracy": 0.6033,
     "n_answerable": 98,
     "n_unanswerable": 32
    },
    {
     "threshold": 0.8,
     "answered_when_answerable": 0.4388,
-    "declined_when_unanswerable": 0.7188,
-    "balanced_accuracy": 0.5788,
+    "declined_when_unanswerable": 0.6875,
+    "balanced_accuracy": 0.5631,
     "n_answerable": 98,
     "n_unanswerable": 32
    }
@@ -501,7 +501,7 @@
     "id": "Q001",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.775
+    "confidence": 0.8238
    },
    {
     "id": "Q002",
@@ -531,7 +531,7 @@
     "id": "Q006",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.2887
+    "confidence": 0.2799
    },
    {
     "id": "Q007",
@@ -561,7 +561,7 @@
     "id": "Q011",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.4442
+    "confidence": 0.4732
    },
    {
     "id": "Q012",
@@ -579,13 +579,13 @@
     "id": "Q014",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7603
+    "confidence": 0.78
    },
    {
     "id": "Q015",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.3384
+    "confidence": 0.3555
    },
    {
     "id": "Q016",
@@ -597,7 +597,7 @@
     "id": "Q017",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5953
+    "confidence": 0.6148
    },
    {
     "id": "Q018",
@@ -609,43 +609,43 @@
     "id": "Q019",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.9047
+    "confidence": 0.9176
    },
    {
     "id": "Q020",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8997
+    "confidence": 0.8927
    },
    {
     "id": "Q021",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.559
+    "confidence": 0.5539
    },
    {
     "id": "Q022",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5091
+    "confidence": 0.5024
    },
    {
     "id": "Q023",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.8573
+    "confidence": 0.8544
    },
    {
     "id": "Q024",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6562
+    "confidence": 0.7147
    },
    {
     "id": "Q025",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.5628
+    "confidence": 0.5687
    },
    {
     "id": "Q026",
@@ -657,7 +657,7 @@
     "id": "Q027",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.523
+    "confidence": 0.5441
    },
    {
     "id": "Q028",
@@ -669,49 +669,49 @@
     "id": "Q029",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7864
+    "confidence": 0.7898
    },
    {
     "id": "Q030",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.6539
+    "confidence": 0.756
    },
    {
     "id": "Q031",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8714
+    "confidence": 0.8883
    },
    {
     "id": "Q032",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.8715
+    "confidence": 0.8937
    },
    {
     "id": "Q033",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6435
+    "confidence": 0.6624
    },
    {
     "id": "Q034",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.6983
+    "confidence": 0.7196
    },
    {
     "id": "Q035",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.5885
+    "confidence": 0.6293
    },
    {
     "id": "Q036",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6373
+    "confidence": 0.6528
    },
    {
     "id": "Q037",
@@ -723,13 +723,13 @@
     "id": "Q038",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8532
+    "confidence": 0.8676
    },
    {
     "id": "Q039",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7548
+    "confidence": 0.7611
    },
    {
     "id": "Q040",
@@ -741,31 +741,31 @@
     "id": "Q041",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5115
+    "confidence": 0.5848
    },
    {
     "id": "Q042",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8819
+    "confidence": 0.8911
    },
    {
     "id": "Q043",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7193
+    "confidence": 0.7236
    },
    {
     "id": "Q044",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8776
+    "confidence": 0.7999
    },
    {
     "id": "Q045",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.8903
+    "confidence": 0.8956
    },
    {
     "id": "Q046",
@@ -777,7 +777,7 @@
     "id": "Q047",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.9117
+    "confidence": 0.9127
    },
    {
     "id": "Q048",
@@ -789,79 +789,79 @@
     "id": "Q049",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8616
+    "confidence": 0.8983
    },
    {
     "id": "Q050",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5077
+    "confidence": 0.5189
    },
    {
     "id": "Q051",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7365
+    "confidence": 0.7542
    },
    {
     "id": "Q052",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7262
+    "confidence": 0.7344
    },
    {
     "id": "Q053",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7591
+    "confidence": 0.8504
    },
    {
     "id": "Q054",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.9124
+    "confidence": 0.9157
    },
    {
     "id": "Q055",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.5925
+    "confidence": 0.5948
    },
    {
     "id": "Q056",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7146
+    "confidence": 0.7171
    },
    {
     "id": "Q057",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.8335
+    "confidence": 0.8291
    },
    {
     "id": "Q058",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7622
+    "confidence": 0.771
    },
    {
     "id": "Q059",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7457
+    "confidence": 0.7589
    },
    {
     "id": "Q060",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5199
+    "confidence": 0.5198
    },
    {
     "id": "Q061",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.791
+    "confidence": 0.7975
    },
    {
     "id": "Q062",
@@ -873,25 +873,25 @@
     "id": "Q063",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.3423
+    "confidence": 0.3712
    },
    {
     "id": "Q064",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.602
+    "confidence": 0.6192
    },
    {
     "id": "Q065",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.3955
+    "confidence": 0.402
    },
    {
     "id": "Q066",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.9297
+    "confidence": 0.8282
    },
    {
     "id": "Q067",
@@ -903,25 +903,25 @@
     "id": "Q068",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7379
+    "confidence": 0.7798
    },
    {
     "id": "Q069",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.2363
+    "confidence": 0.2378
    },
    {
     "id": "Q070",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6725
+    "confidence": 0.6811
    },
    {
     "id": "Q071",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.8144
+    "confidence": 0.8387
    },
    {
     "id": "Q072",
@@ -933,7 +933,7 @@
     "id": "Q073",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.8164
+    "confidence": 0.8221
    },
    {
     "id": "Q074",
@@ -945,7 +945,7 @@
     "id": "Q075",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.5199
+    "confidence": 0.8365
    },
    {
     "id": "Q076",
@@ -957,103 +957,103 @@
     "id": "Q077",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.5986
+    "confidence": 0.602
    },
    {
     "id": "Q078",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6377
+    "confidence": 0.6387
    },
    {
     "id": "Q079",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.4263
+    "confidence": 0.4336
    },
    {
     "id": "Q080",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.4596
+    "confidence": 0.6478
    },
    {
     "id": "Q081",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.3918
+    "confidence": 0.5169
    },
    {
     "id": "Q082",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.8564
+    "confidence": 0.7456
    },
    {
     "id": "Q083",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5682
+    "confidence": 0.5641
    },
    {
     "id": "Q084",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.4858
+    "confidence": 0.4934
    },
    {
     "id": "Q085",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7492
+    "confidence": 0.7615
    },
    {
     "id": "Q086",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.6807
+    "confidence": 0.6865
    },
    {
     "id": "Q087",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5876
+    "confidence": 0.5608
    },
    {
     "id": "Q088",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.4403
+    "confidence": 0.4508
    },
    {
     "id": "Q089",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.39
+    "confidence": 0.4013
    },
    {
     "id": "Q090",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.4295
+    "confidence": 0.4452
    },
    {
     "id": "Q091",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7029
+    "confidence": 0.7112
    },
    {
     "id": "Q092",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5123
+    "confidence": 0.522
    },
    {
     "id": "Q093",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.5848
+    "confidence": 0.6655
    },
    {
     "id": "Q094",
@@ -1065,19 +1065,19 @@
     "id": "Q095",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.4626
+    "confidence": 0.467
    },
    {
     "id": "Q096",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.4672
+    "confidence": 0.4608
    },
    {
     "id": "Q097",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.4567
+    "confidence": 0.5242
    },
    {
     "id": "Q098",
@@ -1089,13 +1089,13 @@
     "id": "Q099",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7618
+    "confidence": 0.758
    },
    {
     "id": "Q100",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5802
+    "confidence": 0.672
    },
    {
     "id": "Q101",
@@ -1107,13 +1107,13 @@
     "id": "Q102",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5874
+    "confidence": 0.6136
    },
    {
     "id": "Q103",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.7437
+    "confidence": 0.7539
    },
    {
     "id": "Q104",
@@ -1131,7 +1131,7 @@
     "id": "Q106",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.7232
+    "confidence": 0.7459
    },
    {
     "id": "Q107",
@@ -1143,13 +1143,13 @@
     "id": "Q108",
     "type": "answerable",
     "split": "test",
-    "confidence": 0.5665
+    "confidence": 0.5768
    },
    {
     "id": "Q109",
     "type": "answerable",
     "split": "dev",
-    "confidence": 0.3633
+    "confidence": 0.362
    },
    {
     "id": "Q110",
@@ -1161,13 +1161,13 @@
     "id": "Q111",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.5184
+    "confidence": 0.5379
    },
    {
     "id": "Q112",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.7782
+    "confidence": 0.691
    },
    {
     "id": "Q113",
@@ -1203,7 +1203,7 @@
     "id": "Q118",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.6475
+    "confidence": 0.6646
    },
    {
     "id": "Q119",
@@ -1215,7 +1215,7 @@
     "id": "Q120",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.7719
+    "confidence": 0.7844
    },
    {
     "id": "Q121",
@@ -1227,19 +1227,19 @@
     "id": "Q122",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.7329
+    "confidence": 0.7371
    },
    {
     "id": "Q123",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.4334
+    "confidence": 0.4116
    },
    {
     "id": "Q124",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.6922
+    "confidence": 0.6671
    },
    {
     "id": "Q125",
@@ -1263,19 +1263,19 @@
     "id": "Q128",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.2403
+    "confidence": 0.2263
    },
    {
     "id": "Q129",
     "type": "unanswerable",
     "split": "dev",
-    "confidence": 0.3636
+    "confidence": 0.3709
    },
    {
     "id": "Q130",
     "type": "unanswerable",
     "split": "test",
-    "confidence": 0.4011
+    "confidence": 0.404
    }
   ]
  },
@@ -1283,29 +1283,29 @@
   "extractive": {
    "summary": {
     "n": 130,
-    "accuracy": 0.6462,
-    "accuracy_test_split": 0.5692,
-    "answerable_correct": 0.7143,
-    "answerable_declined": 0.2041,
-    "fact_coverage": 0.9135,
-    "cited_gold_document": 0.9487,
-    "unanswerable_declined": 0.4375,
+    "accuracy": 0.6308,
+    "accuracy_test_split": 0.5846,
+    "answerable_correct": 0.7347,
+    "answerable_declined": 0.0408,
+    "fact_coverage": 0.7812,
+    "cited_gold_document": 0.8511,
+    "unanswerable_declined": 0.3125,
     "latency_ms": {
-     "mean": 836,
-     "median": 1000,
-     "p95": 1478
+     "mean": 882,
+     "median": 403,
+     "p95": 802
     },
     "by_style": {
      "colloquial": 0.7,
      "direct": 0.9545,
-     "hinglish": 0.35,
-     "paraphrase": 0.8077
+     "hinglish": 0.6,
+     "paraphrase": 0.6923
     },
     "by_category": {
-     "faqs": 0.7647,
+     "faqs": 1.0,
      "notices": 0.7826,
      "policies": 0.5625,
-     "regulations": 0.7083,
+     "regulations": 0.625,
      "syllabus": 0.7222
     }
    },
@@ -1317,14 +1317,14 @@
      "style": "colloquial",
      "category": "regulations",
      "split": "dev",
-     "answer": "The student has at least 75% attendance in that course, or the shortage has been condoned by the Dean Academics. [1] Every B.Tech student at SVU must have at least 75% attendance in each course in a semester in order to be eligible to appear in the end-term examination of that course. [2] They explain how attendance is counted, when shortage can be condoned and what happens to students who fall short. [3]",
+     "answer": "A student found ineligible to appear in an examination due to shortage of attendance is liable to vacate the LPU hostel, and LPU may bar students with attendance below the prescribed limit from applying for hostel. [1] An LPU student blog post (January 2021) adds that a student who fails to maintain 75% attendance in a subject has to sign up for backlog classes in it. [1] to maintain 75% attendance in a subject has to sign up for backlog classes in it. [2]",
      "abstained": false,
-     "confidence": 0.775,
+     "confidence": 0.8238,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": true,
-     "latency_ms": 737,
+     "cited_gold": false,
+     "latency_ms": 59104,
      "generator_used": "extractive"
     },
     {
@@ -1334,14 +1334,14 @@
      "style": "direct",
      "category": "faqs",
      "split": "test",
-     "answer": "The application fee for 2026-27 is Rs. 1,500, paid online on admissions.svu.example. [1] Applications for 2026-27 opened on 15 April 2026 and closed on 30 June 2026. [1] Applications are invited from continuing B.Tech students for the Merit-cum-Means Grant for the even semester of 2026-27. [2]",
+     "answer": "The application fee for 2026-27 is Rs. 1,500, paid online on admissions.svu.example. [1] The fee is not refundable once the form is submitted. [1] Applications for 2026-27 opened on 15 April 2026 and closed on 30 June 2026. [1]",
      "abstained": false,
      "confidence": 0.9454,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 925,
+     "latency_ms": 478,
      "generator_used": "extractive"
     },
     {
@@ -1358,7 +1358,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1224,
+     "latency_ms": 531,
      "generator_used": "extractive"
     },
     {
@@ -1368,14 +1368,14 @@
      "style": "direct",
      "category": "syllabus",
      "split": "test",
-     "answer": "Code: CS201, Course: Data Structures, L-T-P: 3-0-2, Credits: 4. [1] Code: CS202, Course: Computer Organization and Architecture, L-T-P: 3-1-0, Credits: 4. [1] Code: CS203, Course: Design and Analysis of Algorithms, L-T-P: 3-0-2, Credits: 4. [1]",
+     "answer": "Data Structures has the course code CS201 and is taught in Semester 3. [1] Code: CS201, Course: Data Structures, L-T-P: 3-0-2, Credits: 4. [2] Code: CS203, Course: Design and Analysis of Algorithms, L-T-P: 3-0-2, Credits: 4. [2]",
      "abstained": false,
      "confidence": 0.9721,
      "facts_total": 2,
      "facts_found": 1,
      "correct": false,
-     "cited_gold": false,
-     "latency_ms": 1157,
+     "cited_gold": true,
+     "latency_ms": 356,
      "generator_used": "extractive"
     },
     {
@@ -1392,7 +1392,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1351,
+     "latency_ms": 482,
      "generator_used": "extractive"
     },
     {
@@ -1404,12 +1404,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.2887,
+     "confidence": 0.2799,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 54,
+     "latency_ms": 28,
      "generator_used": "extractive"
     },
     {
@@ -1419,14 +1419,14 @@
      "style": "paraphrase",
      "category": "regulations",
      "split": "test",
-     "answer": "To convert CGPA into an approximate percentage, multiply the CGPA by 9.5. [1]",
+     "answer": "For admission purposes, LPU's Prospectus 2026 uses a multiplying factor of 10 to convert CGPA to percentage. [1]",
      "abstained": false,
      "confidence": 0.8642,
      "facts_total": 1,
-     "facts_found": 1,
-     "correct": true,
-     "cited_gold": true,
-     "latency_ms": 1063,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 648,
      "generator_used": "extractive"
     },
     {
@@ -1436,14 +1436,14 @@
      "style": "direct",
      "category": "faqs",
      "split": "dev",
-     "answer": "The Central Library in Block A is open from 8:30 am to 10:00 pm from Monday to Saturday, and from 10:00 am to 5:00 pm on Sunday. [1] During end-term examination weeks it stays open until midnight. [1] Frequently asked questions about hostel life, the Central Library, university buses, the health centre and sports facilities at Sutlej Valley University (SVU) for the academic year 2026-27. [2]",
+     "answer": "The Central Library in Block A is open from 8:30 am to 10:00 pm from Monday to Saturday, and from 10:00 am to 5:00 pm on Sunday. [1] During end-term examination weeks it stays open until midnight. [1]",
      "abstained": false,
      "confidence": 0.899,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1167,
+     "latency_ms": 468,
      "generator_used": "extractive"
     },
     {
@@ -1453,14 +1453,14 @@
      "style": "direct",
      "category": "notices",
      "split": "test",
-     "answer": "The last date for payment of the even semester fee without any late fee is 31 December 2026. [1] The last date for the even semester fee payment is 31 December 2026. [2] Event: Even semester fee last date, Date: 31 December 2026. [2]",
+     "answer": "The last date for payment of the even semester fee without any late fee is 31 December 2026. [1] Students who have not paid by the last date are not blocked from the portal immediately, but the late fee starts from 1 January 2027. [1]",
      "abstained": false,
      "confidence": 1.0,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1012,
+     "latency_ms": 264,
      "generator_used": "extractive"
     },
     {
@@ -1470,14 +1470,14 @@
      "style": "direct",
      "category": "syllabus",
      "split": "dev",
-     "answer": "Students must have completed Data Structures (CS201) and Discrete Mathematics (MA201) before registering for Database Management Systems. [1] Database Management Systems (DBMS) has the course code CS211 and is taught in Semester 4. [3] Database Management Systems (CS211) is a 3-0-2 course worth 4 credits, and it requires Data Structures (CS201) and Discrete Mathematics (MA201) as prerequisites. [4]",
+     "answer": "This is the official syllabus of Database Management Systems (CS211), a core course for B.Tech CSE students in Semester 4 at Sutlej Valley University (SVU). [2] Database Management Systems (DBMS) has the course code CS211 and is taught in Semester 4. [3] Database Management Systems (CS211) is a 3-0-2 course worth 4 credits, and it requires Data Structures (CS201) and Discrete Mathematics (MA201) as prerequisites. [4]",
      "abstained": false,
      "confidence": 1.0,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 943,
+     "latency_ms": 281,
      "generator_used": "extractive"
     },
     {
@@ -1487,14 +1487,14 @@
      "style": "colloquial",
      "category": "policies",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4442,
+     "answer": "The overall similarity must be at most 10%, and the similarity with any single source must not exceed 5%. [1] A report with a similarity above 25% is rejected, and the student has to repeat the project phase in the next semester. [1] The overall similarity percentage determines the action taken for a course assignment or report. [2]",
+     "abstained": false,
+     "confidence": 0.4732,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": false,
-     "latency_ms": 65,
+     "cited_gold": true,
+     "latency_ms": 277,
      "generator_used": "extractive"
     },
     {
@@ -1511,7 +1511,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 923,
+     "latency_ms": 291,
      "generator_used": "extractive"
     },
     {
@@ -1528,7 +1528,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1081,
+     "latency_ms": 330,
      "generator_used": "extractive"
     },
     {
@@ -1538,14 +1538,14 @@
      "style": "colloquial",
      "category": "notices",
      "split": "dev",
-     "answer": "From 15 November 2026 to 19 November 2026, the late fee is Rs. 1,000 in addition to the examination fee. [1] From 20 November 2026 to 21 November 2026, the late fee is Rs. 3,000. [1] The last date for payment of the even semester fee without any late fee is 31 December 2026. [2]",
+     "answer": "From 15 November 2026 to 19 November 2026, the late fee is Rs. 1,000 in addition to the examination fee. [1] The last date for payment of the even semester fee without any late fee is 31 December 2026. [2] Students who have not paid by the last date are not blocked from the portal immediately, but the late fee starts from 1 January 2027. [2]",
      "abstained": false,
-     "confidence": 0.7603,
+     "confidence": 0.78,
      "facts_total": 2,
-     "facts_found": 2,
-     "correct": true,
+     "facts_found": 1,
+     "correct": false,
      "cited_gold": true,
-     "latency_ms": 1074,
+     "latency_ms": 267,
      "generator_used": "extractive"
     },
     {
@@ -1557,12 +1557,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3384,
+     "confidence": 0.3555,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 65,
+     "latency_ms": 13,
      "generator_used": "extractive"
     },
     {
@@ -1579,7 +1579,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 964,
+     "latency_ms": 287,
      "generator_used": "extractive"
     },
     {
@@ -1591,12 +1591,12 @@
      "split": "dev",
      "answer": "A student who is ill must inform the class coordinator by email on the first day of absence. [1] On rejoining, the student must submit a medical certificate from a registered medical practitioner to the Dean Academics office within 7 days. [1] The medical certificate must be submitted to the Dean Academics office within 7 days of the student rejoining classes. [2]",
      "abstained": false,
-     "confidence": 0.5953,
+     "confidence": 0.6148,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1016,
+     "latency_ms": 292,
      "generator_used": "extractive"
     },
     {
@@ -1613,7 +1613,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1029,
+     "latency_ms": 300,
      "generator_used": "extractive"
     },
     {
@@ -1625,12 +1625,12 @@
      "split": "dev",
      "answer": "The total prize pool of CodeSprint 2027 is Rs. 2,00,000. [1] The first prize is Rs. 1,00,000, the second prize is Rs. 60,000 and the third prize is Rs. 40,000. [1] CodeSprint 2027 is the annual 24-hour hackathon of SVU, to be held on 20 February 2027 and 21 February 2027. [2]",
      "abstained": false,
-     "confidence": 0.9047,
+     "confidence": 0.9176,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1182,
+     "latency_ms": 356,
      "generator_used": "extractive"
     },
     {
@@ -1640,14 +1640,14 @@
      "style": "direct",
      "category": "syllabus",
      "split": "test",
-     "answer": "The B.Tech CSE programme at SVU has eight semesters and a total of 160 credits. [1] A student must earn all 160 credits to be awarded the degree. [1] To be awarded the B.Tech CSE degree, a student must earn all 160 credits listed in the programme structure and must have a final CGPA of at least 5.0. [2]",
+     "answer": "To be awarded the B.Tech CSE degree, a student must earn all 160 credits listed in the programme structure and must have a final CGPA of at least 5.0. [1] The B.Tech CSE programme at SVU has eight semesters and a total of 160 credits. [2] A student must earn all 160 credits to be awarded the degree. [2]",
      "abstained": false,
-     "confidence": 0.8997,
+     "confidence": 0.8927,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1107,
+     "latency_ms": 403,
      "generator_used": "extractive"
     },
     {
@@ -1657,14 +1657,14 @@
      "style": "colloquial",
      "category": "regulations",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.559,
+     "answer": "A one-time, non-refundable registration fee of Rs. 10,000 must be paid at counselling to confirm the seat. [1] It is charged separately from the first semester academic fee of Rs. 1,00,000, which is due before course registration. [1] A student may apply for a break of study of one semester or up to two semesters (one year) for reasons such as serious illness, family emergency, an entrepreneurship venture or an overseas exchange. [2]",
+     "abstained": false,
+     "confidence": 0.5539,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 57,
+     "latency_ms": 408,
      "generator_used": "extractive"
     },
     {
@@ -1674,14 +1674,14 @@
      "style": "hinglish",
      "category": "faqs",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5091,
+     "answer": "The hostel gate closes at 10:00 pm every day for all hostels. [1] A late-night pass up to 11:30 pm can be issued by the warden for a valid reason, and a student can get at most 4 late passes in a month. [1] Students must return by the gate closing time of 10:00 pm on the day mentioned in the leave card. [2]",
+     "abstained": false,
+     "confidence": 0.5024,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 32,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 280,
      "generator_used": "extractive"
     },
     {
@@ -1691,14 +1691,14 @@
      "style": "direct",
      "category": "regulations",
      "split": "dev",
-     "answer": "A student is eligible to appear in the examination of a course only if the following conditions are met:. [1] Every B.Tech student at SVU must have at least 75% attendance in each course in a semester in order to be eligible to appear in the end-term examination of that course. [2] For a course with a 50-mark end-term, it means a minimum of 20 marks. [3]",
+     "answer": "Every B.Tech student at SVU must have at least 75% attendance in each course in a semester in order to be eligible to appear in the end-term examination of that course. [1] Attendance is calculated as the number of classes attended divided by the total number of classes held for that course from the first day of the semester up to the last day of classes, multiplied by 100. [1] A student is eligible to appear in the examination of a course only if the following conditions are met:. [2]",
      "abstained": false,
-     "confidence": 0.8573,
+     "confidence": 0.8544,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 923,
+     "latency_ms": 230,
      "generator_used": "extractive"
     },
     {
@@ -1710,12 +1710,12 @@
      "split": "test",
      "answer": "Date of receipt of withdrawal application: 1 to 29 days before classes begin, Refund of semester academic fee: 90%. [1] Date of receipt of withdrawal application: Up to 15 days after classes begin, Refund of semester academic fee: 70%. [1] Date of receipt of withdrawal application: 16 to 30 days after classes begin, Refund of semester academic fee: 50%. [1]",
      "abstained": false,
-     "confidence": 0.6562,
+     "confidence": 0.7147,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1147,
+     "latency_ms": 512,
      "generator_used": "extractive"
     },
     {
@@ -1725,14 +1725,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5628,
+     "answer": "The telephone number of the cell is 0161-555-0120. [1] The course coordinator is Dr. Harpreet Kaur Sandhu, whose office is Block C, Room C-214, and who can be reached at harpreet.sandhu@svu.example. [4]",
+     "abstained": false,
+     "confidence": 0.5687,
      "facts_total": 0,
      "facts_found": 0,
-     "correct": true,
+     "correct": false,
      "cited_gold": null,
-     "latency_ms": 76,
+     "latency_ms": 303,
      "generator_used": "extractive"
     },
     {
@@ -1749,7 +1749,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1206,
+     "latency_ms": 339,
      "generator_used": "extractive"
     },
     {
@@ -1759,14 +1759,14 @@
      "style": "colloquial",
      "category": "faqs",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.523,
+     "answer": "A candidate must have passed Class 12 with Physics and Mathematics as compulsory subjects, along with Chemistry or Computer Science, with at least 60% aggregate marks in these subjects. [1] For candidates from the SC and ST categories, the minimum is 55%. [1] No. SVU has no upper age limit for B.Tech admission, but a candidate must be at least 17 years old on 1 August of the year of admission. [1]",
+     "abstained": false,
+     "confidence": 0.5441,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 49,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 533,
      "generator_used": "extractive"
     },
     {
@@ -1783,7 +1783,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1364,
+     "latency_ms": 650,
      "generator_used": "extractive"
     },
     {
@@ -1795,12 +1795,12 @@
      "split": "test",
      "answer": "Ellis Horowitz, Sartaj Sahni and Susan Anderson-Freed, Fundamentals of Data Structures in C, 2nd edition, Universities Press. [1] Mark Allen Weiss, Data Structures and Algorithm Analysis in C++, 4th edition, Pearson. [1] Seymour Lipschutz, Data Structures with C, Schaum's Outline Series, McGraw Hill. [1]",
      "abstained": false,
-     "confidence": 0.7864,
+     "confidence": 0.7898,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 978,
+     "latency_ms": 531,
      "generator_used": "extractive"
     },
     {
@@ -1812,12 +1812,12 @@
      "split": "dev",
      "answer": "If the fee is paid after 31 December 2026, a late fee of Rs. 200 per day is charged for each day of delay, up to a maximum of Rs. 2,000. [1] The late fee must be paid together with the semester fee, and no late fee is charged on the amount of any scholarship or waiver already sanctioned. [1] The last date for payment of the even semester fee without any late fee is 31 December 2026. [2]",
      "abstained": false,
-     "confidence": 0.6539,
+     "confidence": 0.756,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1043,
+     "latency_ms": 583,
      "generator_used": "extractive"
     },
     {
@@ -1829,12 +1829,12 @@
      "split": "test",
      "answer": "A student may take up to 5 days of casual leave in a semester for personal reasons such as a family function. [1] Casual leave is a permission to be absent, but it does not add to the attendance of the student. [1]",
      "abstained": false,
-     "confidence": 0.8714,
+     "confidence": 0.8883,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 920,
+     "latency_ms": 242,
      "generator_used": "extractive"
     },
     {
@@ -1846,12 +1846,12 @@
      "split": "dev",
      "answer": "Students must report to the examination hall by 9:30 am, which is 30 minutes before the start. [1] Entry is closed at 10:30 am, and a student who arrives after that time is not allowed to sit the paper. [1] Students must reach the examination hall at least 30 minutes before the start of the paper and must carry their hall ticket and SVU identity card. [2]",
      "abstained": false,
-     "confidence": 0.8715,
+     "confidence": 0.8937,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1256,
+     "latency_ms": 308,
      "generator_used": "extractive"
     },
     {
@@ -1863,12 +1863,12 @@
      "split": "test",
      "answer": "To enter: Semester 3, Credits required to be earned: 26 out of 42 credits of Semesters 1 and 2. [1] To enter: Semester 5, Credits required to be earned: 52 out of 86 credits of Semesters 1 to 4. [1] To enter: Semester 7, Credits required to be earned: 78 out of 129 credits of Semesters 1 to 6. [1]",
      "abstained": false,
-     "confidence": 0.6435,
+     "confidence": 0.6624,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 894,
+     "latency_ms": 260,
      "generator_used": "extractive"
     },
     {
@@ -1878,14 +1878,14 @@
      "style": "paraphrase",
      "category": "syllabus",
      "split": "dev",
-     "answer": "Database Management Systems (DBMS) has the course code CS211 and is taught in Semester 4. [1] Practical sessions are held in the Database Lab, Block C, Room C-305. [1] The DBMS laboratory has 12 weekly experiments on PostgreSQL covering DDL and DML commands, joins, subqueries, views, indexes, triggers, stored procedures and transactions. [2]",
+     "answer": "Database Management Systems (DBMS) has the course code CS211 and is taught in Semester 4. [1] Practical sessions are held in the Database Lab, Block C, Room C-305. [1] Raghu Ramakrishnan and Johannes Gehrke, Database Management Systems, 3rd edition, McGraw Hill. [2]",
      "abstained": false,
-     "confidence": 0.6983,
+     "confidence": 0.7196,
      "facts_total": 1,
-     "facts_found": 1,
-     "correct": true,
+     "facts_found": 0,
+     "correct": false,
      "cited_gold": true,
-     "latency_ms": 961,
+     "latency_ms": 262,
      "generator_used": "extractive"
     },
     {
@@ -1897,12 +1897,12 @@
      "split": "test",
      "answer": "JEE Main percentile: 90 to 94.99, Waiver on tuition fee: 15%. [2] Item: Tuition fee, Amount per semester: Rs. 92,500. [3] The annual tuition fee is therefore Rs. 1,85,000 and the annual development and amenities fee is Rs. 15,000. [3]",
      "abstained": false,
-     "confidence": 0.5885,
+     "confidence": 0.6293,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1016,
+     "latency_ms": 286,
      "generator_used": "extractive"
     },
     {
@@ -1912,14 +1912,14 @@
      "style": "colloquial",
      "category": "regulations",
      "split": "test",
-     "answer": "Students must reach the examination hall at least 30 minutes before the start of the paper and must carry their hall ticket and SVU identity card. [1] Mobile phones, smart watches, earphones and any electronic device are not allowed inside the hall, even if switched off. [1] Students must report to the examination hall by 9:30 am, which is 30 minutes before the start. [2]",
+     "answer": "Students must reach the examination hall at least 30 minutes before the start of the paper and must carry their hall ticket and SVU identity card. [1] Mobile phones, smart watches, earphones and any electronic device are not allowed inside the hall, even if switched off. [1] If there is a mistake in the name, photograph or course list on the hall ticket, the student must inform the Examination Cell, Block A, Room A-114, by email at coe@svu.example before 4 December 2026. [2]",
      "abstained": false,
-     "confidence": 0.6373,
+     "confidence": 0.6528,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1057,
+     "latency_ms": 348,
      "generator_used": "extractive"
     },
     {
@@ -1936,7 +1936,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1131,
+     "latency_ms": 347,
      "generator_used": "extractive"
     },
     {
@@ -1946,14 +1946,14 @@
      "style": "direct",
      "category": "notices",
      "split": "test",
-     "answer": "The annual family income is below Rs. 4,00,000. [1] The Merit-cum-Means Grant is a need-based grant for continuing students. [2] To be eligible, the annual family income must be below Rs. 4,00,000, and the student must have a CGPA of at least 7.0 and attendance of at least 75%. [2]",
+     "answer": "The Merit-cum-Means Grant is a need-based grant for continuing students. [1] To be eligible, the annual family income must be below Rs. 4,00,000, and the student must have a CGPA of at least 7.0 and attendance of at least 75%. [1] A student who already receives an Entrance Merit Waiver of 30% or more cannot hold this grant at the same time. [1]",
      "abstained": false,
-     "confidence": 0.8532,
+     "confidence": 0.8676,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
-     "cited_gold": true,
-     "latency_ms": 1061,
+     "cited_gold": false,
+     "latency_ms": 299,
      "generator_used": "extractive"
     },
     {
@@ -1965,12 +1965,12 @@
      "split": "dev",
      "answer": "In addition, each student team of up to 3 members completes a course project on a dataset of its choice. [1] The project proposal is due in week 6, a progress review is held in week 10, and the final demonstration and report are due in week 14. [1] The course project is evaluated on the proposal, the final demonstration, the report and a short viva. [2]",
      "abstained": false,
-     "confidence": 0.7548,
+     "confidence": 0.7611,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1601,
+     "latency_ms": 639,
      "generator_used": "extractive"
     },
     {
@@ -1987,7 +1987,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 825,
+     "latency_ms": 236,
      "generator_used": "extractive"
     },
     {
@@ -1997,14 +1997,14 @@
      "style": "paraphrase",
      "category": "regulations",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5115,
+     "answer": "An LPU student blog post (January 2021) gives this split for a theory course: attendance 5 marks, continuous assessment (best 2 of 3) 20 marks, mid-term examination 25 marks and end-term examination 50 marks, for 100 marks in total. [2] According to an LPU student blog post (October 2020), missed continuous assessment or mid-term marks are prorated from the other components you attempted. [2] There is no proration for the end-term exam; an end-term exam missed on duty leave can be taken in the next term with no reappear fee. [2]",
+     "abstained": false,
+     "confidence": 0.5848,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 76,
+     "latency_ms": 530,
      "generator_used": "extractive"
     },
     {
@@ -2014,14 +2014,14 @@
      "style": "paraphrase",
      "category": "syllabus",
      "split": "test",
-     "answer": "Machine Learning has the course code CS301 and is taught in Semester 5. [1] Machine Learning (CS301) is a 3-0-2 course worth 4 credits, and its prerequisites are Probability and Statistics (MA202), Data Structures (CS201) and the Python for Data Science Lab (CS215). [2] Code: CS301, Course: Machine Learning, L-T-P: 3-0-2, Credits: 4. [2]",
+     "answer": "Machine Learning (CS301) is a 3-0-2 course worth 4 credits, and its prerequisites are Probability and Statistics (MA202), Data Structures (CS201) and the Python for Data Science Lab (CS215). [1] Code: CS301, Course: Machine Learning, L-T-P: 3-0-2, Credits: 4. [1] Machine Learning has the course code CS301 and is taught in Semester 5. [2]",
      "abstained": false,
-     "confidence": 0.8819,
+     "confidence": 0.8911,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1351,
+     "latency_ms": 505,
      "generator_used": "extractive"
     },
     {
@@ -2033,12 +2033,12 @@
      "split": "dev",
      "answer": "The hostel security deposit of Rs. 10,000 is refunded within 30 days of the student vacating the room, after deducting charges for any damage or missing items. [1] Yes, a one-time refundable hostel security deposit of Rs. 10,000 is collected at the time of allotment. [2] It is returned within 30 days of vacating the hostel after deducting any damages. [2]",
      "abstained": false,
-     "confidence": 0.7193,
+     "confidence": 0.7236,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1434,
+     "latency_ms": 502,
      "generator_used": "extractive"
     },
     {
@@ -2050,12 +2050,12 @@
      "split": "test",
      "answer": "A student who holds an Entrance Merit Waiver must keep the waiver by meeting all of the following conditions at the end of every academic year: a CGPA of at least 8.0, attendance of at least 75% in all courses, and no active backlog or disciplinary action. [1] The waiver can be restored once, for the following year, if the student's CGPA is 8.0 or above in the next year. [1] To be eligible, a student must satisfy all of the following:. [2]",
      "abstained": false,
-     "confidence": 0.8776,
+     "confidence": 0.7999,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1525,
+     "latency_ms": 458,
      "generator_used": "extractive"
     },
     {
@@ -2067,12 +2067,12 @@
      "split": "dev",
      "answer": "SVU offers B.Tech in Computer Science and Engineering (240 seats), Electronics and Communication Engineering (120 seats), Mechanical Engineering (60 seats) and Civil Engineering (60 seats). [1] A candidate must have passed Class 12 with Physics and Mathematics as compulsory subjects, along with Chemistry or Computer Science, with at least 60% aggregate marks in these subjects. [2]",
      "abstained": false,
-     "confidence": 0.8903,
+     "confidence": 0.8956,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1240,
+     "latency_ms": 314,
      "generator_used": "extractive"
     },
     {
@@ -2089,7 +2089,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1144,
+     "latency_ms": 412,
      "generator_used": "extractive"
     },
     {
@@ -2101,12 +2101,12 @@
      "split": "test",
      "answer": "The major project report (Project Phase I and Phase II) and any research paper written as a part of the programme are held to a stricter limit. [1] The final project report cannot be submitted to the examination office without a similarity certificate signed by the guide. [1] This policy defines plagiarism and sets the similarity thresholds and penalties for assignments, reports and projects submitted by B.Tech students at Sutlej Valley University (SVU) in 2026-27. [2]",
      "abstained": false,
-     "confidence": 0.9117,
+     "confidence": 0.9127,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 1036,
+     "latency_ms": 289,
      "generator_used": "extractive"
     },
     {
@@ -2123,7 +2123,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1230,
+     "latency_ms": 375,
      "generator_used": "extractive"
     },
     {
@@ -2135,12 +2135,12 @@
      "split": "test",
      "answer": "Every student who intends to appear in the December 2026 end-term examinations must fill the online examination form on the student portal between 2 November 2026 and 14 November 2026. [1] The examination fee is Rs. 1,800 per semester for regular students. [1] The end-term examinations for the odd semesters (Semesters 1, 3, 5 and 7) of all B.Tech programmes will be held from 7 December 2026 to 22 December 2026. [2]",
      "abstained": false,
-     "confidence": 0.8616,
+     "confidence": 0.8983,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 897,
+     "latency_ms": 254,
      "generator_used": "extractive"
     },
     {
@@ -2150,14 +2150,14 @@
      "style": "paraphrase",
      "category": "policies",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5077,
+     "answer": "Complaints of sexual harassment, discrimination or bullying are handled by the Internal Complaints Committee (ICC), which is headed by a senior woman faculty member and includes an external member from a women's organisation. [1] Retaliation against a person who has complained is a serious offence and is punishable under the Student Conduct Regulations. [1] At Stage 2, if the student is not satisfied, the complaint goes to the Head of Department, who replies within 7 working days. [2]",
+     "abstained": false,
+     "confidence": 0.5189,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": false,
-     "latency_ms": 109,
+     "cited_gold": true,
+     "latency_ms": 354,
      "generator_used": "extractive"
     },
     {
@@ -2169,12 +2169,12 @@
      "split": "test",
      "answer": "The fee is paid in two instalments: 60% by 31 December 2026 and 40% by 31 January 2027. [1] A processing fee of Rs. 1,000 is charged for the instalment facility. [1] If the second instalment is delayed beyond 31 January 2027, the late fee of Rs. 200 per day, up to Rs. 2,000, applies on the unpaid balance. [1]",
      "abstained": false,
-     "confidence": 0.7365,
+     "confidence": 0.7542,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1252,
+     "latency_ms": 537,
      "generator_used": "extractive"
     },
     {
@@ -2186,12 +2186,12 @@
      "split": "dev",
      "answer": "Event: Odd semester fee last date, Date: 20 July 2026. [1] Event: Add/drop of courses closes, Date: 14 August 2026. [1] Event: Add/drop of courses closes, Date: 22 January 2027. [2]",
      "abstained": false,
-     "confidence": 0.7262,
+     "confidence": 0.7344,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": false,
-     "latency_ms": 1170,
+     "latency_ms": 770,
      "generator_used": "extractive"
     },
     {
@@ -2201,14 +2201,14 @@
      "style": "paraphrase",
      "category": "regulations",
      "split": "test",
-     "answer": "Ragging means any act that causes physical or mental harm or embarrassment to a student, including forced introductions, teasing, financial demands or forced actions. [1] Complaints can be sent to antiragging@svu.example or made by calling the 24-hour helpline 1800-555-0147. [1] Both the student and a parent must submit the signed anti-ragging undertaking at admission, as required by the Student Conduct Regulations. [2]",
+     "answer": "Under a UGC letter dated 16 September 2022 (D.O.No.F.1-15/2021(ARC)), every LPU student and their parent or guardian must submit an online anti-ragging undertaking every academic year at www.antiragging.in. [1] LPU's anti-ragging page lists the national anti-ragging helpline 1800-180-5522 (24x7, toll free) and the email helpline@antiragging.in. [1] The same page lists LPU's Anti-Ragging Committee and Anti-Ragging Squad contacts. [1]",
      "abstained": false,
-     "confidence": 0.7591,
+     "confidence": 0.8504,
      "facts_total": 2,
-     "facts_found": 2,
-     "correct": true,
-     "cited_gold": true,
-     "latency_ms": 1258,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 684,
      "generator_used": "extractive"
     },
     {
@@ -2220,12 +2220,12 @@
      "split": "dev",
      "answer": "To pass, a student needs at least 40 marks out of 100 overall and at least 20 marks out of 50 in the end-term examination. [1] After completing Data Structures, a student should be able to do the following:. [2] Data Structures has the course code CS201 and is taught in Semester 3. [3]",
      "abstained": false,
-     "confidence": 0.9124,
+     "confidence": 0.9157,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1478,
+     "latency_ms": 595,
      "generator_used": "extractive"
     },
     {
@@ -2237,12 +2237,12 @@
      "split": "test",
      "answer": "The fee payable by every B.Tech student for the even semester of 2026-27 is given below. [1] Item: Tuition fee, Amount per semester: Rs. 92,500. [1] The annual tuition fee is therefore Rs. 1,85,000 and the annual development and amenities fee is Rs. 15,000. [1]",
      "abstained": false,
-     "confidence": 0.5925,
+     "confidence": 0.5948,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1205,
+     "latency_ms": 569,
      "generator_used": "extractive"
     },
     {
@@ -2252,14 +2252,14 @@
      "style": "colloquial",
      "category": "regulations",
      "split": "test",
-     "answer": "The grades from the earlier attempt are replaced by the new grades, but both attempts count in the limit of 4 attempts per course. [1] Lateral entry students need to earn 118 credits in Semesters 3 to 8 to complete the degree, and they must clear the bridge courses in Mathematics and Programming in their first year. [1] A student has a maximum of 4 attempts for any course, which is the first attempt plus 3 reappear attempts. [2]",
+     "answer": "According to an LPU student blog post (January 2021), a student who cannot clear a subject in 5 reappear attempts must sign up for backlog classes in it. [3] According to the same LPU student blog post (January 2021), a passed subject can be re-attempted up to 5 times to improve its grade. [3] LPU's prospectus says the university may set conditions such as a specific CGPA and/or a maximum number of permissible backlogs or re-appears for taking part in placement activities. [3]",
      "abstained": false,
-     "confidence": 0.7146,
+     "confidence": 0.7171,
      "facts_total": 1,
-     "facts_found": 1,
-     "correct": true,
-     "cited_gold": true,
-     "latency_ms": 1537,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 403,
      "generator_used": "extractive"
     },
     {
@@ -2271,12 +2271,12 @@
      "split": "dev",
      "answer": "Apply on the portal under Transcripts. [1] The fee is Rs. 500 per copy, and it is issued in a sealed envelope within 7 working days. [1] A courier charge of Rs. 200 applies for postal delivery within India. [1]",
      "abstained": false,
-     "confidence": 0.8335,
+     "confidence": 0.8291,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1399,
+     "latency_ms": 610,
      "generator_used": "extractive"
     },
     {
@@ -2286,14 +2286,14 @@
      "style": "colloquial",
      "category": "notices",
      "split": "test",
-     "answer": "Teams with members from different branches and years are encouraged. [1] Registration is free of charge for SVU students and must be completed by 31 January 2027 at codesprint.svu.example. [1] A team that registers late can be accepted only if seats remain. [1]",
+     "answer": "Registration is free of charge for SVU students and must be completed by 31 January 2027 at codesprint.svu.example. [1] A team that registers late can be accepted only if seats remain. [1] Participation in CodeSprint can be counted as duty leave under the Attendance Regulations, up to a maximum of 10% of the total classes of a course, if the student obtains prior approval from the Dean Student Affairs. [2]",
      "abstained": false,
-     "confidence": 0.7622,
+     "confidence": 0.771,
      "facts_total": 2,
      "facts_found": 1,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 1762,
+     "latency_ms": 411,
      "generator_used": "extractive"
     },
     {
@@ -2305,12 +2305,12 @@
      "split": "dev",
      "answer": "Component: Mid-term examination, Marks: 20. [1] Component: End-term examination, Marks: 50. [1] The mid-term is 90 minutes long and the end-term is 3 hours long. [1]",
      "abstained": false,
-     "confidence": 0.7457,
+     "confidence": 0.7589,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": false,
-     "latency_ms": 2027,
+     "latency_ms": 669,
      "generator_used": "extractive"
     },
     {
@@ -2320,14 +2320,14 @@
      "style": "hinglish",
      "category": "regulations",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5199,
+     "answer": "The campus has a cricket ground, football field, 2 basketball courts, 4 badminton courts, a table tennis hall and an indoor gym. [1] Use of the facilities is free for all students. [1] Register with the Sports Officer at the Sports Complex, Room S-01. [1]",
+     "abstained": false,
+     "confidence": 0.5198,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 69,
+     "latency_ms": 628,
      "generator_used": "extractive"
     },
     {
@@ -2339,12 +2339,12 @@
      "split": "dev",
      "answer": "Code: CS451, Course: Major Project Phase II, Credits: 10. [1] Major Project Phase II (CS451) is worth 10 credits, the largest single course in the programme. [1] Code: CS401, Course: Major Project Phase I, Credits: 6. [2]",
      "abstained": false,
-     "confidence": 0.791,
+     "confidence": 0.7975,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1189,
+     "latency_ms": 620,
      "generator_used": "extractive"
     },
     {
@@ -2361,7 +2361,7 @@
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1410,
+     "latency_ms": 789,
      "generator_used": "extractive"
     },
     {
@@ -2373,12 +2373,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3423,
+     "confidence": 0.3712,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 59,
+     "latency_ms": 23,
      "generator_used": "extractive"
     },
     {
@@ -2390,12 +2390,12 @@
      "split": "dev",
      "answer": "Date of receipt of withdrawal application: 1 to 29 days before classes begin, Refund of semester academic fee: 90%. [2] Date of receipt of withdrawal application: Up to 15 days after classes begin, Refund of semester academic fee: 70%. [2] Date of receipt of withdrawal application: 16 to 30 days after classes begin, Refund of semester academic fee: 50%. [2]",
      "abstained": false,
-     "confidence": 0.602,
+     "confidence": 0.6192,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 830,
+     "latency_ms": 466,
      "generator_used": "extractive"
     },
     {
@@ -2407,12 +2407,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3955,
+     "confidence": 0.402,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 51,
+     "latency_ms": 24,
      "generator_used": "extractive"
     },
     {
@@ -2424,12 +2424,12 @@
      "split": "dev",
      "answer": "Occasion: Utsav annual cultural and technical fest, Date: 4 to 6 March 2027. [1] Regular classes will not be held on the three days of the Utsav fest, and attendance for those days will not be counted in the total number of classes. [1]",
      "abstained": false,
-     "confidence": 0.9297,
+     "confidence": 0.8282,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 713,
+     "latency_ms": 663,
      "generator_used": "extractive"
     },
     {
@@ -2446,7 +2446,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 774,
+     "latency_ms": 264,
      "generator_used": "extractive"
     },
     {
@@ -2458,12 +2458,12 @@
      "split": "dev",
      "answer": "A student may apply for a change of branch after Semester 1 if the CGPA is 8.5 or above and a seat is vacant in the desired branch. [1] Applications must be submitted within 7 days of the Semester 1 result declaration. [1] Only one change of branch is allowed during the programme. [1]",
      "abstained": false,
-     "confidence": 0.7379,
+     "confidence": 0.7798,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 877,
+     "latency_ms": 339,
      "generator_used": "extractive"
     },
     {
@@ -2475,12 +2475,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.2363,
+     "confidence": 0.2378,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 54,
+     "latency_ms": 11,
      "generator_used": "extractive"
     },
     {
@@ -2492,12 +2492,12 @@
      "split": "test",
      "answer": "Complaints of sexual harassment, discrimination or bullying are handled by the Internal Complaints Committee (ICC), which is headed by a senior woman faculty member and includes an external member from a women's organisation. [1] Complaints can be sent to icc@svu.example or made in person at Block A, Room A-121. [1] The ICC completes the enquiry within 60 days of receiving the complaint, and the proceedings are fully confidential. [1]",
      "abstained": false,
-     "confidence": 0.6725,
+     "confidence": 0.6811,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 891,
+     "latency_ms": 275,
      "generator_used": "extractive"
     },
     {
@@ -2509,12 +2509,12 @@
      "split": "dev",
      "answer": "Unit V: Neural networks and responsible AI (9 hours). Perceptron, multilayer perceptron, backpropagation, activation functions, an introduction to convolutional networks, model deployment basics, and ethics covering data bias, fairness, privacy and explainability. [1] Deep learning in depth is not part of this course and is covered in the programme electives of later semesters. [1] Machine Learning has the course code CS301 and is taught in Semester 5. [2]",
      "abstained": false,
-     "confidence": 0.8144,
+     "confidence": 0.8387,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 782,
+     "latency_ms": 398,
      "generator_used": "extractive"
     },
     {
@@ -2531,7 +2531,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 801,
+     "latency_ms": 387,
      "generator_used": "extractive"
     },
     {
@@ -2543,12 +2543,12 @@
      "split": "dev",
      "answer": "When an invigilator reports unfair means, the answer script and the material seized are sent to the Unfair Means Committee, which is headed by the Controller of Examinations. [1] A student who disagrees can appeal in writing to the Vice-Chancellor within 15 days of receiving the order. [1] A student who is not satisfied with the decision of the Grievance Redressal Committee can appeal to the Student Ombudsperson within 30 days of receiving the decision. [2]",
      "abstained": false,
-     "confidence": 0.8164,
+     "confidence": 0.8221,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 796,
+     "latency_ms": 665,
      "generator_used": "extractive"
     },
     {
@@ -2558,14 +2558,14 @@
      "style": "paraphrase",
      "category": "notices",
      "split": "test",
-     "answer": "Offline payment is also accepted by demand draft drawn in favour of \"Sutlej Valley University\" payable at Ropar, submitted at the Accounts Office, Block B, Room B-12, between 10:00 am and 4:00 pm from Monday to Friday. [1] Cash and personal cheques are not accepted. [1] For queries about fee statements, payment failures and instalments, contact the Accounts Office at accounts@svu.example or call 0161-555-0130. [2]",
+     "answer": "Offline payment is also accepted by demand draft drawn in favour of \"Sutlej Valley University\" payable at Ropar, submitted at the Accounts Office, Block B, Room B-12, between 10:00 am and 4:00 pm from Monday to Friday. [1] Cash and personal cheques are not accepted. [1] The refund is processed within 21 working days of the approval, and it is transferred only to the bank account from which the fee was originally paid, not to cash. [2]",
      "abstained": false,
      "confidence": 0.8094,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 902,
+     "latency_ms": 802,
      "generator_used": "extractive"
     },
     {
@@ -2575,14 +2575,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5199,
+     "answer": "The AICTE Operating Systems syllabus covers seven modules: an introduction to operating systems, a computer organization refresher, processes and system calls, memory management and virtual memory, process management and CPU scheduling, concurrency and synchronization (threads, locks, semaphores, deadlocks), and file systems. [1] Overview of the components of an operating system. [2]",
+     "abstained": false,
+     "confidence": 0.8365,
      "facts_total": 0,
      "facts_found": 0,
-     "correct": true,
+     "correct": false,
      "cited_gold": null,
-     "latency_ms": 54,
+     "latency_ms": 697,
      "generator_used": "extractive"
     },
     {
@@ -2592,14 +2592,14 @@
      "style": "paraphrase",
      "category": "syllabus",
      "split": "dev",
-     "answer": "A student is promoted to a higher year only if a minimum number of credits has been earned from the earlier semesters. [1] To enter: Semester 3, Credits required to be earned: 26 out of 42 credits of Semesters 1 and 2. [1] An elective runs only if at least 20 students register for it. [2]",
+     "answer": "A student is promoted to a higher year only if a minimum number of credits has been earned from the earlier semesters. [1] To enter: Semester 3, Credits required to be earned: 26 out of 42 credits of Semesters 1 and 2. [1] An elective runs only if at least 20 students register for it. [3]",
      "abstained": false,
      "confidence": 0.827,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 845,
+     "latency_ms": 598,
      "generator_used": "extractive"
     },
     {
@@ -2611,12 +2611,12 @@
      "split": "test",
      "answer": "A student may apply for a break of study of one semester or up to two semesters (one year) for reasons such as serious illness, family emergency, an entrepreneurship venture or an overseas exchange. [1] A student who wishes to leave the university permanently must apply for withdrawal and clear all dues, and the refund rules of the Scholarship and Fee Refund Policy apply. [1] A student can use condonation in at most 2 semesters during the entire programme. [2]",
      "abstained": false,
-     "confidence": 0.5986,
+     "confidence": 0.602,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 995,
+     "latency_ms": 593,
      "generator_used": "extractive"
     },
     {
@@ -2628,12 +2628,12 @@
      "split": "test",
      "answer": "Marks out of 100: 90 to 100, Grade: O (Outstanding), Grade points: 10. [1] Marks out of 100: 80 to 89, Grade: A+, Grade points: 9. [1] Marks out of 100: 60 to 69, Grade: B+, Grade points: 7. [1]",
      "abstained": false,
-     "confidence": 0.6377,
+     "confidence": 0.6387,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1119,
+     "latency_ms": 1035,
      "generator_used": "extractive"
     },
     {
@@ -2645,12 +2645,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.4263,
+     "confidence": 0.4336,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 45,
+     "latency_ms": 48,
      "generator_used": "extractive"
     },
     {
@@ -2660,14 +2660,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4596,
+     "answer": "LPU has separate hostels for boys and girls within the campus. [3] Free parking is available at designated places for residents. [3] Per session, air-cooled / AC: 6, 7 or 8 seater Rs 80,000 / Rs 90,000; 5 seater Rs 80,000 / Rs 90,000; 4 seater Rs 93,000 / Rs 1,03,000; 3 seater Rs 1,08,000 / Rs 1,23,000; 2 seater Rs. [3]",
+     "abstained": false,
+     "confidence": 0.6478,
      "facts_total": 0,
      "facts_found": 0,
-     "correct": true,
+     "correct": false,
      "cited_gold": null,
-     "latency_ms": 63,
+     "latency_ms": 1040,
      "generator_used": "extractive"
     },
     {
@@ -2677,14 +2677,14 @@
      "style": "hinglish",
      "category": "notices",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.3918,
+     "answer": "The summer break begins on 26 May 2027 and ends on 31 July 2027. [1] Students must complete their summer internship of at least 6 weeks during the break. [1] Hostels close on 5 June 2027 for maintenance and reopen on 25 July 2027, and students who need accommodation in July for the special examination should apply to the Chief Warden. [1]",
+     "abstained": false,
+     "confidence": 0.5169,
      "facts_total": 2,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 71,
+     "facts_found": 2,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 730,
      "generator_used": "extractive"
     },
     {
@@ -2696,12 +2696,12 @@
      "split": "test",
      "answer": "Breakfast is served from 7:30 am to 9:00 am, lunch from 12:30 pm to 2:30 pm, evening snacks from 5:00 pm to 6:00 pm, and dinner from 7:30 pm to 9:30 pm. [1] There are two separate mess halls, one purely vegetarian and one with non-vegetarian items on Tuesdays, Thursdays and Sundays. [1] Students can choose their mess at the start of each semester. [1]",
      "abstained": false,
-     "confidence": 0.8564,
+     "confidence": 0.7456,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1418,
+     "latency_ms": 750,
      "generator_used": "extractive"
     },
     {
@@ -2711,14 +2711,14 @@
      "style": "hinglish",
      "category": "faqs",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5682,
+     "answer": "Each student can connect up to 2 devices at the same time. [1] The fair-use limit is 5 GB per day per student. [1]",
+     "abstained": false,
+     "confidence": 0.5641,
      "facts_total": 2,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 45,
+     "facts_found": 2,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 664,
      "generator_used": "extractive"
     },
     {
@@ -2728,14 +2728,14 @@
      "style": "hinglish",
      "category": "notices",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4858,
+     "answer": "Hall tickets will be released on the student portal on 1 December 2026 at 5:00 pm. [1] If there is a mistake in the name, photograph or course list on the hall ticket, the student must inform the Examination Cell, Block A, Room A-114, by email at coe@svu.example before 4 December 2026. [1] Hall tickets will not be sent by post. [1]",
+     "abstained": false,
+     "confidence": 0.4934,
      "facts_total": 2,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 48,
+     "facts_found": 2,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 382,
      "generator_used": "extractive"
     },
     {
@@ -2745,14 +2745,14 @@
      "style": "hinglish",
      "category": "notices",
      "split": "dev",
-     "answer": "The fee can be paid online on the student portal by UPI, net banking, debit card or credit card. [1] There is no extra charge for UPI and net banking, and a charge of 1.5% is added for credit cards. [1] A character certificate costs Rs. 100, a no-dues certificate is free, and a migration certificate costs Rs. 500 and takes 10 working days. [2]",
+     "answer": "LPU says students with post-matric, government or other scholarships or loans must still pay the programme fee, examination fee and facility charges before each semester starts. [1] The university does not liaise with scholarship or loan providers. [1] Students on the B.Tech CSE 2+2 international transfer option pay an additional International Transfer Fee of INR 50,000 with the 1st semester fee. [1]",
      "abstained": false,
-     "confidence": 0.7492,
+     "confidence": 0.7615,
      "facts_total": 1,
-     "facts_found": 1,
-     "correct": true,
-     "cited_gold": true,
-     "latency_ms": 1167,
+     "facts_found": 0,
+     "correct": false,
+     "cited_gold": false,
+     "latency_ms": 721,
      "generator_used": "extractive"
     },
     {
@@ -2764,12 +2764,12 @@
      "split": "test",
      "answer": "Results of the Merit-cum-Means Grant applications are expected on 15 December 2026, so grant holders will see a credit of Rs. 20,000 against the even semester fee after that date. [1] Students who have been sanctioned the grant after paying the fee will get a refund to their bank account within 21 working days. [1] The last date for payment of the even semester fee without any late fee is 31 December 2026. [2]",
      "abstained": false,
-     "confidence": 0.6807,
+     "confidence": 0.6865,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 940,
+     "latency_ms": 368,
      "generator_used": "extractive"
     },
     {
@@ -2781,12 +2781,12 @@
      "split": "dev",
      "answer": "SVU offers a Sports Excellence Scholarship to students who have won medals in recognised competitions. [1] A student who has won a medal at the national level receives a waiver of up to 25% of the tuition fee. [1] A student who has won a medal at the state level receives a waiver of 10% of the tuition fee. [1]",
      "abstained": false,
-     "confidence": 0.5876,
+     "confidence": 0.5608,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 988,
+     "latency_ms": 503,
      "generator_used": "extractive"
     },
     {
@@ -2796,14 +2796,14 @@
      "style": "hinglish",
      "category": "policies",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4403,
+     "answer": "The penalties become heavier for repeated plagiarism. [1] Offence: First offence of possessing unauthorised material or copying, Penalty: Zero marks in that course and grade F. [2] Offence: Impersonation or tampering with answer scripts, Penalty: Cancellation of the semester and debarment for the next semester. [2]",
+     "abstained": false,
+     "confidence": 0.4508,
      "facts_total": 2,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": false,
-     "latency_ms": 59,
+     "cited_gold": true,
+     "latency_ms": 458,
      "generator_used": "extractive"
     },
     {
@@ -2815,12 +2815,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.39,
+     "confidence": 0.4013,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 52,
+     "latency_ms": 25,
      "generator_used": "extractive"
     },
     {
@@ -2832,12 +2832,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.4295,
+     "confidence": 0.4452,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 41,
+     "latency_ms": 12,
      "generator_used": "extractive"
     },
     {
@@ -2849,12 +2849,12 @@
      "split": "dev",
      "answer": "A student who is not satisfied with the marks in an end-term examination may first request a photocopy of the answer script by paying Rs. 500 per course within 5 days of the result declaration. [1] The script is checked by a different examiner. [1] Bring the original and one self-attested photocopy of the Class 10 and Class 12 marksheets, the JEE Main or SVUET scorecard, the Aadhaar card, the migration or transfer certificate, a medical fitness certificate, the category certificate if applicable, and 6 passport-size photographs. [2]",
      "abstained": false,
-     "confidence": 0.7029,
+     "confidence": 0.7112,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1179,
+     "latency_ms": 846,
      "generator_used": "extractive"
     },
     {
@@ -2864,14 +2864,14 @@
      "style": "hinglish",
      "category": "regulations",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5123,
+     "answer": "A student who has an SGPA below 5.0 in two consecutive semesters, or a CGPA below 5.0 at the end of any semester from Semester 4 onwards, is placed on academic probation. [1] Probation is lifted when the SGPA of the next semester is 5.0 or above and the CGPA is at least 5.0. [1] The Semester Grade Point Average (SGPA) is the sum of (credits of each course multiplied by its grade points) divided by the total credits registered in the semester. [2]",
+     "abstained": false,
+     "confidence": 0.522,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": false,
-     "latency_ms": 52,
+     "cited_gold": true,
+     "latency_ms": 444,
      "generator_used": "extractive"
     },
     {
@@ -2883,12 +2883,12 @@
      "split": "dev",
      "answer": "Damage to property must be paid for by the student responsible, and a fine of up to Rs. 5,000 may be added. [1] Smoking, vaping and the use of alcohol or any narcotic substance are prohibited on campus and in hostels. [1] A fine of Rs. 2,000 is charged for a first violation of the smoking rule. [1]",
      "abstained": false,
-     "confidence": 0.5848,
+     "confidence": 0.6655,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 886,
+     "latency_ms": 359,
      "generator_used": "extractive"
     },
     {
@@ -2898,14 +2898,14 @@
      "style": "hinglish",
      "category": "syllabus",
      "split": "test",
-     "answer": "Open electives are offered by other departments and must be taken from outside the CSE department. [1] The major project is done in teams of at most 4 students under a faculty guide from the CSE department. [1] The IT Helpdesk is in Block C, Room C-001, open from 9:00 am to 5:00 pm from Monday to Friday. [2]",
+     "answer": "The Admissions Office is in Block A, Room A-102. [1] It is open from 9:30 am to 5:00 pm from Monday to Saturday. [1] The IT Helpdesk is in Block C, Room C-001, open from 9:00 am to 5:00 pm from Monday to Friday. [2]",
      "abstained": false,
      "confidence": 0.7277,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
-     "cited_gold": true,
-     "latency_ms": 1131,
+     "cited_gold": false,
+     "latency_ms": 511,
      "generator_used": "extractive"
     },
     {
@@ -2915,14 +2915,14 @@
      "style": "hinglish",
      "category": "syllabus",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4626,
+     "answer": "The laboratory part of Data Structures consists of 12 experiments performed in C++ across 14 weekly sessions of 2 hours each. [1] Experiments include array operations, linked list implementation, stack-based expression evaluation, queue simulation, binary search tree operations, AVL tree insertion, graph traversal, shortest path, sorting comparison and a hashing program. [1] The DBMS laboratory has 12 weekly experiments on PostgreSQL covering DDL and DML commands, joins, subqueries, views, indexes, triggers, stored procedures and transactions. [2]",
+     "abstained": false,
+     "confidence": 0.467,
      "facts_total": 2,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 60,
+     "facts_found": 2,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 448,
      "generator_used": "extractive"
     },
     {
@@ -2932,14 +2932,14 @@
      "style": "hinglish",
      "category": "faqs",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4672,
+     "answer": "Bring the original and one self-attested photocopy of the Class 10 and Class 12 marksheets, the JEE Main or SVUET scorecard, the Aadhaar card, the migration or transfer certificate, a medical fitness certificate, the category certificate if applicable, and 6 passport-size photographs. [1] Missing documents can be submitted within 30 days of admission, but admission is cancelled if the Class 12 marksheet is not produced. [1] The application fee for 2026-27 is Rs. 1,500, paid online on admissions.svu.example. [2]",
+     "abstained": false,
+     "confidence": 0.4608,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 56,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 654,
      "generator_used": "extractive"
     },
     {
@@ -2949,14 +2949,14 @@
      "style": "colloquial",
      "category": "syllabus",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.4567,
+     "answer": "LPU's School of CSE page lists: the iMac Lab, for iOS app development using macOS, Xcode and Swift; the IoT Bot Lab, for software bots, IoT, data analysis and real-time system integration; the Google Lab, offering certifications in mobile app development and digital marketing with access to Google Cloud and G Suite; the Linux Lab, for open-source software, Linux-based development and system administration; and the E-Cell Logic Room, a space for team projects and developing ideas with peers. [2] It is a coding facility at LPU designed as a real workplace model, with collaboration hubs, discussion zones, coding bays and digital displays. [2] It supports over 200 students at a time and is used for live projects, coding challenges, hackathons and team assignments. [2]",
+     "abstained": false,
+     "confidence": 0.5242,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 48,
+     "latency_ms": 1195,
      "generator_used": "extractive"
     },
     {
@@ -2973,7 +2973,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 817,
+     "latency_ms": 484,
      "generator_used": "extractive"
     },
     {
@@ -2985,12 +2985,12 @@
      "split": "dev",
      "answer": "The annual bus fee depends on the distance of the pick-up point: Rs. 18,000 for Zone A (within 15 km), Rs. 26,000 for Zone B (15 to 40 km) and Rs. 34,000 for Zone C (beyond 40 km, including Chandigarh and Ludhiana routes). [1] Apply on the portal under Transport, pay the fee, and collect the pass from the Transport Office in Block B, Room B-03. [1] The pass is valid only with the ID card. [1]",
      "abstained": false,
-     "confidence": 0.7618,
+     "confidence": 0.758,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1493,
+     "latency_ms": 1241,
      "generator_used": "extractive"
     },
     {
@@ -3002,12 +3002,12 @@
      "split": "test",
      "answer": "Apply on the portal under Certificates and pay Rs. 100. [1] It is issued in 2 working days and collected from Room A-105. [1] A character certificate costs Rs. 100, a no-dues certificate is free, and a migration certificate costs Rs. 500 and takes 10 working days. [1]",
      "abstained": false,
-     "confidence": 0.5802,
+     "confidence": 0.672,
      "facts_total": 2,
      "facts_found": 2,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 930,
+     "latency_ms": 453,
      "generator_used": "extractive"
     },
     {
@@ -3024,7 +3024,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1111,
+     "latency_ms": 480,
      "generator_used": "extractive"
     },
     {
@@ -3036,12 +3036,12 @@
      "split": "test",
      "answer": "Students must report to the examination hall by 9:30 am, which is 30 minutes before the start. [1] No student may leave the hall during the first 60 minutes of the examination. [1] Students must reach the examination hall at least 30 minutes before the start of the paper and must carry their hall ticket and SVU identity card. [2]",
      "abstained": false,
-     "confidence": 0.5874,
+     "confidence": 0.6136,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1025,
+     "latency_ms": 376,
      "generator_used": "extractive"
     },
     {
@@ -3053,12 +3053,12 @@
      "split": "dev",
      "answer": "For the year 2026-27, the hostel fee is Rs. 62,000 for triple occupancy, Rs. 78,000 for double occupancy and Rs. 98,000 for single occupancy. [1] Mess charges are Rs. 54,000 per year, or Rs. 4,500 per month. [1] Item: Hostel, double occupancy, Amount per semester: Rs. 39,000. [2]",
      "abstained": false,
-     "confidence": 0.7437,
+     "confidence": 0.7539,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1142,
+     "latency_ms": 684,
      "generator_used": "extractive"
     },
     {
@@ -3075,7 +3075,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": true,
-     "latency_ms": 1014,
+     "latency_ms": 430,
      "generator_used": "extractive"
     },
     {
@@ -3085,14 +3085,14 @@
      "style": "colloquial",
      "category": "policies",
      "split": "dev",
-     "answer": "Students who cannot pay the full semester fee at once may opt for the instalment facility on the student portal before 31 December 2026. [1] A processing fee of Rs. 1,000 is charged for the instalment facility. [1] These are the application fee of Rs. 1,500, the one-time registration fee of Rs. 10,000, the examination fee, the late fee, the processing fee of Rs. 1,000 for the instalment facility, and the condonation fee for attendance shortage. [2]",
+     "answer": "These are the application fee of Rs. 1,500, the one-time registration fee of Rs. 10,000, the examination fee, the late fee, the processing fee of Rs. 1,000 for the instalment facility, and the condonation fee for attendance shortage. [1] Students who cannot pay the full semester fee at once may opt for the instalment facility on the student portal before 31 December 2026. [2] A processing fee of Rs. 1,000 is charged for the instalment facility. [2]",
      "abstained": false,
      "confidence": 0.8521,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1128,
+     "latency_ms": 684,
      "generator_used": "extractive"
     },
     {
@@ -3104,12 +3104,12 @@
      "split": "test",
      "answer": "A student who enters a class more than 10 minutes after it has started is marked absent for that class. [1]",
      "abstained": false,
-     "confidence": 0.7232,
+     "confidence": 0.7459,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1116,
+     "latency_ms": 485,
      "generator_used": "extractive"
     },
     {
@@ -3126,7 +3126,7 @@
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1107,
+     "latency_ms": 347,
      "generator_used": "extractive"
     },
     {
@@ -3136,14 +3136,14 @@
      "style": "colloquial",
      "category": "regulations",
      "split": "test",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5665,
+     "answer": "A student may apply for a break of study of one semester or up to two semesters (one year) for reasons such as serious illness, family emergency, an entrepreneurship venture or an overseas exchange. [1] A break is not permitted in the first semester, and the total break cannot exceed 2 semesters during the programme. [1] Students must complete their summer internship of at least 6 weeks during the break. [2]",
+     "abstained": false,
+     "confidence": 0.5768,
      "facts_total": 1,
-     "facts_found": 0,
-     "correct": false,
-     "cited_gold": false,
-     "latency_ms": 44,
+     "facts_found": 1,
+     "correct": true,
+     "cited_gold": true,
+     "latency_ms": 334,
      "generator_used": "extractive"
     },
     {
@@ -3155,12 +3155,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3633,
+     "confidence": 0.362,
      "facts_total": 1,
      "facts_found": 0,
      "correct": false,
      "cited_gold": false,
-     "latency_ms": 38,
+     "latency_ms": 15,
      "generator_used": "extractive"
     },
     {
@@ -3170,14 +3170,14 @@
      "style": "colloquial",
      "category": "faqs",
      "split": "test",
-     "answer": "The Admissions Office is in Block A, Room A-102. [1] It is open from 9:30 am to 5:00 pm from Monday to Saturday. [1] Breakfast is served from 7:30 am to 9:00 am, lunch from 12:30 pm to 2:30 pm, evening snacks from 5:00 pm to 6:00 pm, and dinner from 7:30 pm to 9:30 pm. [2]",
+     "answer": "The Admissions Office is in Block A, Room A-102. [1] It is open from 9:30 am to 5:00 pm from Monday to Saturday. [1] Log in to admissions.svu.example with the application number and date of birth to see the status and download the offer letter. [1]",
      "abstained": false,
      "confidence": 0.8813,
      "facts_total": 1,
      "facts_found": 1,
      "correct": true,
      "cited_gold": true,
-     "latency_ms": 1412,
+     "latency_ms": 773,
      "generator_used": "extractive"
     },
     {
@@ -3187,14 +3187,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "dev",
-     "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
-     "abstained": true,
-     "confidence": 0.5184,
+     "answer": "For the year 2026-27, the hostel fee is Rs. 62,000 for triple occupancy, Rs. 78,000 for double occupancy and Rs. 98,000 for single occupancy. [1] Mess charges are Rs. 54,000 per year, or Rs. 4,500 per month. [1] The hostel fee for a semester is not refunded once the semester has started. [2]",
+     "abstained": false,
+     "confidence": 0.5379,
      "facts_total": 0,
      "facts_found": 0,
-     "correct": true,
+     "correct": false,
      "cited_gold": null,
-     "latency_ms": 60,
+     "latency_ms": 665,
      "generator_used": "extractive"
     },
     {
@@ -3204,14 +3204,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "Code: CS212, Course: Theory of Computation, L-T-P: 3-1-0, Credits: 4. [1] Code: CS214, Course: Computer Networks, L-T-P: 3-0-2, Credits: 4. [1]",
+     "answer": "Code: CS211, Course: Database Management Systems, L-T-P: 3-0-2, Credits: 4. [2] Code: CS212, Course: Theory of Computation, L-T-P: 3-1-0, Credits: 4. [2] Code: CS214, Course: Computer Networks, L-T-P: 3-0-2, Credits: 4. [2]",
      "abstained": false,
-     "confidence": 0.7782,
+     "confidence": 0.691,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1006,
+     "latency_ms": 681,
      "generator_used": "extractive"
     },
     {
@@ -3228,7 +3228,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1028,
+     "latency_ms": 595,
      "generator_used": "extractive"
     },
     {
@@ -3245,7 +3245,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 861,
+     "latency_ms": 240,
      "generator_used": "extractive"
     },
     {
@@ -3255,14 +3255,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "dev",
-     "answer": "Event: Mid-term examinations, Date: 22 to 27 February 2027. [1] Event: End-term examinations, Date: 10 to 25 May 2027. [1] The results will be declared on 8 January 2027. [2]",
+     "answer": "The results will be declared on 8 January 2027. [1] Event: End-term examinations, Date: 10 to 25 May 2027. [2] The results of the odd semester end-term examinations will be declared on 8 January 2027. [3]",
      "abstained": false,
      "confidence": 0.9241,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1077,
+     "latency_ms": 361,
      "generator_used": "extractive"
     },
     {
@@ -3279,7 +3279,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 830,
+     "latency_ms": 224,
      "generator_used": "extractive"
     },
     {
@@ -3296,7 +3296,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1277,
+     "latency_ms": 380,
      "generator_used": "extractive"
     },
     {
@@ -3306,14 +3306,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "Ellis Horowitz, Sartaj Sahni and Susan Anderson-Freed, Fundamentals of Data Structures in C, 2nd edition, Universities Press. [1] Mark Allen Weiss, Data Structures and Algorithm Analysis in C++, 4th edition, Pearson. [1] Code: CS103, Course: Digital Logic Design, L-T-P: 3-0-2, Credits: 4. [4]",
+     "answer": "Textbook: Compilers: Principles, Techniques, and Tools (Aho, Lam, Sethi and Ullman, 2nd edition). [1] Reference: Modern Compiler Implementation in Java (Appel and Palsberg, 2nd edition). [1] Item: Course title, Value: Compiler Design / Construction. [2]",
      "abstained": false,
-     "confidence": 0.6475,
+     "confidence": 0.6646,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1263,
+     "latency_ms": 237,
      "generator_used": "extractive"
     },
     {
@@ -3330,7 +3330,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1320,
+     "latency_ms": 378,
      "generator_used": "extractive"
     },
     {
@@ -3342,12 +3342,12 @@
      "split": "test",
      "answer": "The total prize pool of CodeSprint 2027 is Rs. 2,00,000. [1] The first prize is Rs. 1,00,000, the second prize is Rs. 60,000 and the third prize is Rs. 40,000. [1] CodeSprint 2027 is the annual 24-hour hackathon of SVU, to be held on 20 February 2027 and 21 February 2027. [2]",
      "abstained": false,
-     "confidence": 0.7719,
+     "confidence": 0.7844,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1336,
+     "latency_ms": 290,
      "generator_used": "extractive"
     },
     {
@@ -3364,7 +3364,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1209,
+     "latency_ms": 253,
      "generator_used": "extractive"
     },
     {
@@ -3374,14 +3374,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "Lateral entry into Semester 3 is available for diploma holders who have scored at least 60% in a 3-year engineering diploma. [1] Lateral entry students need to earn 118 credits in Semesters 3 to 8 to complete the degree, and they must clear the bridge courses in Mathematics and Programming in their first year. [1] Diploma holders with at least 60% in a 3-year engineering diploma can take lateral entry directly into Semester 3, and they complete bridge courses in Mathematics and Programming in the first year. [2]",
+     "answer": "Lateral entry into Semester 3 is available for diploma holders who have scored at least 60% in a 3-year engineering diploma. [1] Lateral entry students need to earn 118 credits in Semesters 3 to 8 to complete the degree, and they must clear the bridge courses in Mathematics and Programming in their first year. [1]",
      "abstained": false,
-     "confidence": 0.7329,
+     "confidence": 0.7371,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 909,
+     "latency_ms": 305,
      "generator_used": "extractive"
     },
     {
@@ -3393,12 +3393,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.4334,
+     "confidence": 0.4116,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 67,
+     "latency_ms": 16,
      "generator_used": "extractive"
     },
     {
@@ -3408,14 +3408,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "Semester 1 of the B.Tech CSE programme carries 21 credits across six courses. [1] All Semester 1 courses are common to every B.Tech branch at SVU, and classes begin on 3 August 2026 for the new batch. [1] This document gives the semester-wise course structure of the B.Tech Computer Science and Engineering (CSE) programme at Sutlej Valley University (SVU) for the 2026-27 batch and curriculum. [2]",
+     "answer": "Semester 1 of the B.Tech CSE programme carries 21 credits across six courses. [1] All Semester 1 courses are common to every B.Tech branch at SVU, and classes begin on 3 August 2026 for the new batch. [1] Code: PH101, Course: Engineering Physics, L-T-P: 3-0-2, Credits: 4. [1]",
      "abstained": false,
-     "confidence": 0.6922,
+     "confidence": 0.6671,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1284,
+     "latency_ms": 689,
      "generator_used": "extractive"
     },
     {
@@ -3432,7 +3432,7 @@
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1083,
+     "latency_ms": 393,
      "generator_used": "extractive"
     },
     {
@@ -3442,14 +3442,14 @@
      "style": "direct",
      "category": "out_of_scope",
      "split": "test",
-     "answer": "The end-term examinations will be held from 7 December 2026 to 22 December 2026. [1] The results of the odd semester end-term examinations will be declared on 8 January 2027. [1] The end-term examinations for the odd semesters (Semesters 1, 3, 5 and 7) of all B.Tech programmes will be held from 7 December 2026 to 22 December 2026. [2]",
+     "answer": "Online course registration for the even semester takes place from 4 January 2027 to 8 January 2027. [1] Event: Mid-term examinations, Date: 22 to 27 February 2027. [1] Event: End-term examinations, Date: 10 to 25 May 2027. [1]",
      "abstained": false,
      "confidence": 0.9642,
      "facts_total": 0,
      "facts_found": 0,
      "correct": false,
      "cited_gold": null,
-     "latency_ms": 1036,
+     "latency_ms": 427,
      "generator_used": "extractive"
     },
     {
@@ -3466,7 +3466,7 @@
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 47,
+     "latency_ms": 12,
      "generator_used": "extractive"
     },
     {
@@ -3478,12 +3478,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.2403,
+     "confidence": 0.2263,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 57,
+     "latency_ms": 12,
      "generator_used": "extractive"
     },
     {
@@ -3495,12 +3495,12 @@
      "split": "dev",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.3636,
+     "confidence": 0.3709,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 47,
+     "latency_ms": 13,
      "generator_used": "extractive"
     },
     {
@@ -3512,12 +3512,12 @@
      "split": "test",
      "answer": "I could not find this in the university documents I have, so I will not guess. Try rephrasing, or check with the concerned office.",
      "abstained": true,
-     "confidence": 0.4011,
+     "confidence": 0.404,
      "facts_total": 0,
      "facts_found": 0,
      "correct": true,
      "cited_gold": null,
-     "latency_ms": 55,
+     "latency_ms": 18,
      "generator_used": "extractive"
     }
    ]
